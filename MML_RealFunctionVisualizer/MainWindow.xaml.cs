@@ -48,10 +48,13 @@ namespace MML_RealFunctionVisualizer
     public void LoadData(string inFileName)
     {
       string[] lines = File.ReadAllLines(inFileName);
+      string type = lines[0];
+      if( type == "REAL_FUNCTION_EQUAL_SPACED")
+      {}
 
-      foreach (var line in lines)
+      for(int i=0; i<lines.Length; i++)
       {
-        string[] parts = line.Split(' ');
+        string[] parts = lines[i].Split(' ');
 
         double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
         double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
@@ -61,8 +64,8 @@ namespace MML_RealFunctionVisualizer
         circle.Height = 5;
         circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
         mainCanvas.Children.Add(circle);
-        Canvas.SetLeft(circle, 500 + x - 2.5);
-        Canvas.SetTop(circle, 500 + y - 2.5);
+        Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
+        Canvas.SetTop(circle, 500 - y * 20 - 2.5);
       }
     }
   }
