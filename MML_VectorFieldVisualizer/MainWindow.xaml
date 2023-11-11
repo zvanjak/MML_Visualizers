@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_VectorFieldVisualizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1200">
     <Grid>
-
+      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="7500" Canvas.Left="0" Canvas.Top="10" >
+      </Viewport3D>
     </Grid>
 </Window>
