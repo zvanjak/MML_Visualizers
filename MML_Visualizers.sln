@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_RealFunctionVisualizer", "MML_RealFunctionVisualizer\MML_RealFunctionVisualizer.csproj", "{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_VectorFieldVisualizer", "MML_VectorFieldVisualizer\MML_VectorFieldVisualizer.csproj", "{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
