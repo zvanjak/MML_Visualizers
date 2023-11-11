@@ -103,15 +103,18 @@ namespace MML_VectorFieldVisualizer
       //GeometryModel3D valjakModel = new GeometryModel3D(valjak, valjakMaterial);
       //myModel3DGroup.Children.Add(valjakModel);
 
-      //MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
-      //var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      //GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
-      //myModel3DGroup.Children.Add(valjakModel);
+      MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
+      var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+      GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
-      MeshGeometry3D plane = Geometries.CreatePlane();
-      var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      GeometryModel3D planeModel = new GeometryModel3D(plane, planeMaterial);
-      myModel3DGroup.Children.Add(planeModel);
+      //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
+      valjakModel.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
+      myModel3DGroup.Children.Add(valjakModel);
+
+      //MeshGeometry3D plane = Geometries.CreatePlane();
+      //var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+      //GeometryModel3D planeModel = new GeometryModel3D(plane, planeMaterial);
+      //myModel3DGroup.Children.Add(planeModel);
 
       // Add the group of models to the ModelVisual3d.
       myModelVisual3D.Content = myModel3DGroup;
