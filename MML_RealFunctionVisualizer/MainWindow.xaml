@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_RealFunctionVisualizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1000" Width="1000">
     <Grid>
-      <Canvas x:Name="mainCanvas" Width="500" Height="500">
+      <Canvas x:Name="mainCanvas" Width="1000" Height="1000">
       </Canvas>
     </Grid>
 </Window>

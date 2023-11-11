@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -52,16 +53,16 @@ namespace MML_RealFunctionVisualizer
       {
         string[] parts = line.Split(' ');
 
-        double x = double.Parse(parts[0]);
-        double y = double.Parse(parts[1]);
+        double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+        double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
 
         Ellipse circle = new Ellipse();
         circle.Width = 5;
         circle.Height = 5;
         circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
         mainCanvas.Children.Add(circle);
-        Canvas.SetLeft(circle, x - 2.5);
-        Canvas.SetTop(circle, y - 2.5);
+        Canvas.SetLeft(circle, 500 + x - 2.5);
+        Canvas.SetTop(circle, 500 + y - 2.5);
       }
     }
   }
