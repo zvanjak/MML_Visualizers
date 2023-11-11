@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MML_RealFunctionVisualizer": {
+      "commandName": "Project",
+      "commandLineArgs": "sin_func.txt"
+    }
+  }
+}
