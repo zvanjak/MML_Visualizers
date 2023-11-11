@@ -73,7 +73,7 @@ namespace MML_VectorFieldVisualizer
       myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
       myModel3DGroup.Children.Add(myDirectionalLight2);
 
-      double defAxisWidth = 0.1;
+      double defAxisWidth = 0.2;
       var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
 
       MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
@@ -85,13 +85,13 @@ namespace MML_VectorFieldVisualizer
       myModel3DGroup.Children.Add(axisYModel);
 
       MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
-      GeometryModel3D kucaModel = new GeometryModel3D(axisZ, axisMaterial);
-      myModel3DGroup.Children.Add(kucaModel);
+      GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
+      myModel3DGroup.Children.Add(axisZModel);
 
-      //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(50, 50, 0), 10);
-      //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-      //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
-      //myModel3DGroup.Children.Add(sphereModel);
+      MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(50, 50, 0), 10);
+      var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+      myModel3DGroup.Children.Add(sphereModel);
 
       //MeshGeometry3D stozac = Geometries.CreateDvostrukiStozac(new Point3D(0, 0, 0), 10, 20);
       //var stozacMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
@@ -108,10 +108,10 @@ namespace MML_VectorFieldVisualizer
       //GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
       //myModel3DGroup.Children.Add(valjakModel);
 
-      //MeshGeometry3D plane = Geometries.CreatePlane();
-      //var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      //GeometryModel3D planeModel = new GeometryModel3D(plane, planeMaterial);
-      //myModel3DGroup.Children.Add(planeModel);
+      MeshGeometry3D plane = Geometries.CreatePlane();
+      var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+      GeometryModel3D planeModel = new GeometryModel3D(plane, planeMaterial);
+      myModel3DGroup.Children.Add(planeModel);
 
       // Add the group of models to the ModelVisual3d.
       myModelVisual3D.Content = myModel3DGroup;
