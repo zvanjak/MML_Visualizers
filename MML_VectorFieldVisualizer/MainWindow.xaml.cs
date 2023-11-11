@@ -108,7 +108,10 @@ namespace MML_VectorFieldVisualizer
       GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
       //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
-      valjakModel.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
+      var trans  = new TranslateTransform3D(50, -50, 0);
+      var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
+      valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
+//      valjakModel.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
       myModel3DGroup.Children.Add(valjakModel);
 
       //MeshGeometry3D plane = Geometries.CreatePlane();
