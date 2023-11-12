@@ -161,6 +161,10 @@ namespace MML_VectorFieldVisualizer
         double vy = double.Parse(parts[4], CultureInfo.InvariantCulture);
         double vz = double.Parse(parts[5], CultureInfo.InvariantCulture);
 
+        Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
+        Vector3Cartesian vel = new Vector3Cartesian(vx, vy, vz);
+
+        ret.Add(new VecRepr(pos, vel));
 
         //Ellipse circle = new Ellipse();
         //circle.Width = 5;
