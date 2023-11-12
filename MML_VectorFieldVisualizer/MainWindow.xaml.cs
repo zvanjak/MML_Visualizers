@@ -17,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MML;
+using System.Globalization;
+using System.IO;
 
 namespace MML_VectorFieldVisualizer
 {
@@ -41,6 +43,12 @@ namespace MML_VectorFieldVisualizer
     public MainWindow()
     {
       InitializeComponent();
+
+      var args = Environment.GetCommandLineArgs();
+
+      var fileName = args[1];
+
+      LoadData(fileName);
 
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
@@ -130,6 +138,30 @@ namespace MML_VectorFieldVisualizer
       myModelVisual3D.Content = myModel3DGroup;
 
       myViewport3D.Children.Add(myModelVisual3D);
+    }
+
+    public void LoadData(string inFileName)
+    {
+      string[] lines = File.ReadAllLines(inFileName);
+      string type = lines[0];
+      if (type == "REAL_FUNCTION_EQUAL_SPACED")
+      { }
+
+      for (int i = 0; i < lines.Length; i++)
+      {
+        string[] parts = lines[i].Split(' ');
+
+        double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+        double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
+
+        //Ellipse circle = new Ellipse();
+        //circle.Width = 5;
+        //circle.Height = 5;
+        //circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+        //mainCanvas.Children.Add(circle);
+        //Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
+        //Canvas.SetTop(circle, 500 - y * 20 - 2.5);
+      }
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
