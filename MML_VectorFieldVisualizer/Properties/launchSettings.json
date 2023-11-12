@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MML_VectorFieldVisualizer": {
+      "commandName": "Project",
+      "commandLineArgs": "vec_field.txt"
+    }
+  }
+}
