@@ -109,9 +109,13 @@ namespace MML_VectorFieldVisualizer
 
       //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
       var trans  = new TranslateTransform3D(50, -50, 0);
-      var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
-      valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
-//      valjakModel.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(10, 10, 1), 45));
+      var newDir = new Vector3D(1, 1, 0);
+      // treba mi vektor na pola put zmeđu z i newDir
+      // zbrojiš ih i podijeliš sa 2
+      // uzmeš cross produkt (0,0,1) i newDir
+      var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0.5, 0.5, 0.5), 150));
+      // valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
+      valjakModel.Transform = rot;
       myModel3DGroup.Children.Add(valjakModel);
 
       //MeshGeometry3D plane = Geometries.CreatePlane();
