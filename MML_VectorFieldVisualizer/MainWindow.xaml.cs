@@ -118,19 +118,17 @@ namespace MML_VectorFieldVisualizer
         GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
         //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
-        var trans = new TranslateTransform3D(50, -50, 0);
+        var trans = new TranslateTransform3D(vec.Pos.X, vec.Pos.Y, vec.Pos.Z);
         
         var currDir = new Vector3Cartesian(0, 0, 1);
         var newDir = new Vector3Cartesian(vec.Vec.X, vec.Vec.Y, vec.Vec.Z);
         
         var cross = Vector3Cartesian.VectorProd(currDir, newDir);
         double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / Double.Pi * 180;
-        // treba mi vektor na pola put zmeđu z i newDir
-        // zbrojiš ih i podijeliš sa 2
-        // uzmeš cross produkt (0,0,1) i newDir
         var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(cross.X, cross.Y, cross.Z), angle));
-        // valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
-        valjakModel.Transform = rot;
+
+        valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
+        //valjakModel.Transform = rot;
         myModel3DGroup.Children.Add(valjakModel);
       }
 
