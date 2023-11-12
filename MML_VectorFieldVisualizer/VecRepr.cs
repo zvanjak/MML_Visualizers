@@ -9,13 +9,13 @@ namespace MML_VectorFieldVisualizer
 {
   public class VecRepr
   {
-    public Vector3Cartesian _pos;
-    public Vector3Cartesian _vec;
+    public Vector3Cartesian Pos;
+    public Vector3Cartesian Vec;
 
     public VecRepr(Vector3Cartesian pos, Vector3Cartesian vec)
     {
-      _pos = pos;
-      _vec = vec;
+      Pos = pos;
+      Vec = vec;
     }
   }
 }

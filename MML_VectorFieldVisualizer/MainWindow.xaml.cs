@@ -48,7 +48,7 @@ namespace MML_VectorFieldVisualizer
 
       var fileName = args[1];
 
-      LoadData(fileName);
+      var listVecs = LoadData(fileName);
 
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
@@ -111,23 +111,30 @@ namespace MML_VectorFieldVisualizer
       //GeometryModel3D valjakModel = new GeometryModel3D(valjak, valjakMaterial);
       //myModel3DGroup.Children.Add(valjakModel);
 
-      MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
-      var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
+      foreach (var vec in listVecs)
+      {
+        MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
+        var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+        GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
-      //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
-      var trans  = new TranslateTransform3D(50, -50, 0);
-      var currDir = new Vector3Cartesian(0, 0, 1);
-      var newDir = new Vector3Cartesian(1, 1, 3);
-      var cross = Vector3Cartesian.VectorProd(currDir, newDir);
-      double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / Double.Pi * 180;
-      // treba mi vektor na pola put zmeđu z i newDir
-      // zbrojiš ih i podijeliš sa 2
-      // uzmeš cross produkt (0,0,1) i newDir
-      var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(cross.X, cross.Y, cross.Z), angle));
-      // valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
-      valjakModel.Transform = rot;
-      myModel3DGroup.Children.Add(valjakModel);
+        //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
+        var trans = new TranslateTransform3D(50, -50, 0);
+        
+        var currDir = new Vector3Cartesian(0, 0, 1);
+        var newDir = new Vector3Cartesian(vec.Vec.X, vec.Vec.Y, vec.Vec.Z);
+        
+        var cross = Vector3Cartesian.VectorProd(currDir, newDir);
+        double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / Double.Pi * 180;
+        // treba mi vektor na pola put zmeđu z i newDir
+        // zbrojiš ih i podijeliš sa 2
+        // uzmeš cross produkt (0,0,1) i newDir
+        var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(cross.X, cross.Y, cross.Z), angle));
+        // valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
+        valjakModel.Transform = rot;
+        myModel3DGroup.Children.Add(valjakModel);
+      }
+
+
 
       //MeshGeometry3D plane = Geometries.CreatePlane();
       //var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
