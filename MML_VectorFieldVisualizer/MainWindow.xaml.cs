@@ -190,6 +190,8 @@ namespace MML_VectorFieldVisualizer
         var diffX = (newPos.X - _lastMousePos.X) / 100.0;
         var diffY = (newPos.Y - _lastMousePos.Y) / 100.0;
 
+        // uzeti smjer gledanja kao normalu, i kreirati horizontalni x-y koord sustav
+        // koji određuje koliki su u stvari dx i dy
         _cameraPos = new Point3D(_cameraPos.X + diffX, _cameraPos.Y - diffY, _cameraPos.Z);
         _lookToPos = new Point3D(_lookToPos.X + diffX, _lookToPos.Y - diffY, _lookToPos.Z);
 
