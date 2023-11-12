@@ -96,14 +96,16 @@ namespace MML_VectorFieldVisualizer
       GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
       myModel3DGroup.Children.Add(axisZModel);
 
-      MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(50, 50, 0), 10);
-      var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 5);
+      var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGreen));
       GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
       myModel3DGroup.Children.Add(sphereModel);
 
       foreach (var vec in listVecs)
       {
-        MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
+        double baseWidth = vec.Vec.Norm();
+        double len = 5 * vec.Vec.Norm();
+        MeshGeometry3D vektor = Geometries.CreateVectorArrow(baseWidth, len, 10, 5, 1, 2);
         var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
         GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
@@ -116,7 +118,7 @@ namespace MML_VectorFieldVisualizer
         double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / double.Pi * 180;
         var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(cross.X, cross.Y, cross.Z), angle));
 
-        valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
+        valjakModel.Transform = new MatrixTransform3D(rot.Value * trans.Value);
         //valjakModel.Transform = rot;
         myModel3DGroup.Children.Add(valjakModel);
       }
