@@ -140,11 +140,13 @@ namespace MML_VectorFieldVisualizer
       myViewport3D.Children.Add(myModelVisual3D);
     }
 
-    public void LoadData(string inFileName)
+    public List<VecRepr> LoadData(string inFileName)
     {
+      List<VecRepr> ret = new List<VecRepr>();
+
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
-      if (type == "REAL_FUNCTION_EQUAL_SPACED")
+      if (type == "VECTOR_FIELD_CARTESIAN")
       { }
 
       for (int i = 0; i < lines.Length; i++)
@@ -153,6 +155,12 @@ namespace MML_VectorFieldVisualizer
 
         double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
         double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
+        double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+        double vx = double.Parse(parts[3], CultureInfo.InvariantCulture);
+        double vy = double.Parse(parts[4], CultureInfo.InvariantCulture);
+        double vz = double.Parse(parts[5], CultureInfo.InvariantCulture);
+
 
         //Ellipse circle = new Ellipse();
         //circle.Width = 5;
@@ -162,6 +170,8 @@ namespace MML_VectorFieldVisualizer
         //Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
         //Canvas.SetTop(circle, 500 - y * 20 - 2.5);
       }
+
+      return ret;
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
