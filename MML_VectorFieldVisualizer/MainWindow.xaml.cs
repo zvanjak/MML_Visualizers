@@ -101,43 +101,25 @@ namespace MML_VectorFieldVisualizer
       GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
       myModel3DGroup.Children.Add(sphereModel);
 
-      //MeshGeometry3D stozac = Geometries.CreateDvostrukiStozac(new Point3D(0, 0, 0), 10, 20);
-      //var stozacMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      //GeometryModel3D stozacModel = new GeometryModel3D(stozac, stozacMaterial);
-      //myModel3DGroup.Children.Add(stozacModel);
-
-      //MeshGeometry3D valjak = Geometries.CreateValjak(10, 50, 100, 5);
-      //var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      //GeometryModel3D valjakModel = new GeometryModel3D(valjak, valjakMaterial);
-      //myModel3DGroup.Children.Add(valjakModel);
-
       foreach (var vec in listVecs)
       {
         MeshGeometry3D vektor = Geometries.CreateVectorArrow(10, 50, 10, 5, 7, 25);
         var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
         GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
-        //valjakModel.Transform = new TranslateTransform3D(50, 50, 0);
         var trans = new TranslateTransform3D(vec.Pos.X, vec.Pos.Y, vec.Pos.Z);
         
         var currDir = new Vector3Cartesian(0, 0, 1);
         var newDir = new Vector3Cartesian(vec.Vec.X, vec.Vec.Y, vec.Vec.Z);
         
         var cross = Vector3Cartesian.VectorProd(currDir, newDir);
-        double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / Double.Pi * 180;
+        double angle = Vector3Cartesian.VectorAngle(currDir, newDir) / double.Pi * 180;
         var rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(cross.X, cross.Y, cross.Z), angle));
 
         valjakModel.Transform = new MatrixTransform3D(trans.Value * rot.Value);
         //valjakModel.Transform = rot;
         myModel3DGroup.Children.Add(valjakModel);
       }
-
-
-
-      //MeshGeometry3D plane = Geometries.CreatePlane();
-      //var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-      //GeometryModel3D planeModel = new GeometryModel3D(plane, planeMaterial);
-      //myModel3DGroup.Children.Add(planeModel);
 
       // Add the group of models to the ModelVisual3d.
       myModelVisual3D.Content = myModel3DGroup;
@@ -170,14 +152,6 @@ namespace MML_VectorFieldVisualizer
         Vector3Cartesian vel = new Vector3Cartesian(vx, vy, vz);
 
         ret.Add(new VecRepr(pos, vel));
-
-        //Ellipse circle = new Ellipse();
-        //circle.Width = 5;
-        //circle.Height = 5;
-        //circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-        //mainCanvas.Children.Add(circle);
-        //Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
-        //Canvas.SetTop(circle, 500 - y * 20 - 2.5);
       }
 
       return ret;
