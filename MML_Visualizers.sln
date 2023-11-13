@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibCSharp", "..\MathLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurveVisualizer", "MML_ParametricCurveVisualizer\MML_ParametricCurveVisualizer.csproj", "{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2Visualizer", "MML_ScalarFunction2Visualizer\MML_ScalarFunction2Visualizer.csproj", "{B3829DBE-D979-4C47-9008-935F3D2E28E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
