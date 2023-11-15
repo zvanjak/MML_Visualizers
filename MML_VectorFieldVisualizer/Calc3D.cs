@@ -10,14 +10,6 @@ namespace MathVisualizer
 {
   public class Calc3D
   {
-    public static Vector3D getFrom2Points(Point3D pnt1, Point3D pnt2)
-    {
-      Vector3D ret = new Vector3D(pnt2.X - pnt1.X, pnt2.Y - pnt1.Y, pnt2.Z - pnt1.Z);
-
-      ret.Normalize();
-      return ret;
-    }
-
     //public static Point3D rotate_point(double cx, double cy, double angle, Point3D p)
     //{
     //  double s = Math.Sin(angle);
