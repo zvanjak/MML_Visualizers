@@ -1,5 +1,4 @@
-﻿using MML;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using MML;
+using WPF3DHelperLib;
 
 namespace MML_ScalarFunction3Visualizer
 {
@@ -39,15 +41,6 @@ namespace MML_ScalarFunction3Visualizer
     public MainWindow()
     {
       InitializeComponent();
-    }
-
-
-    public static Vector3D getFrom2Points(Point3D pnt1, Point3D pnt2)
-    {
-      Vector3D ret = new Vector3D(pnt2.X - pnt1.X, pnt2.Y - pnt1.Y, pnt2.Z - pnt1.Z);
-
-      ret.Normalize();
-      return ret;
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -139,7 +132,7 @@ namespace MML_ScalarFunction3Visualizer
         Debug.WriteLine("{0}  Elevation - {1}", _cameraPos.ToString(), outPnt.Theta);
 
         // treba ažurirati i LookDirection!!!
-        myPCamera.LookDirection = getFrom2Points(_cameraPos, _lookToPos);
+        myPCamera.LookDirection = Utils.getFrom2Points(_cameraPos, _lookToPos);
 
         myViewport3D.InvalidateVisual();
       }
@@ -148,7 +141,7 @@ namespace MML_ScalarFunction3Visualizer
     private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       // mijenjamo poziciju kamere da se ili približi ili udalji od točke u koju gledamo
-      Vector3D dir = getFrom2Points(_cameraPos, _lookToPos);
+      Vector3D dir = Utils.getFrom2Points(_cameraPos, _lookToPos);
 
       _cameraPos = _cameraPos + (e.Delta / 10.0) * dir;
 

@@ -1,5 +1,4 @@
-﻿using MML;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using MML;
+using WPF3DHelperLib;
 
 namespace MML_WorldVisualizer
 {
@@ -35,6 +37,7 @@ namespace MML_WorldVisualizer
 
     private Point _lastMousePos;
     private Point _startMouseRButtonClick;
+
     public MainWindow()
     {
       InitializeComponent();

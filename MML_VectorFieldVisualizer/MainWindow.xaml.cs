@@ -58,7 +58,7 @@ namespace MML_VectorFieldVisualizer
       // the camera must be positioned and pointed such that the object is within view
       // of the camera.
       myPCamera.Position = _cameraPos;
-      myPCamera.LookDirection = getFrom2Points(_cameraPos, _lookToPos);
+      myPCamera.LookDirection = Utils.getFrom2Points(_cameraPos, _lookToPos);
       myPCamera.UpDirection = new Vector3D(0, 0, 1);
       myPCamera.FieldOfView = 60;
 
@@ -127,14 +127,6 @@ namespace MML_VectorFieldVisualizer
       myModelVisual3D.Content = myModel3DGroup;
 
       myViewport3D.Children.Add(myModelVisual3D);
-    }
-
-    public static Vector3D getFrom2Points(Point3D pnt1, Point3D pnt2)
-    {
-      Vector3D ret = new Vector3D(pnt2.X - pnt1.X, pnt2.Y - pnt1.Y, pnt2.Z - pnt1.Z);
-
-      ret.Normalize();
-      return ret;
     }
 
     public List<VecRepr> LoadData(string inFileName)
@@ -256,7 +248,7 @@ namespace MML_VectorFieldVisualizer
         Debug.WriteLine("{0}  Elevation - {1}", _cameraPos.ToString(), outPnt.Theta);
 
         // treba ažurirati i LookDirection!!!
-        myPCamera.LookDirection = getFrom2Points(_cameraPos, _lookToPos);
+        myPCamera.LookDirection = Utils.getFrom2Points(_cameraPos, _lookToPos);
 
         myViewport3D.InvalidateVisual();
       }
@@ -265,7 +257,7 @@ namespace MML_VectorFieldVisualizer
     private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       // mijenjamo poziciju kamere da se ili približi ili udalji od točke u koju gledamo
-      Vector3D dir = getFrom2Points(_cameraPos, _lookToPos);
+      Vector3D dir = Utils.getFrom2Points(_cameraPos, _lookToPos);
 
       _cameraPos = _cameraPos + (e.Delta / 10.0) * dir;
 
