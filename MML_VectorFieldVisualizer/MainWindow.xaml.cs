@@ -50,6 +50,13 @@ namespace MML_VectorFieldVisualizer
 
       var listVecs = LoadData(fileName);
 
+      // analizirati podatke
+      // naci bounding cube, da se vidi GDJE iscrtavamo polje
+      //    podesiti camera pos i direction
+      //    podesiti da se i koord osi iscrtaju do max koord
+      // naci max i min Norm za sve vektore u listi
+      //    u skladu s tim podesiti velicinu vektora
+
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
       ModelVisual3D myModelVisual3D = new ModelVisual3D();
