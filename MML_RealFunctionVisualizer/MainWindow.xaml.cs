@@ -22,8 +22,8 @@ namespace MML_RealFunctionVisualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    private List<double> _xVals;
-    private List<double> _yVals;
+    private List<double> _xVals = new List<double>();
+    private List<double> _yVals = new List<double>();
 
     public MainWindow()
     {
@@ -35,17 +35,21 @@ namespace MML_RealFunctionVisualizer
 
       LoadData(fileName);
 
-      double radius = 10;
-      double x = 100;
-      double y = 100;
+      for (int i = 0; i < _xVals.Count; i++)
+      {
+        DrawPoint(_xVals[i], _yVals[i]);
+      }
+    }
 
+    void DrawPoint(double x, double y)
+    {
       Ellipse circle = new Ellipse();
-      circle.Width = radius * 2;
-      circle.Height = radius * 2;
-      circle.Fill = new SolidColorBrush(Colors.Blue);
+      circle.Width = 5;
+      circle.Height = 5;
+      circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
       mainCanvas.Children.Add(circle);
-      Canvas.SetLeft(circle, x - radius);
-      Canvas.SetTop(circle, y - radius);
+      Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
+      Canvas.SetTop(circle, 500 - y * 20 - 2.5);
     }
 
     public void LoadData(string inFileName)
@@ -70,13 +74,8 @@ namespace MML_RealFunctionVisualizer
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
           double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
 
-          Ellipse circle = new Ellipse();
-          circle.Width = 5;
-          circle.Height = 5;
-          circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-          mainCanvas.Children.Add(circle);
-          Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
-          Canvas.SetTop(circle, 500 - y * 20 - 2.5);
+          _xVals.Add(x);
+          _yVals.Add(y);
         }
       }
     }
