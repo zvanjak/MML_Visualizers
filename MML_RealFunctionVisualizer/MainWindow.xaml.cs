@@ -91,6 +91,21 @@ namespace MML_RealFunctionVisualizer
           _yVals.Add(y);
         }
       }
+      else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
+      {
+        MessageBox.Show("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
+        return false;
+      }
+      else if (type == "REAL_FUNCTION_VARIABLE_SPACED")
+      {
+        MessageBox.Show("REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        return false;
+      }
+      else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
+      {
+        MessageBox.Show("MULTI_REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        return false;
+      }
       else
       {
         MessageBox.Show("Unsupported format: " + type);
