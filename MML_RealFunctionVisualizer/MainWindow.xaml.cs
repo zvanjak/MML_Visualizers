@@ -31,13 +31,20 @@ namespace MML_RealFunctionVisualizer
 
       var args = Environment.GetCommandLineArgs();
 
+      if (args.Length < 2)
+      {
+        MessageBox.Show("No file name specified.");
+        return;
+      } 
+
       var fileName = args[1];
 
-      LoadData(fileName);
-
-      for (int i = 0; i < _xVals.Count; i++)
+      if (LoadData(fileName))
       {
-        DrawPoint(_xVals[i], _yVals[i]);
+        for (int i = 0; i < _xVals.Count; i++)
+        {
+          DrawPoint(_xVals[i], _yVals[i]);
+        }
       }
     }
 
