@@ -52,8 +52,14 @@ namespace MML_RealFunctionVisualizer
       Canvas.SetTop(circle, 500 - y * 20 - 2.5);
     }
 
-    public void LoadData(string inFileName)
+    public bool LoadData(string inFileName)
     {
+      if (File.Exists(inFileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + inFileName);
+        return false;
+      } 
+
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
@@ -78,6 +84,13 @@ namespace MML_RealFunctionVisualizer
           _yVals.Add(y);
         }
       }
+      else
+      {
+        MessageBox.Show("Unsupported format: " + type);
+        return false;
+      }
+
+      return true;
     }
   }
 }
