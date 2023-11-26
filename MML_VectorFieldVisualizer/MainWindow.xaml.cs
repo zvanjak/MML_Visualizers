@@ -142,25 +142,25 @@ namespace MML_VectorFieldVisualizer
 
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
-      if (type == "VECTOR_FIELD_CARTESIAN")
-      { }
-
-      for (int i = 0; i < lines.Length; i++)
+      if (type == "VECTOR_FIELD_3D_CARTESIAN")
       {
-        string[] parts = lines[i].Split(' ');
+        for (int i = 1; i < lines.Length; i++)
+        {
+          string[] parts = lines[i].Split(' ');
 
-        double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-        double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
-        double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
+          double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+          double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
+          double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
-        double vx = double.Parse(parts[3], CultureInfo.InvariantCulture);
-        double vy = double.Parse(parts[4], CultureInfo.InvariantCulture);
-        double vz = double.Parse(parts[5], CultureInfo.InvariantCulture);
+          double vx = double.Parse(parts[3], CultureInfo.InvariantCulture);
+          double vy = double.Parse(parts[4], CultureInfo.InvariantCulture);
+          double vz = double.Parse(parts[5], CultureInfo.InvariantCulture);
 
-        Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
-        Vector3Cartesian vel = new Vector3Cartesian(vx, vy, vz);
+          Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
+          Vector3Cartesian vel = new Vector3Cartesian(vx, vy, vz);
 
-        ret.Add(new VecRepr(pos, vel));
+          ret.Add(new VecRepr(pos, vel));
+        }
       }
 
       return ret;

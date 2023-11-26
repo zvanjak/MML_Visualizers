@@ -25,6 +25,13 @@ namespace MML_RealFunctionVisualizer
     private List<double> _xVals = new List<double>();
     private List<double> _yVals = new List<double>();
 
+    double _windowWidth = 1000;
+    double _windowHeight = 800;
+    double _centerX = 500;
+    double _centerY = 400;
+    double _scaleX = 40;
+    double _scaleY = 40;
+
     public MainWindow()
     {
       InitializeComponent();
@@ -41,9 +48,23 @@ namespace MML_RealFunctionVisualizer
 
       if (LoadData(fileName))
       {
+        // analiza podataka
         for (int i = 0; i < _xVals.Count; i++)
         {
-          DrawCoordSystem(-10, 10, -10, 10);
+          double xMin = _xVals.Min();
+          double xMax = _xVals.Max();
+          double yMin = _yVals.Min();
+          double yMax = _yVals.Max();
+
+          // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+          // prilagođavanje skaliranja i centra
+          // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
+          // inače E notacija
+          _scaleX = _windowWidth / (xMax - xMin) * 0.9;
+          _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+
+          DrawCoordSystem(xMin, xMax, yMin, yMax);
+
           DrawPoint(_xVals[i], _yVals[i]);
         }
       }
@@ -54,61 +75,76 @@ namespace MML_RealFunctionVisualizer
       Line xAxis = new Line();
       xAxis.Stroke = Brushes.Black;
       xAxis.X1 = 0;
-      xAxis.Y1 = 400;
-      xAxis.X2 = 1000;
-      xAxis.Y2 = 400;
+      xAxis.Y1 = _centerY;
+      xAxis.X2 = _windowWidth;
+      xAxis.Y2 = _centerY;
       mainCanvas.Children.Add(xAxis);
 
       Line yAxis = new Line();
       yAxis.Stroke = Brushes.Black;
-      yAxis.X1 = 500;
+      yAxis.X1 = _centerX;
       yAxis.Y1 = 0;
-      yAxis.X2 = 500;
-      yAxis.Y2 = 1000;
+      yAxis.X2 = _centerX;
+      yAxis.Y2 = _windowHeight;
       mainCanvas.Children.Add(yAxis);
 
-      for (int i = 0; i < 1000; i += 20)
+      int numXTicks = (int)(xMax - xMin);
+      for (int i = -numXTicks; i<=numXTicks; i++)
       {
         Line xTick = new Line();
         xTick.Stroke = Brushes.Black;
-        xTick.X1 = i;
-        xTick.Y1 = 400 - 2;
-        xTick.X2 = i;
-        xTick.Y2 = 400 + 2;
+        xTick.X1 = _centerX + i * _scaleX;
+        xTick.Y1 = _centerY - 2;
+        xTick.X2 = _centerX + i * _scaleX;
+        xTick.Y2 = _centerY + 2;
         mainCanvas.Children.Add(xTick);
-
-        Line yTick = new Line();
-        yTick.Stroke = Brushes.Black;
-        yTick.X1 = 500 - 2;
-        yTick.Y1 = i;
-        yTick.X2 = 500 + 2;
-        yTick.Y2 = i;
-        mainCanvas.Children.Add(yTick);
       }
+
+      for (int i = -8; i<=8; i++)
+      {
+        Line xTick = new Line();
+        xTick.Stroke = Brushes.Black;
+        xTick.X1 = _centerX - 2;
+        xTick.Y1 = _centerY - i * _scaleX;
+        xTick.X2 = _centerX + 2;
+        xTick.Y2 = _centerY - i * _scaleX;
+        mainCanvas.Children.Add(xTick);
+      }
+
+      //for (double i = 0; i < 800; i += _scaleY)
+      //{
+      //  Line yTick = new Line();
+      //  yTick.Stroke = Brushes.Black;
+      //  yTick.X1 = _centerX - 2;
+      //  yTick.Y1 = i;
+      //  yTick.X2 = _centerX + 2;
+      //  yTick.Y2 = i;
+      //  mainCanvas.Children.Add(yTick);
+      //}
 
       TextBlock xMinText = new TextBlock();
       xMinText.Text = xMin.ToString();
       mainCanvas.Children.Add(xMinText);
-      Canvas.SetLeft(xMinText, 500 + xMin * 20 - 2.5);
-      Canvas.SetTop(xMinText, 500 + 5);
+      Canvas.SetLeft(xMinText, _centerX + xMin * _scaleX - 2.5);
+      Canvas.SetTop(xMinText, _centerY + 5);
 
       TextBlock xMaxText = new TextBlock();
       xMaxText.Text = xMax.ToString();
       mainCanvas.Children.Add(xMaxText);
-      Canvas.SetLeft(xMaxText, 500 + xMax * 20 - 2.5);
-      Canvas.SetTop(xMaxText, 500 + 5);
+      Canvas.SetLeft(xMaxText, _centerX + xMax * _scaleX - 20);
+      Canvas.SetTop(xMaxText, _centerY + 5);
 
       TextBlock yMinText = new TextBlock();
       yMinText.Text = yMin.ToString();
       mainCanvas.Children.Add(yMinText);
-      Canvas.SetLeft(yMinText, 500 - 20);
-      Canvas.SetTop(yMinText, 400 - yMin * 20 - 2.5);
+      Canvas.SetLeft(yMinText, _centerX - 20);
+      Canvas.SetTop(yMinText, _centerY - yMin * _scaleY - 2.5);
 
       TextBlock yMaxText = new TextBlock();
       yMaxText.Text = yMax.ToString();
       mainCanvas.Children.Add(yMaxText);
-      Canvas.SetLeft(yMaxText, 500 - 20);
-      Canvas.SetTop(yMaxText, 400 - yMax * 20 - 2.5);
+      Canvas.SetLeft(yMaxText, _centerX - 20);
+      Canvas.SetTop(yMaxText, _centerY - yMax * _scaleY - 2.5);
     }
     void DrawPoint(double x, double y)
     {
@@ -117,8 +153,8 @@ namespace MML_RealFunctionVisualizer
       circle.Height = 5;
       circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
       mainCanvas.Children.Add(circle);
-      Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
-      Canvas.SetTop(circle, 400 - y * 20 - 2.5);
+      Canvas.SetLeft(circle, _centerX + x * _scaleX - 2.5);
+      Canvas.SetTop(circle, _centerY - y * _scaleY - 2.5);
     }
 
     public bool LoadData(string inFileName)
