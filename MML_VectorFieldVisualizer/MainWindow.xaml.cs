@@ -140,6 +140,12 @@ namespace MML_VectorFieldVisualizer
     {
       List<VecRepr> ret = new List<VecRepr>();
 
+      if (File.Exists(inFileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + inFileName);
+        return ret;
+      }
+
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
       if (type == "VECTOR_FIELD_3D_CARTESIAN")
@@ -161,6 +167,11 @@ namespace MML_VectorFieldVisualizer
 
           ret.Add(new VecRepr(pos, vel));
         }
+      }
+      else
+      {
+        MessageBox.Show("Unsupported format: " + type);
+        return ret;
       }
 
       return ret;
