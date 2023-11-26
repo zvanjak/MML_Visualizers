@@ -43,11 +43,73 @@ namespace MML_RealFunctionVisualizer
       {
         for (int i = 0; i < _xVals.Count; i++)
         {
+          DrawCoordSystem(-10, 10, -10, 10);
           DrawPoint(_xVals[i], _yVals[i]);
         }
       }
     }
 
+    void DrawCoordSystem(double xMin, double xMax, double yMin, double yMax)
+    {
+      Line xAxis = new Line();
+      xAxis.Stroke = Brushes.Black;
+      xAxis.X1 = 0;
+      xAxis.Y1 = 400;
+      xAxis.X2 = 1000;
+      xAxis.Y2 = 400;
+      mainCanvas.Children.Add(xAxis);
+
+      Line yAxis = new Line();
+      yAxis.Stroke = Brushes.Black;
+      yAxis.X1 = 500;
+      yAxis.Y1 = 0;
+      yAxis.X2 = 500;
+      yAxis.Y2 = 1000;
+      mainCanvas.Children.Add(yAxis);
+
+      for (int i = 0; i < 1000; i += 20)
+      {
+        Line xTick = new Line();
+        xTick.Stroke = Brushes.Black;
+        xTick.X1 = i;
+        xTick.Y1 = 400 - 2;
+        xTick.X2 = i;
+        xTick.Y2 = 400 + 2;
+        mainCanvas.Children.Add(xTick);
+
+        Line yTick = new Line();
+        yTick.Stroke = Brushes.Black;
+        yTick.X1 = 500 - 2;
+        yTick.Y1 = i;
+        yTick.X2 = 500 + 2;
+        yTick.Y2 = i;
+        mainCanvas.Children.Add(yTick);
+      }
+
+      TextBlock xMinText = new TextBlock();
+      xMinText.Text = xMin.ToString();
+      mainCanvas.Children.Add(xMinText);
+      Canvas.SetLeft(xMinText, 500 + xMin * 20 - 2.5);
+      Canvas.SetTop(xMinText, 500 + 5);
+
+      TextBlock xMaxText = new TextBlock();
+      xMaxText.Text = xMax.ToString();
+      mainCanvas.Children.Add(xMaxText);
+      Canvas.SetLeft(xMaxText, 500 + xMax * 20 - 2.5);
+      Canvas.SetTop(xMaxText, 500 + 5);
+
+      TextBlock yMinText = new TextBlock();
+      yMinText.Text = yMin.ToString();
+      mainCanvas.Children.Add(yMinText);
+      Canvas.SetLeft(yMinText, 500 - 20);
+      Canvas.SetTop(yMinText, 400 - yMin * 20 - 2.5);
+
+      TextBlock yMaxText = new TextBlock();
+      yMaxText.Text = yMax.ToString();
+      mainCanvas.Children.Add(yMaxText);
+      Canvas.SetLeft(yMaxText, 500 - 20);
+      Canvas.SetTop(yMaxText, 400 - yMax * 20 - 2.5);
+    }
     void DrawPoint(double x, double y)
     {
       Ellipse circle = new Ellipse();
@@ -56,7 +118,7 @@ namespace MML_RealFunctionVisualizer
       circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
       mainCanvas.Children.Add(circle);
       Canvas.SetLeft(circle, 500 + x * 20 - 2.5);
-      Canvas.SetTop(circle, 500 - y * 20 - 2.5);
+      Canvas.SetTop(circle, 400 - y * 20 - 2.5);
     }
 
     public bool LoadData(string inFileName)
@@ -69,6 +131,7 @@ namespace MML_RealFunctionVisualizer
 
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
+
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
         string[] partsX1 = lines[1].Split(' ');
