@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,7 +60,30 @@ namespace MML_ScalarFunction2Visualizer
 
     bool LoadData(string inFileName)
     {
-      return false;
+      if (File.Exists(inFileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + inFileName);
+        return false;
+      }
+
+      string[] lines = File.ReadAllLines(inFileName);
+      string type = lines[0];
+
+      if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
+      {
+      }
+      else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
+      {
+        MessageBox.Show("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
+        return false;
+      }
+      else
+      {
+        MessageBox.Show("Unsupported format: " + type);
+        return false;
+      }
+
+      return true;
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
