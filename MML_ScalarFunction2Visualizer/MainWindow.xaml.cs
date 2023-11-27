@@ -50,6 +50,16 @@ namespace MML_ScalarFunction2Visualizer
         return;
       }
 
+      var fileName = args[1];
+
+      if (LoadData(fileName))
+      {
+      }
+    }
+
+    bool LoadData(string inFileName)
+    {
+      return false;
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

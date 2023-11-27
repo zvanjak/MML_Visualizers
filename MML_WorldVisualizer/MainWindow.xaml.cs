@@ -50,6 +50,15 @@ namespace MML_WorldVisualizer
         return;
       }
 
+      var fileName = args[1];
+
+      if (LoadData(fileName))
+      {
+      }
+    }
+    bool LoadData(string inFileName)
+    {
+      return false;
     }
 
     public static Vector3D getFrom2Points(Point3D pnt1, Point3D pnt2)
