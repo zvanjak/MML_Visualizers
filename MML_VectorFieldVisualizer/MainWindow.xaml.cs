@@ -88,20 +88,22 @@ namespace MML_VectorFieldVisualizer
       myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
       myModel3DGroup.Children.Add(myDirectionalLight2);
 
-      double defAxisWidth = 0.2;
-      var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+      //double defAxisWidth = 0.2;
+      //var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
 
-      MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
-      GeometryModel3D axisXModel = new GeometryModel3D(axisX, axisMaterial);
-      myModel3DGroup.Children.Add(axisXModel);
+      //MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
+      //GeometryModel3D axisXModel = new GeometryModel3D(axisX, axisMaterial);
+      //myModel3DGroup.Children.Add(axisXModel);
 
-      MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, 100, defAxisWidth);
-      GeometryModel3D axisYModel = new GeometryModel3D(axisY, axisMaterial);
-      myModel3DGroup.Children.Add(axisYModel);
+      //MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, 100, defAxisWidth);
+      //GeometryModel3D axisYModel = new GeometryModel3D(axisY, axisMaterial);
+      //myModel3DGroup.Children.Add(axisYModel);
 
-      MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
-      GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
-      myModel3DGroup.Children.Add(axisZModel);
+      //MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
+      //GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
+      //myModel3DGroup.Children.Add(axisZModel);
+
+      DrawCoordSystem(myModel3DGroup);
 
       MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 5);
       var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGreen));
@@ -134,6 +136,24 @@ namespace MML_VectorFieldVisualizer
       myModelVisual3D.Content = myModel3DGroup;
 
       myViewport3D.Children.Add(myModelVisual3D);
+    }
+
+    void DrawCoordSystem(Model3DGroup modelGroup)
+    {
+      double defAxisWidth = 0.2;
+      var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+
+      MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
+      GeometryModel3D axisXModel = new GeometryModel3D(axisX, axisMaterial);
+      modelGroup.Children.Add(axisXModel);
+
+      MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, 100, defAxisWidth);
+      GeometryModel3D axisYModel = new GeometryModel3D(axisY, axisMaterial);
+      modelGroup.Children.Add(axisYModel);
+
+      MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
+      GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
+      modelGroup.Children.Add(axisZModel);
     }
 
     public List<VecRepr> LoadData(string inFileName)
