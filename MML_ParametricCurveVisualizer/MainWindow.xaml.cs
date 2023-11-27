@@ -60,6 +60,42 @@ namespace MML_ParametricCurveVisualizer
 
       if (LoadData(fileName))
       {
+        // Declare scene objects.
+        Model3DGroup myModel3DGroup = new Model3DGroup();
+        ModelVisual3D myModelVisual3D = new ModelVisual3D();
+
+        // Defines the camera used to view the 3D object. In order to view the 3D object,
+        // the camera must be positioned and pointed such that the object is within view
+        // of the camera.
+        myPCamera.Position = _cameraPos;
+        myPCamera.LookDirection = Utils.getFrom2Points(_cameraPos, _lookToPos);
+        myPCamera.UpDirection = new Vector3D(0, 0, 1);
+        myPCamera.FieldOfView = 60;
+
+        myViewport3D.Camera = myPCamera;
+
+        // Define the lights cast in the scene. Without light, the 3D object cannot
+        // be seen. Note: to illuminate an object from additional directions, create
+        // additional lights.
+        AmbientLight ambLight = new AmbientLight();
+        ambLight.Color = Colors.Yellow;
+        myModel3DGroup.Children.Add(ambLight);
+
+        DirectionalLight myDirectionalLight = new DirectionalLight();
+        myDirectionalLight.Color = Colors.White;
+        myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
+        myModel3DGroup.Children.Add(myDirectionalLight);
+
+        DirectionalLight myDirectionalLight2 = new DirectionalLight();
+        myDirectionalLight2.Color = Colors.White;
+        myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
+        myModel3DGroup.Children.Add(myDirectionalLight2);
+        
+        DrawCoordSystem(myModel3DGroup);
+
+        myModelVisual3D.Content = myModel3DGroup;
+
+        myViewport3D.Children.Add(myModelVisual3D);
       }
     }
 
@@ -141,6 +177,24 @@ namespace MML_ParametricCurveVisualizer
       }
 
       return true;
+    }
+
+    void DrawCoordSystem(Model3DGroup modelGroup)
+    {
+      double defAxisWidth = 0.2;
+      var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+
+      MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
+      GeometryModel3D axisXModel = new GeometryModel3D(axisX, axisMaterial);
+      modelGroup.Children.Add(axisXModel);
+
+      MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, 100, defAxisWidth);
+      GeometryModel3D axisYModel = new GeometryModel3D(axisY, axisMaterial);
+      modelGroup.Children.Add(axisYModel);
+
+      MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
+      GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
+      modelGroup.Children.Add(axisZModel);
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
