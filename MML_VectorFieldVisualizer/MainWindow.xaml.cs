@@ -168,10 +168,13 @@ namespace MML_VectorFieldVisualizer
           ret.Add(new VecRepr(pos, vel));
         }
       }
+      else if (type == "VECTOR_FIELD_SPHERICAL")
+      {
+        MessageBox.Show("VECTOR_FIELD_SPHERICAL not yet supported");
+      }
       else
       {
         MessageBox.Show("Unsupported format: " + type);
-        return ret;
       }
 
       return ret;
