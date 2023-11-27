@@ -41,6 +41,15 @@ namespace MML_ParametricCurveVisualizer
     public MainWindow()
     {
       InitializeComponent();
+
+      var args = Environment.GetCommandLineArgs();
+
+      if (args.Length < 2)
+      {
+        MessageBox.Show("No file name specified.");
+        return;
+      }
+
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

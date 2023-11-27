@@ -111,17 +111,6 @@ namespace MML_RealFunctionVisualizer
         mainCanvas.Children.Add(xTick);
       }
 
-      //for (double i = 0; i < 800; i += _scaleY)
-      //{
-      //  Line yTick = new Line();
-      //  yTick.Stroke = Brushes.Black;
-      //  yTick.X1 = _centerX - 2;
-      //  yTick.Y1 = i;
-      //  yTick.X2 = _centerX + 2;
-      //  yTick.Y2 = i;
-      //  mainCanvas.Children.Add(yTick);
-      //}
-
       TextBlock xMinText = new TextBlock();
       xMinText.Text = xMin.ToString();
       mainCanvas.Children.Add(xMinText);

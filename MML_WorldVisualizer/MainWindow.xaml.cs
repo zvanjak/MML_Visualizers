@@ -41,6 +41,15 @@ namespace MML_WorldVisualizer
     public MainWindow()
     {
       InitializeComponent();
+
+      var args = Environment.GetCommandLineArgs();
+
+      if (args.Length < 2)
+      {
+        MessageBox.Show("No file name specified.");
+        return;
+      }
+
     }
 
     public static Vector3D getFrom2Points(Point3D pnt1, Point3D pnt2)
