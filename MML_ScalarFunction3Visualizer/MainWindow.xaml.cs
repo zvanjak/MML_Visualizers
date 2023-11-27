@@ -69,13 +69,8 @@ namespace MML_ScalarFunction3Visualizer
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
 
-      if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
+      if (type == "SCALAR_FUNCTION_CARTESIAN_3D")
       {
-      }
-      else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
-      {
-        MessageBox.Show("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
-        return false;
       }
       else
       {
