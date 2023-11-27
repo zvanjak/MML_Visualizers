@@ -96,6 +96,16 @@ namespace MML_ParametricCurveVisualizer
         myModelVisual3D.Content = myModel3DGroup;
 
         myViewport3D.Children.Add(myModelVisual3D);
+
+        foreach (var vec in _curveTrace)
+        {
+          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.5);
+          var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
+          GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+          myModel3DGroup.Children.Add(sphereModel);
+        }
+
       }
     }
 
@@ -181,18 +191,20 @@ namespace MML_ParametricCurveVisualizer
 
     void DrawCoordSystem(Model3DGroup modelGroup)
     {
-      double defAxisWidth = 0.2;
-      var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+      double defAxisWidth = 0.5;
+      var axisMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkBlue));
 
-      MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), 100.0, defAxisWidth, defAxisWidth);
+      double axisLen = 300;
+
+      MeshGeometry3D axisX = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), axisLen, defAxisWidth, defAxisWidth);
       GeometryModel3D axisXModel = new GeometryModel3D(axisX, axisMaterial);
       modelGroup.Children.Add(axisXModel);
 
-      MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, 100, defAxisWidth);
+      MeshGeometry3D axisY = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, axisLen, defAxisWidth);
       GeometryModel3D axisYModel = new GeometryModel3D(axisY, axisMaterial);
       modelGroup.Children.Add(axisYModel);
 
-      MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, 100);
+      MeshGeometry3D axisZ = Geometries.CreateParallelepiped(new Point3D(0, 0, 0), defAxisWidth, defAxisWidth, axisLen);
       GeometryModel3D axisZModel = new GeometryModel3D(axisZ, axisMaterial);
       modelGroup.Children.Add(axisZModel);
     }
