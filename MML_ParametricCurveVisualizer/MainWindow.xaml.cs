@@ -28,6 +28,9 @@ namespace MML_ParametricCurveVisualizer
   /// </summary>
   public partial class MainWindow : Window
   {
+    List<Vector3Cartesian> _curveTrace = new List<Vector3Cartesian>();
+
+
     PerspectiveCamera myPCamera = new PerspectiveCamera();
 
     Point3D _cameraPos = new Point3D(180, 80, 150);
@@ -82,8 +85,6 @@ namespace MML_ParametricCurveVisualizer
         string[] partsNumPoints = lines[3].Split(' ');
         int numPoints = int.Parse(partsNumPoints[1]);
 
-        List<Vector3Cartesian> ret = new List<Vector3Cartesian>();
-
         for (int i = 4; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
@@ -95,7 +96,7 @@ namespace MML_ParametricCurveVisualizer
 
           Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
 
-          ret.Add(pos);
+          _curveTrace.Add(pos);
         }
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
