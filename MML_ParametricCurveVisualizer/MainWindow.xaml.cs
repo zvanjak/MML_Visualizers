@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MML;
+using MML_VectorFieldVisualizer;
 using WPF3DHelperLib;
 
 namespace MML_ParametricCurveVisualizer
@@ -72,6 +73,30 @@ namespace MML_ParametricCurveVisualizer
 
       if (type == "PARAMETRIC_CURVE_CARTESIAN_3D")
       {
+        string[] partsT1 = lines[1].Split(' ');
+        double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
+
+        string[] partsT2 = lines[2].Split(' ');
+        double t2 = double.Parse(partsT2[1], CultureInfo.InvariantCulture);
+
+        string[] partsNumPoints = lines[3].Split(' ');
+        int numPoints = int.Parse(partsNumPoints[1]);
+
+        List<Vector3Cartesian> ret = new List<Vector3Cartesian>();
+
+        for (int i = 4; i < lines.Length; i++)
+        {
+          string[] parts = lines[i].Split(' ');
+
+          double t = double.Parse(parts[0], CultureInfo.InvariantCulture);
+          double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+          double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+          double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
+
+          Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
+
+          ret.Add(pos);
+        }
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
       {
