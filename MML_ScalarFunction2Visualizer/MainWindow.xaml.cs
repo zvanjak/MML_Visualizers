@@ -81,6 +81,7 @@ namespace MML_ScalarFunction2Visualizer
       return true;
     }
 
+
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       _bLButtonDown = true;
