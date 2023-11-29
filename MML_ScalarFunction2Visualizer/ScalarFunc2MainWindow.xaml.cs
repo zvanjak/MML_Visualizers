@@ -62,6 +62,19 @@ namespace MML_ScalarFunction2Visualizer
 
       if (LoadData(fileName))
       {
+        for(int i=0; i<_vals.Rows; i++)
+        for (int j = 0; j < _vals.Cols; j++)
+        {
+          double x = i;
+          double y = j;
+          double z = _vals.ElemAt(i, j);
+
+          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.5);
+          var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
+          GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+          myModel3DGroup.Children.Add(sphereModel);
+        }
       }
     }
 
