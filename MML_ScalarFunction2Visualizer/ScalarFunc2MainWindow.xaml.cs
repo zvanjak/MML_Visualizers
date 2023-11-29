@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 
 using MML;
 using WPF3DHelperLib;
+using Matrix = MML.Matrix;
 
 namespace MML_ScalarFunction2Visualizer
 {
@@ -27,6 +28,7 @@ namespace MML_ScalarFunction2Visualizer
   /// </summary>
   public partial class MainWindow : Window
   {
+    private Matrix _vals;
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
 
@@ -94,6 +96,9 @@ namespace MML_ScalarFunction2Visualizer
         string[] partsNumPointsY = lines[6].Split(' ');
         int numPointsY = int.Parse(partsNumPointsY[1]);
 
+        _vals = new Matrix(numPointsX, numPointsY);
+
+        int count = 0;
         for (int i = 4; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
@@ -101,6 +106,8 @@ namespace MML_ScalarFunction2Visualizer
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
           double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
           double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+          _vals.SetElemAt(count / numPointsY, count % numPointsY, z);
         }
       }
       else
