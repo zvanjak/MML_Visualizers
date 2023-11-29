@@ -29,6 +29,13 @@ namespace MML_ScalarFunction2Visualizer
   public partial class MainWindow : Window
   {
     private Matrix _vals;
+    private int _xMin;
+    private int _xMax;
+    private int _numPointsX;
+    private int _yMin;
+    private int _yMax;
+    private int _numPointsY;
+
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
 
@@ -92,27 +99,27 @@ namespace MML_ScalarFunction2Visualizer
       if (type == "SCALAR_FUNCTION_CARTESIAN_2D")
       {
         string[] partsX1 = lines[1].Split(' ');
-        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+        _xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
         string[] partsX2 = lines[2].Split(' ');
-        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
+        _xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
         string[] partsNumPointsX = lines[3].Split(' ');
-        int numPointsX = int.Parse(partsNumPointsX[1]);
+        _numPointsX = int.Parse(partsNumPointsX[1]);
 
         string[] partsY1 = lines[4].Split(' ');
-        double yMin = double.Parse(partsY1[1], CultureInfo.InvariantCulture);
+        _yMin = double.Parse(partsY1[1], CultureInfo.InvariantCulture);
 
         string[] partsY2 = lines[5].Split(' ');
-        double yMax = double.Parse(partsY2[1], CultureInfo.InvariantCulture);
+        _yMax = double.Parse(partsY2[1], CultureInfo.InvariantCulture);
 
         string[] partsNumPointsY = lines[6].Split(' ');
-        int numPointsY = int.Parse(partsNumPointsY[1]);
+        _numPointsY = int.Parse(partsNumPointsY[1]);
 
         _vals = new Matrix(numPointsX, numPointsY);
 
         int count = 0;
-        for (int i = 4; i < lines.Length; i++)
+        for (int i = 7; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
