@@ -84,7 +84,14 @@ namespace MML_ScalarFunction2Visualizer
           GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
 
           myModel3DGroup.Children.Add(sphereModel);
-        }
+
+          MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
+          var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.YellowGreen));
+          GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
+
+          myModel3DGroup.Children.Add(surfaceModel);
+
+          }
       }
     }
 
