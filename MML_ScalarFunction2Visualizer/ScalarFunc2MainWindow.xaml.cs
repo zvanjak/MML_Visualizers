@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -75,6 +76,32 @@ namespace MML_ScalarFunction2Visualizer
 
       if (type == "SCALAR_FUNCTION_CARTESIAN_2D")
       {
+        string[] partsX1 = lines[1].Split(' ');
+        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+
+        string[] partsX2 = lines[2].Split(' ');
+        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
+
+        string[] partsNumPointsX = lines[3].Split(' ');
+        int numPointsX = int.Parse(partsNumPointsX[1]);
+
+        string[] partsY1 = lines[4].Split(' ');
+        double yMin = double.Parse(partsY1[1], CultureInfo.InvariantCulture);
+
+        string[] partsY2 = lines[5].Split(' ');
+        double yMax = double.Parse(partsY2[1], CultureInfo.InvariantCulture);
+
+        string[] partsNumPointsY = lines[6].Split(' ');
+        int numPointsY = int.Parse(partsNumPointsY[1]);
+
+        for (int i = 4; i < lines.Length; i++)
+        {
+          string[] parts = lines[i].Split(' ');
+
+          double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+          double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
+          double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
+        }
       }
       else
       {
