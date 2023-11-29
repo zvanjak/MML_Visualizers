@@ -29,12 +29,15 @@ namespace MML_ScalarFunction2Visualizer
   public partial class MainWindow : Window
   {
     private Matrix _vals;
-    private int _xMin;
-    private int _xMax;
+    private double _xMin;
+    private double _xMax;
     private int _numPointsX;
-    private int _yMin;
-    private int _yMax;
+    private double _yMin;
+    private double _yMax;
     private int _numPointsY;
+
+    double _scaleX = 10;
+    double _scaleY = 10;
 
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
@@ -72,8 +75,8 @@ namespace MML_ScalarFunction2Visualizer
         for(int i=0; i<_vals.Rows; i++)
         for (int j = 0; j < _vals.Cols; j++)
         {
-          double x = i;
-          double y = j;
+          double x = _scaleX * (_xMin + i * (_xMax - _xMin) / _numPointsX);
+          double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
           double z = _vals.ElemAt(i, j);
 
           MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.5);
@@ -116,7 +119,7 @@ namespace MML_ScalarFunction2Visualizer
         string[] partsNumPointsY = lines[6].Split(' ');
         _numPointsY = int.Parse(partsNumPointsY[1]);
 
-        _vals = new Matrix(numPointsX, numPointsY);
+        _vals = new Matrix(_numPointsX, _numPointsY);
 
         int count = 0;
         for (int i = 7; i < lines.Length; i++)
@@ -127,7 +130,8 @@ namespace MML_ScalarFunction2Visualizer
           double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
           double z = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
-          _vals.SetElemAt(count / numPointsY, count % numPointsY, z);
+          _vals.SetElemAt(count / _numPointsY, count % _numPointsY, z);
+          count++;
         }
       }
       else
