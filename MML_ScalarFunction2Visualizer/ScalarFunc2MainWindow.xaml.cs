@@ -79,19 +79,19 @@ namespace MML_ScalarFunction2Visualizer
           double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
           double z = _vals.ElemAt(i, j);
 
-          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.5);
-          var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
+          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
+          var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
           GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
 
           myModel3DGroup.Children.Add(sphereModel);
 
           MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
-          var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.YellowGreen));
+          var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
           GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
 
           myModel3DGroup.Children.Add(surfaceModel);
 
-          }
+        }
       }
     }
 
