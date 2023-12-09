@@ -60,14 +60,23 @@ namespace MML_RealFunctionVisualizer
           // prilagođavanje skaliranja i centra
           // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
           // inače E notacija
-          _scaleX = _windowWidth / (xMax - xMin) * 0.9;
-          _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+          _scaleX = _windowWidth / (xMax - xMin);
+          _scaleY = _windowHeight / (yMax - yMin);
           _centerX = xMin / (xMax - xMin) * _scaleX;
-          _centerY = yMax / (yMax - yMin) * _scaleY;
+          _centerY = -yMin / (yMax - yMin) * _scaleY;
 
           DrawCoordSystem(xMin, xMax, yMin, yMax);
 
           DrawPoint(_xVals[i], _yVals[i]);
+
+          Rectangle rect = new Rectangle();
+          rect.Width = 100;
+          rect.Height = 100;
+          rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+          mainCanvas.Children.Add(rect);
+          Canvas.SetLeft(rect, 100);
+          Canvas.SetTop(rect, 100);
+
         }
       }
     }
@@ -212,7 +221,8 @@ namespace MML_RealFunctionVisualizer
 
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-      MessageBox.Show("Size changed");
+      //MessageBox.Show("Size changed");
+      InvalidateVisual();
     }
   }
 }
