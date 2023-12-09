@@ -62,6 +62,8 @@ namespace MML_RealFunctionVisualizer
           // inače E notacija
           _scaleX = _windowWidth / (xMax - xMin) * 0.9;
           _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+          _centerX = xMin / (xMax - xMin) * _scaleX;
+          _centerY = yMax / (yMax - yMin) * _scaleY;
 
           DrawCoordSystem(xMin, xMax, yMin, yMax);
 
