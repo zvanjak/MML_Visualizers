@@ -204,5 +204,15 @@ namespace MML_RealFunctionVisualizer
 
       return true;
     }
+
+    private void mainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+
+    }
+
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      MessageBox.Show("Size changed");
+    }
   }
 }
