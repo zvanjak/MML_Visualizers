@@ -27,7 +27,7 @@ namespace MML_RealFunctionVisualizer
 
     double _windowWidth = 1000;
     double _windowHeight = 800;
-    double _centerX = 500;
+    double _centerX = 100;
     double _centerY = 400;
     double _scaleX = 40;
     double _scaleY = 40;

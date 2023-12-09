@@ -2,7 +2,7 @@
   "profiles": {
     "MML_RealFunctionVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "sin_func.txt"
+      "commandLineArgs": "func_sin_x_lin_interp.txt"
     }
   }
 }
