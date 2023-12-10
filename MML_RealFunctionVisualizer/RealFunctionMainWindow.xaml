@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Real function visualizer" Height="800" Width="1000" SizeChanged="Window_SizeChanged">
     <Grid>
-      <Canvas x:Name="mainCanvas" Width="1000" Height="800" SizeChanged="mainCanvas_SizeChanged">
+      <Canvas x:Name="mainCanvas" Width="1000" Height="750" SizeChanged="mainCanvas_SizeChanged">
       </Canvas>
     </Grid>
 </Window>

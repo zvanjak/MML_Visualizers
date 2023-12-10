@@ -60,10 +60,10 @@ namespace MML_RealFunctionVisualizer
           // prilagođavanje skaliranja i centra
           // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
           // inače E notacija
-          _scaleX = _windowWidth / (xMax - xMin);
-          _scaleY = _windowHeight / (yMax - yMin);
-          _centerX = xMin / (xMax - xMin) * _scaleX;
-          _centerY = -yMin * _scaleY;
+          _scaleX = _windowWidth / (xMax - xMin) * 0.9;
+          _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+          _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
+          _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
 
           DrawCoordSystem(xMin, xMax, yMin, yMax);
 
