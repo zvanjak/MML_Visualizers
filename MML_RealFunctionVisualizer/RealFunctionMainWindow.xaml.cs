@@ -63,7 +63,7 @@ namespace MML_RealFunctionVisualizer
           _scaleX = _windowWidth / (xMax - xMin);
           _scaleY = _windowHeight / (yMax - yMin);
           _centerX = xMin / (xMax - xMin) * _scaleX;
-          _centerY = -yMin / (yMax - yMin) * _scaleY;
+          _centerY = -yMin * _scaleY;
 
           DrawCoordSystem(xMin, xMax, yMin, yMax);
 
