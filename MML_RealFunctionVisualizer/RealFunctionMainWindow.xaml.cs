@@ -69,14 +69,13 @@ namespace MML_RealFunctionVisualizer
 
           DrawPoint(_xVals[i], _yVals[i]);
 
-          Rectangle rect = new Rectangle();
-          rect.Width = 100;
-          rect.Height = 100;
-          rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-          mainCanvas.Children.Add(rect);
-          Canvas.SetLeft(rect, 100);
-          Canvas.SetTop(rect, 100);
-
+          //Rectangle rect = new Rectangle();
+          //rect.Width = 100;
+          //rect.Height = 100;
+          //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+          //mainCanvas.Children.Add(rect);
+          //Canvas.SetLeft(rect, 100);
+          //Canvas.SetTop(rect, 100);
         }
       }
     }

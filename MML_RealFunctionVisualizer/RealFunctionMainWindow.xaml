@@ -5,9 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_RealFunctionVisualizer"
         mc:Ignorable="d"
-        Title="Real function visualizer" Height="800" Width="1000" SizeChanged="Window_SizeChanged">
-    <Grid>
-      <Canvas x:Name="mainCanvas" Width="1000" Height="750" SizeChanged="mainCanvas_SizeChanged">
-      </Canvas>
-    </Grid>
+        Title="Real function visualizer" Height="850" Width="1200" SizeChanged="Window_SizeChanged">
+  <Grid Background="White">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="200" />
+    </Grid.ColumnDefinitions>
+      
+    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="750" SizeChanged="mainCanvas_SizeChanged">
+    </Canvas>
+  </Grid>
 </Window>

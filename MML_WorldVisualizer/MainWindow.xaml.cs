@@ -69,6 +69,7 @@ namespace MML_WorldVisualizer
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
 
+      // TODO - 3D animacija ... dobije odredjen broj parm krivulja, s istim dT, i onda možeš to gledati
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
       }
