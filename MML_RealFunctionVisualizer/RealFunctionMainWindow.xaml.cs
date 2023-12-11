@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using MML;
+
 namespace MML_RealFunctionVisualizer
 {
   /// <summary>
@@ -24,6 +26,9 @@ namespace MML_RealFunctionVisualizer
   {
     private List<double> _xVals = new List<double>();
     private List<double> _yVals = new List<double>();
+
+    private MML.Vector _multiFuncX;
+    private MML.Matrix _multiFuncY;
 
     double _windowWidth = 1000;
     double _windowHeight = 800;
@@ -169,17 +174,14 @@ namespace MML_RealFunctionVisualizer
 
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
-        string[] partsDim = lines[3].Split(' ');
-        int dim = int.Parse(partsDim[1]);
+        string[] partsX1 = lines[1].Split(' ');
+        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+
+        string[] partsX2 = lines[2].Split(' ');
+        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
         string[] partsNumPoints = lines[3].Split(' ');
         int numPoints = int.Parse(partsNumPoints[1]);
-
-        string[] partsX1 = lines[1].Split(' ');
-        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
-        
-        string[] partsX2 = lines[2].Split(' ');
-        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
         for (int i = 4; i < lines.Length; i++)
         {
@@ -205,26 +207,35 @@ namespace MML_RealFunctionVisualizer
       else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
       {
         //MessageBox.Show("MULTI_REAL_FUNCTION_VARIABLE_SPACED not yet supported");
-        
-        string[] partsX1 = lines[1].Split(' ');
-        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+        string[] partsDim = lines[1].Split(' ');
+        int dim = int.Parse(partsDim[1]);
 
-        string[] partsX2 = lines[2].Split(' ');
-        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
-
-        string[] partsNumPoints = lines[3].Split(' ');
+        string[] partsNumPoints = lines[2].Split(' ');
         int numPoints = int.Parse(partsNumPoints[1]);
 
-        for (int i = 4; i < lines.Length; i++)
+        string[] partsX1 = lines[3].Split(' ');
+        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+
+        string[] partsX2 = lines[4].Split(' ');
+        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
+
+        _multiFuncX = new MML.Vector(numPoints);
+        _multiFuncY = new MML.Matrix(dim, numPoints);
+
+        for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
-
           _xVals.Add(x);
-          _yVals.Add(y);
+          for (int j = 0; j < dim; j++)
+          {
+            double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
+
+            _yVals.Add(y);
+          }
         }
+
 
         return false;
       }
