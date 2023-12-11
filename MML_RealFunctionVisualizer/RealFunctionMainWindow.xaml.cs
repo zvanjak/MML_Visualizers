@@ -19,11 +19,20 @@ using MML;
 
 namespace MML_RealFunctionVisualizer
 {
+  enum LoadedType
+  {
+    REAL_FUNCTION_EQUALLY_SPACED_DETAILED,
+    REAL_FUNCTION_EQUALLY_SPACED,
+    REAL_FUNCTION_VARIABLE_SPACED,
+    MULTI_REAL_FUNCTION_VARIABLE_SPACED
+  };
+  
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
+    private LoadedType _loadedType;
     private List<double> _xVals = new List<double>();
     private List<double> _yVals = new List<double>();
 
@@ -174,6 +183,8 @@ namespace MML_RealFunctionVisualizer
 
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
+        _loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
+
         string[] partsX1 = lines[1].Split(' ');
         double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
@@ -197,16 +208,21 @@ namespace MML_RealFunctionVisualizer
       else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
       {
         MessageBox.Show("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
+        _loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED;
+
         return false;
       }
       else if (type == "REAL_FUNCTION_VARIABLE_SPACED")
       {
         MessageBox.Show("REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        _loadedType = LoadedType.REAL_FUNCTION_VARIABLE_SPACED;
+
         return false;
       }
       else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
       {
-        //MessageBox.Show("MULTI_REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        _loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
+
         string[] partsDim = lines[1].Split(' ');
         int dim = int.Parse(partsDim[1]);
 
@@ -227,12 +243,11 @@ namespace MML_RealFunctionVisualizer
           string[] parts = lines[i].Split(' ');
 
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          _xVals.Add(x);
+          _multiFuncX.Elements[i-5] = x;
           for (int j = 0; j < dim; j++)
           {
             double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
-
-            _yVals.Add(y);
+            _multiFuncY.SetElemAt(j, i - 5, y);
           }
         }
 
