@@ -169,14 +169,17 @@ namespace MML_RealFunctionVisualizer
 
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
+        string[] partsDim = lines[3].Split(' ');
+        int dim = int.Parse(partsDim[1]);
+
+        string[] partsNumPoints = lines[3].Split(' ');
+        int numPoints = int.Parse(partsNumPoints[1]);
+
         string[] partsX1 = lines[1].Split(' ');
         double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
         
         string[] partsX2 = lines[2].Split(' ');
         double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
-
-        string[] partsNumPoints = lines[3].Split(' ');
-        int numPoints = int.Parse(partsNumPoints[1]);
 
         for (int i = 4; i < lines.Length; i++)
         {
@@ -201,7 +204,28 @@ namespace MML_RealFunctionVisualizer
       }
       else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
       {
-        MessageBox.Show("MULTI_REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        //MessageBox.Show("MULTI_REAL_FUNCTION_VARIABLE_SPACED not yet supported");
+        
+        string[] partsX1 = lines[1].Split(' ');
+        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+
+        string[] partsX2 = lines[2].Split(' ');
+        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
+
+        string[] partsNumPoints = lines[3].Split(' ');
+        int numPoints = int.Parse(partsNumPoints[1]);
+
+        for (int i = 4; i < lines.Length; i++)
+        {
+          string[] parts = lines[i].Split(' ');
+
+          double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+          double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
+
+          _xVals.Add(x);
+          _yVals.Add(y);
+        }
+
         return false;
       }
       else
