@@ -58,6 +58,8 @@ namespace MML_RealFunctionVisualizer
         return;
       } 
 
+      // TODO - napraviti da može više fajlova
+
       var fileName = args[1];
 
       if (LoadData(fileName))
@@ -74,7 +76,7 @@ namespace MML_RealFunctionVisualizer
 
             // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
             // prilagođavanje skaliranja i centra
-            // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
+            // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
             // inače E notacija
             _scaleX = _windowWidth / (xMax - xMin) * 0.9;
             _scaleY = _windowHeight / (yMax - yMin) * 0.9;
