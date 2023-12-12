@@ -83,7 +83,7 @@ namespace MML_RealFunctionVisualizer
 
             DrawCoordSystem(xMin, xMax, yMin, yMax);
 
-            DrawPoint(_xVals[i], _yVals[i]);
+            DrawPoint(_xVals[i], _yVals[i], Colors.Blue);
 
             //Rectangle rect = new Rectangle();
             //rect.Width = 100;
@@ -99,7 +99,7 @@ namespace MML_RealFunctionVisualizer
           double xMin = _multiFuncX.Elements.Min();
           double xMax = _multiFuncX.Elements.Max();
           double yMin = -5; // _multiFuncY.Min();
-          double yMax = 5; // _multiFuncY.Max();
+          double yMax = 15; // _multiFuncY.Max();
 
           // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
           // prilagođavanje skaliranja i centra
@@ -112,10 +112,16 @@ namespace MML_RealFunctionVisualizer
 
           DrawCoordSystem(xMin, xMax, yMin, yMax);
 
+          List<Color> colors = new List<Color>();
+          colors.Add(Colors.Blue);
+          colors.Add(Colors.Red);
+          colors.Add(Colors.Green);
+          colors.Add(Colors.Yellow);
+
           for (int i = 0; i < _multiFuncX.Elements.Length; i++)
           {
             for( int j=0; j<_multiFuncY.Rows; j++)
-              DrawPoint(_multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i));
+              DrawPoint(_multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
           }
         }
         else
@@ -190,12 +196,12 @@ namespace MML_RealFunctionVisualizer
       Canvas.SetLeft(yMaxText, _centerX - 20);
       Canvas.SetTop(yMaxText, _centerY - yMax * _scaleY - 2.5);
     }
-    void DrawPoint(double x, double y)
+    void DrawPoint(double x, double y, Color inColor)
     {
       Ellipse circle = new Ellipse();
       circle.Width = 5;
       circle.Height = 5;
-      circle.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+      circle.Fill = new SolidColorBrush(inColor);
       mainCanvas.Children.Add(circle);
       Canvas.SetLeft(circle, _centerX + x * _scaleX - 2.5);
       Canvas.SetTop(circle, _centerY - y * _scaleY - 2.5);
