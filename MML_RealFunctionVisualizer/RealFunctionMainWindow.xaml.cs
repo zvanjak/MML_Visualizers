@@ -26,6 +26,14 @@ namespace MML_RealFunctionVisualizer
     REAL_FUNCTION_VARIABLE_SPACED,
     MULTI_REAL_FUNCTION_VARIABLE_SPACED
   };
+
+  class SingleLoadedFunction
+  {
+    public LoadedType _loadedType;
+    public List<double> _xVals = new List<double>();
+    public List<double> _yVals = new List<double>();
+
+  };
   
   /// <summary>
   /// Interaction logic for MainWindow.xaml
