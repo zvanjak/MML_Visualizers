@@ -11,32 +11,32 @@ namespace MML_RealFunctionVisualizer
 {
   internal class Utils
   {
-    public static void DrawPoint(Canvas mainCanvas, double x, double y, Color inColor)
+    public static void DrawPoint(Canvas mainCanvas, CoordSystemParams coordSysParams, double x, double y, Color inColor)
     {
       Ellipse circle = new Ellipse();
       circle.Width = 5;
       circle.Height = 5;
       circle.Fill = new SolidColorBrush(inColor);
       mainCanvas.Children.Add(circle);
-      Canvas.SetLeft(circle, _centerX + x * _scaleX - 2.5);
-      Canvas.SetTop(circle, _centerY - y * _scaleY - 2.5);
+      Canvas.SetLeft(circle, coordSysParams._centerX + x * coordSysParams._scaleX - 2.5);
+      Canvas.SetTop(circle, coordSysParams._centerY - y * coordSysParams._scaleY - 2.5);
     }
-    public static void DrawCoordSystem(Canvas mainCanvas, double xMin, double xMax, double yMin, double yMax)
+    public static void DrawCoordSystem(Canvas mainCanvas, CoordSystemParams coordSysParams, double xMin, double xMax, double yMin, double yMax)
     {
       Line xAxis = new Line();
       xAxis.Stroke = Brushes.Black;
       xAxis.X1 = 0;
-      xAxis.Y1 = _centerY;
-      xAxis.X2 = _windowWidth;
-      xAxis.Y2 = _centerY;
+      xAxis.Y1 = coordSysParams._centerY;
+      xAxis.X2 = coordSysParams._windowWidth;
+      xAxis.Y2 = coordSysParams._centerY;
       mainCanvas.Children.Add(xAxis);
 
       Line yAxis = new Line();
       yAxis.Stroke = Brushes.Black;
-      yAxis.X1 = _centerX;
+      yAxis.X1 = coordSysParams._centerX;
       yAxis.Y1 = 0;
-      yAxis.X2 = _centerX;
-      yAxis.Y2 = _windowHeight;
+      yAxis.X2 = coordSysParams._centerX;
+      yAxis.Y2 = coordSysParams._windowHeight;
       mainCanvas.Children.Add(yAxis);
 
       int numXTicks = (int)(xMax - xMin);
@@ -44,10 +44,10 @@ namespace MML_RealFunctionVisualizer
       {
         Line xTick = new Line();
         xTick.Stroke = Brushes.Black;
-        xTick.X1 = _centerX + i * _scaleX;
-        xTick.Y1 = _centerY - 2;
-        xTick.X2 = _centerX + i * _scaleX;
-        xTick.Y2 = _centerY + 2;
+        xTick.X1 = coordSysParams._centerX + i * coordSysParams._scaleX;
+        xTick.Y1 = coordSysParams._centerY - 2;
+        xTick.X2 = coordSysParams._centerX + i * coordSysParams._scaleX;
+        xTick.Y2 = coordSysParams._centerY + 2;
         mainCanvas.Children.Add(xTick);
       }
 
@@ -55,36 +55,36 @@ namespace MML_RealFunctionVisualizer
       {
         Line xTick = new Line();
         xTick.Stroke = Brushes.Black;
-        xTick.X1 = _centerX - 2;
-        xTick.Y1 = _centerY - i * _scaleX;
-        xTick.X2 = _centerX + 2;
-        xTick.Y2 = _centerY - i * _scaleX;
+        xTick.X1 = coordSysParams._centerX - 2;
+        xTick.Y1 = coordSysParams._centerY - i * coordSysParams._scaleX;
+        xTick.X2 = coordSysParams._centerX + 2;
+        xTick.Y2 = coordSysParams._centerY - i * coordSysParams._scaleX;
         mainCanvas.Children.Add(xTick);
       }
 
       TextBlock xMinText = new TextBlock();
       xMinText.Text = xMin.ToString();
       mainCanvas.Children.Add(xMinText);
-      Canvas.SetLeft(xMinText, _centerX + xMin * _scaleX - 2.5);
-      Canvas.SetTop(xMinText, _centerY + 5);
+      Canvas.SetLeft(xMinText, coordSysParams._centerX + xMin * coordSysParams._scaleX - 2.5);
+      Canvas.SetTop(xMinText, coordSysParams._centerY + 5);
 
       TextBlock xMaxText = new TextBlock();
       xMaxText.Text = xMax.ToString();
       mainCanvas.Children.Add(xMaxText);
-      Canvas.SetLeft(xMaxText, _centerX + xMax * _scaleX - 20);
-      Canvas.SetTop(xMaxText, _centerY + 5);
+      Canvas.SetLeft(xMaxText, coordSysParams._centerX + xMax * coordSysParams._scaleX - 20);
+      Canvas.SetTop(xMaxText, coordSysParams._centerY + 5);
 
       TextBlock yMinText = new TextBlock();
       yMinText.Text = yMin.ToString();
       mainCanvas.Children.Add(yMinText);
-      Canvas.SetLeft(yMinText, _centerX - 20);
-      Canvas.SetTop(yMinText, _centerY - yMin * _scaleY - 2.5);
+      Canvas.SetLeft(yMinText, coordSysParams._centerX - 20);
+      Canvas.SetTop(yMinText, coordSysParams._centerY - yMin * coordSysParams._scaleY - 2.5);
 
       TextBlock yMaxText = new TextBlock();
       yMaxText.Text = yMax.ToString();
       mainCanvas.Children.Add(yMaxText);
-      Canvas.SetLeft(yMaxText, _centerX - 20);
-      Canvas.SetTop(yMaxText, _centerY - yMax * _scaleY - 2.5);
+      Canvas.SetLeft(yMaxText, coordSysParams._centerX - 20);
+      Canvas.SetTop(yMaxText, coordSysParams._centerY - yMax * coordSysParams._scaleY - 2.5);
     }
   }
 }

@@ -65,9 +65,9 @@ namespace MML_RealFunctionVisualizer
         coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
         coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
-        Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
+        Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
 
-        Utils.DrawPoint(mainCanvas, _xVals[i], _yVals[i], Colors.Blue);
+        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], Colors.Blue);
 
         //Rectangle rect = new Rectangle();
         //rect.Width = 100;
@@ -101,7 +101,7 @@ namespace MML_RealFunctionVisualizer
       coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
       coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
-      Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
+      Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
 
       List<Color> colors = new List<Color>();
       colors.Add(Colors.Blue);
@@ -112,7 +112,7 @@ namespace MML_RealFunctionVisualizer
       for (int i = 0; i < _multiFuncX.Elements.Length; i++)
       {
         for (int j = 0; j < _multiFuncY.Rows; j++)
-          Utils.DrawPoint(mainCanvas, _multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
+          Utils.DrawPoint(mainCanvas, coordSysParams, _multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
       }
     }
   };
