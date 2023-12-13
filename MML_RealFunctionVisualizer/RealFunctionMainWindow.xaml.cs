@@ -27,27 +27,47 @@ namespace MML_RealFunctionVisualizer
     MULTI_REAL_FUNCTION_VARIABLE_SPACED
   };
 
-  class SingleLoadedFunction
+  abstract class LoadedFunction
+  {
+    public abstract void Draw();
+  }
+
+  class SingleLoadedFunction : LoadedFunction
   {
     public LoadedType _loadedType;
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
 
+    public override void Draw()
+    {
+
+    }
   };
-  
+
+  class MultiLoadedFunction : LoadedFunction
+  {
+    private MML.Vector _multiFuncX;
+    private MML.Matrix _multiFuncY;
+
+    public override void Draw()
+    {
+
+    }
+  };
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
-    List<SingleLoadedFunction> _loadedFunctions = new List<SingleLoadedFunction>(); 
+    List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
 
     //private LoadedType _loadedType;
     //private List<double> _xVals = new List<double>();
     //private List<double> _yVals = new List<double>();
 
-    private MML.Vector _multiFuncX;
-    private MML.Matrix _multiFuncY;
+    //private MML.Vector _multiFuncX;
+    //private MML.Matrix _multiFuncY;
 
     double _windowWidth = 1000;
     double _windowHeight = 800;
@@ -75,13 +95,8 @@ namespace MML_RealFunctionVisualizer
         var fileName = args[i+1];
 
         LoadData(fileName);
-      }
-      
 
-      //if (LoadData(fileName))
-      {
-        // analiza podataka
-        if (_loadedType == LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED)
+        if (_loadedFunctions[i]._loadedType == LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED)
         {
           for (int i = 0; i < _xVals.Count; i++)
           {
@@ -282,6 +297,7 @@ namespace MML_RealFunctionVisualizer
       else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
       {
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
+        MultiLoadedFunction mlf = new MultiLoadedFunction();
 
         int dim = int.Parse(lines[1]);
 
