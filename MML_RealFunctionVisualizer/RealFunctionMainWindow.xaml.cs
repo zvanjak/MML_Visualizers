@@ -168,7 +168,6 @@ namespace MML_RealFunctionVisualizer
 
         slf._loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
 
-
         string[] partsX1 = lines[1].Split(' ');
         double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
@@ -245,11 +244,6 @@ namespace MML_RealFunctionVisualizer
       }
 
       return true;
-    }
-
-    private void mainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-
     }
 
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

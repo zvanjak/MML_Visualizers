@@ -16,7 +16,7 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
       
-    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="750" SizeChanged="mainCanvas_SizeChanged">
+    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="750">
     </Canvas>
   </Grid>
 </Window>
