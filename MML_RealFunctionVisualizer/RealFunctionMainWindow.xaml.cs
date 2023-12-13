@@ -69,10 +69,16 @@ namespace MML_RealFunctionVisualizer
       } 
 
       // TODO - napraviti da može više fajlova
+      int numInputs = args.Length - 1;
+      for (int i = 0; i < numInputs; i++)
+      {
+        var fileName = args[i+1];
 
-      var fileName = args[1];
+        LoadData(fileName);
+      }
+      
 
-      if (LoadData(fileName))
+      //if (LoadData(fileName))
       {
         // analiza podataka
         if (_loadedType == LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED)
@@ -262,20 +268,20 @@ namespace MML_RealFunctionVisualizer
       else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
       {
         MessageBox.Show("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
-        _loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED;
+        //_loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED;
 
         return false;
       }
       else if (type == "REAL_FUNCTION_VARIABLE_SPACED")
       {
         MessageBox.Show("REAL_FUNCTION_VARIABLE_SPACED not yet supported");
-        _loadedType = LoadedType.REAL_FUNCTION_VARIABLE_SPACED;
+        //_loadedType = LoadedType.REAL_FUNCTION_VARIABLE_SPACED;
 
         return false;
       }
       else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
       {
-        _loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
+        //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
 
         int dim = int.Parse(lines[1]);
 
