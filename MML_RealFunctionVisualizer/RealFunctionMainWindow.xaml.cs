@@ -27,6 +27,15 @@ namespace MML_RealFunctionVisualizer
     MULTI_REAL_FUNCTION_VARIABLE_SPACED
   };
 
+  class CoordSystemParams
+  {
+    public double _windowWidth = 1000;
+    public double _windowHeight = 800;
+    public double _centerX = 100;
+    public double _centerY = 400;
+    public double _scaleX = 40;
+    public double _scaleY = 40;
+  }
   abstract class LoadedFunction
   {
     public abstract void Draw(Canvas mainCanvas);
@@ -92,7 +101,7 @@ namespace MML_RealFunctionVisualizer
       _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
       _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
 
-      DrawCoordSystem(xMin, xMax, yMin, yMax);
+      Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
 
       List<Color> colors = new List<Color>();
       colors.Add(Colors.Blue);
@@ -114,13 +123,6 @@ namespace MML_RealFunctionVisualizer
   public partial class MainWindow : Window
   {
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
-
-    double _windowWidth = 1000;
-    double _windowHeight = 800;
-    double _centerX = 100;
-    double _centerY = 400;
-    double _scaleX = 40;
-    double _scaleY = 40;
 
     public MainWindow()
     {
@@ -144,7 +146,7 @@ namespace MML_RealFunctionVisualizer
 
       for (int i = 0; i < _loadedFunctions.Count; i++)
       {
-        _loadedFunctions[i].Draw();
+        _loadedFunctions[i].Draw(mainCanvas);
       }
     }
 
