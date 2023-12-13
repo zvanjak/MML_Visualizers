@@ -38,7 +38,7 @@ namespace MML_RealFunctionVisualizer
   }
   abstract class LoadedFunction
   {
-    public abstract void Draw(Canvas mainCanvas);
+    public abstract void Draw(Canvas mainCanvas, CoordSystemParams inParams);
   }
 
   class SingleLoadedFunction : LoadedFunction
@@ -47,7 +47,7 @@ namespace MML_RealFunctionVisualizer
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
 
-    public override void Draw(Canvas mainCanvas)
+    public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
       for (int i = 0; i < _xVals.Count; i++)
       {
@@ -60,10 +60,10 @@ namespace MML_RealFunctionVisualizer
         // prilagođavanje skaliranja i centra
         // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
         // inače E notacija
-        _scaleX = _windowWidth / (xMax - xMin) * 0.9;
-        _scaleY = _windowHeight / (yMax - yMin) * 0.9;
-        _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
-        _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
+        coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
+        coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
+        coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
+        coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
         Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
 
@@ -85,7 +85,7 @@ namespace MML_RealFunctionVisualizer
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
 
-    public override void Draw(Canvas mainCanvas)
+    public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
       double xMin = _multiFuncX.Elements.Min();
       double xMax = _multiFuncX.Elements.Max();
@@ -96,10 +96,10 @@ namespace MML_RealFunctionVisualizer
       // prilagođavanje skaliranja i centra
       // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
       // inače E notacija
-      _scaleX = _windowWidth / (xMax - xMin) * 0.9;
-      _scaleY = _windowHeight / (yMax - yMin) * 0.9;
-      _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
-      _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
+      coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
+      coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
+      coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
+      coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
       Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
 
@@ -123,6 +123,7 @@ namespace MML_RealFunctionVisualizer
   public partial class MainWindow : Window
   {
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
+    CoordSystemParams _coordSystemParams = new CoordSystemParams();
 
     public MainWindow()
     {
@@ -146,7 +147,7 @@ namespace MML_RealFunctionVisualizer
 
       for (int i = 0; i < _loadedFunctions.Count; i++)
       {
-        _loadedFunctions[i].Draw(mainCanvas);
+        _loadedFunctions[i].Draw(mainCanvas, _coordSystemParams);
       }
     }
 
