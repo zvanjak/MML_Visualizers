@@ -29,7 +29,7 @@ namespace MML_RealFunctionVisualizer
 
   abstract class LoadedFunction
   {
-    public abstract void Draw();
+    public abstract void Draw(Canvas mainCanvas);
   }
 
   class SingleLoadedFunction : LoadedFunction
@@ -38,20 +38,73 @@ namespace MML_RealFunctionVisualizer
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
 
-    public override void Draw()
+    public override void Draw(Canvas mainCanvas)
     {
+      for (int i = 0; i < _xVals.Count; i++)
+      {
+        double xMin = _xVals.Min();
+        double xMax = _xVals.Max();
+        double yMin = _yVals.Min();
+        double yMax = _yVals.Max();
 
+        // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+        // prilagođavanje skaliranja i centra
+        // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
+        // inače E notacija
+        _scaleX = _windowWidth / (xMax - xMin) * 0.9;
+        _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+        _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
+        _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
+
+        Utils.DrawCoordSystem(mainCanvas, xMin, xMax, yMin, yMax);
+
+        Utils.DrawPoint(mainCanvas, _xVals[i], _yVals[i], Colors.Blue);
+
+        //Rectangle rect = new Rectangle();
+        //rect.Width = 100;
+        //rect.Height = 100;
+        //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+        //mainCanvas.Children.Add(rect);
+        //Canvas.SetLeft(rect, 100);
+        //Canvas.SetTop(rect, 100);
+      }
     }
   };
 
   class MultiLoadedFunction : LoadedFunction
   {
-    private MML.Vector _multiFuncX;
-    private MML.Matrix _multiFuncY;
+    public MML.Vector _multiFuncX;
+    public MML.Matrix _multiFuncY;
 
-    public override void Draw()
+    public override void Draw(Canvas mainCanvas)
     {
+      double xMin = _multiFuncX.Elements.Min();
+      double xMax = _multiFuncX.Elements.Max();
+      double yMin = -5; // _multiFuncY.Min();
+      double yMax = 15; // _multiFuncY.Max();
 
+      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      // prilagođavanje skaliranja i centra
+      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
+      // inače E notacija
+      _scaleX = _windowWidth / (xMax - xMin) * 0.9;
+      _scaleY = _windowHeight / (yMax - yMin) * 0.9;
+      _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
+      _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
+
+      DrawCoordSystem(xMin, xMax, yMin, yMax);
+
+      List<Color> colors = new List<Color>();
+      colors.Add(Colors.Blue);
+      colors.Add(Colors.Red);
+      colors.Add(Colors.Green);
+      colors.Add(Colors.Yellow);
+
+      for (int i = 0; i < _multiFuncX.Elements.Length; i++)
+      {
+        for (int j = 0; j < _multiFuncY.Rows; j++)
+          Utils.DrawPoint(mainCanvas, _multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
+      }
     }
   };
 
@@ -61,13 +114,6 @@ namespace MML_RealFunctionVisualizer
   public partial class MainWindow : Window
   {
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
-
-    //private LoadedType _loadedType;
-    //private List<double> _xVals = new List<double>();
-    //private List<double> _yVals = new List<double>();
-
-    //private MML.Vector _multiFuncX;
-    //private MML.Matrix _multiFuncY;
 
     double _windowWidth = 1000;
     double _windowHeight = 800;
@@ -88,156 +134,18 @@ namespace MML_RealFunctionVisualizer
         return;
       } 
 
-      // TODO - napraviti da može više fajlova
       int numInputs = args.Length - 1;
       for (int i = 0; i < numInputs; i++)
       {
-        var fileName = args[i+1];
+        var fileName = args[i + 1];
 
         LoadData(fileName);
-
-        if (_loadedFunctions[i]._loadedType == LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED)
-        {
-          for (int i = 0; i < _xVals.Count; i++)
-          {
-            double xMin = _xVals.Min();
-            double xMax = _xVals.Max();
-            double yMin = _yVals.Min();
-            double yMax = _yVals.Max();
-
-            // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-            // prilagođavanje skaliranja i centra
-            // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
-            // inače E notacija
-            _scaleX = _windowWidth / (xMax - xMin) * 0.9;
-            _scaleY = _windowHeight / (yMax - yMin) * 0.9;
-            _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
-            _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
-
-            DrawCoordSystem(xMin, xMax, yMin, yMax);
-
-            DrawPoint(_xVals[i], _yVals[i], Colors.Blue);
-
-            //Rectangle rect = new Rectangle();
-            //rect.Width = 100;
-            //rect.Height = 100;
-            //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-            //mainCanvas.Children.Add(rect);
-            //Canvas.SetLeft(rect, 100);
-            //Canvas.SetTop(rect, 100);
-          }
-        }
-        else if (_loadedType == LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED)
-        {
-          double xMin = _multiFuncX.Elements.Min();
-          double xMax = _multiFuncX.Elements.Max();
-          double yMin = -5; // _multiFuncY.Min();
-          double yMax = 15; // _multiFuncY.Max();
-
-          // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-          // prilagođavanje skaliranja i centra
-          // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
-          // inače E notacija
-          _scaleX = _windowWidth / (xMax - xMin) * 0.9;
-          _scaleY = _windowHeight / (yMax - yMin) * 0.9;
-          _centerX = xMin * _windowWidth / (xMax - xMin) + _windowWidth / 20;
-          _centerY = -yMin * _windowHeight / (yMax - yMin) - _windowHeight / 20;
-
-          DrawCoordSystem(xMin, xMax, yMin, yMax);
-
-          List<Color> colors = new List<Color>();
-          colors.Add(Colors.Blue);
-          colors.Add(Colors.Red);
-          colors.Add(Colors.Green);
-          colors.Add(Colors.Yellow);
-
-          for (int i = 0; i < _multiFuncX.Elements.Length; i++)
-          {
-            for( int j=0; j<_multiFuncY.Rows; j++)
-              DrawPoint(_multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
-          }
-        }
-        else
-        {
-          MessageBox.Show("Unsupported format: " + _loadedType);
-        } 
       }
-    }
 
-    void DrawCoordSystem(double xMin, double xMax, double yMin, double yMax)
-    {
-      Line xAxis = new Line();
-      xAxis.Stroke = Brushes.Black;
-      xAxis.X1 = 0;
-      xAxis.Y1 = _centerY;
-      xAxis.X2 = _windowWidth;
-      xAxis.Y2 = _centerY;
-      mainCanvas.Children.Add(xAxis);
-
-      Line yAxis = new Line();
-      yAxis.Stroke = Brushes.Black;
-      yAxis.X1 = _centerX;
-      yAxis.Y1 = 0;
-      yAxis.X2 = _centerX;
-      yAxis.Y2 = _windowHeight;
-      mainCanvas.Children.Add(yAxis);
-
-      int numXTicks = (int)(xMax - xMin);
-      for (int i = -numXTicks; i<=numXTicks; i++)
+      for (int i = 0; i < _loadedFunctions.Count; i++)
       {
-        Line xTick = new Line();
-        xTick.Stroke = Brushes.Black;
-        xTick.X1 = _centerX + i * _scaleX;
-        xTick.Y1 = _centerY - 2;
-        xTick.X2 = _centerX + i * _scaleX;
-        xTick.Y2 = _centerY + 2;
-        mainCanvas.Children.Add(xTick);
+        _loadedFunctions[i].Draw();
       }
-
-      for (int i = -8; i<=8; i++)
-      {
-        Line xTick = new Line();
-        xTick.Stroke = Brushes.Black;
-        xTick.X1 = _centerX - 2;
-        xTick.Y1 = _centerY - i * _scaleX;
-        xTick.X2 = _centerX + 2;
-        xTick.Y2 = _centerY - i * _scaleX;
-        mainCanvas.Children.Add(xTick);
-      }
-
-      TextBlock xMinText = new TextBlock();
-      xMinText.Text = xMin.ToString();
-      mainCanvas.Children.Add(xMinText);
-      Canvas.SetLeft(xMinText, _centerX + xMin * _scaleX - 2.5);
-      Canvas.SetTop(xMinText, _centerY + 5);
-
-      TextBlock xMaxText = new TextBlock();
-      xMaxText.Text = xMax.ToString();
-      mainCanvas.Children.Add(xMaxText);
-      Canvas.SetLeft(xMaxText, _centerX + xMax * _scaleX - 20);
-      Canvas.SetTop(xMaxText, _centerY + 5);
-
-      TextBlock yMinText = new TextBlock();
-      yMinText.Text = yMin.ToString();
-      mainCanvas.Children.Add(yMinText);
-      Canvas.SetLeft(yMinText, _centerX - 20);
-      Canvas.SetTop(yMinText, _centerY - yMin * _scaleY - 2.5);
-
-      TextBlock yMaxText = new TextBlock();
-      yMaxText.Text = yMax.ToString();
-      mainCanvas.Children.Add(yMaxText);
-      Canvas.SetLeft(yMaxText, _centerX - 20);
-      Canvas.SetTop(yMaxText, _centerY - yMax * _scaleY - 2.5);
-    }
-    void DrawPoint(double x, double y, Color inColor)
-    {
-      Ellipse circle = new Ellipse();
-      circle.Width = 5;
-      circle.Height = 5;
-      circle.Fill = new SolidColorBrush(inColor);
-      mainCanvas.Children.Add(circle);
-      Canvas.SetLeft(circle, _centerX + x * _scaleX - 2.5);
-      Canvas.SetTop(circle, _centerY - y * _scaleY - 2.5);
     }
 
     public bool LoadData(string inFileName)
@@ -307,21 +215,23 @@ namespace MML_RealFunctionVisualizer
 
         double xMax = double.Parse(lines[4], CultureInfo.InvariantCulture);
 
-        _multiFuncX = new MML.Vector(numPoints);
-        _multiFuncY = new MML.Matrix(dim, numPoints);
+        mlf._multiFuncX = new MML.Vector(numPoints);
+        mlf._multiFuncY = new MML.Matrix(dim, numPoints);
 
         for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          _multiFuncX.Elements[i-5] = x;
+          mlf._multiFuncX.Elements[i-5] = x;
           for (int j = 0; j < dim; j++)
           {
             double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
-            _multiFuncY.SetElemAt(j, i - 5, y);
+            mlf._multiFuncY.SetElemAt(j, i - 5, y);
           }
         }
+
+        _loadedFunctions.Add(mlf);  
 
         return true;
       }
