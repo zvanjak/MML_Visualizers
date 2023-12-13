@@ -40,9 +40,11 @@ namespace MML_RealFunctionVisualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    private LoadedType _loadedType;
-    private List<double> _xVals = new List<double>();
-    private List<double> _yVals = new List<double>();
+    List<SingleLoadedFunction> _loadedFunctions = new List<SingleLoadedFunction>(); 
+
+    //private LoadedType _loadedType;
+    //private List<double> _xVals = new List<double>();
+    //private List<double> _yVals = new List<double>();
 
     private MML.Vector _multiFuncX;
     private MML.Matrix _multiFuncY;
@@ -230,7 +232,10 @@ namespace MML_RealFunctionVisualizer
 
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
-        _loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
+        SingleLoadedFunction slf = new SingleLoadedFunction();
+
+        slf._loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
+
 
         string[] partsX1 = lines[1].Split(' ');
         double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
@@ -248,9 +253,11 @@ namespace MML_RealFunctionVisualizer
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
           double y = double.Parse(parts[1], CultureInfo.InvariantCulture);
 
-          _xVals.Add(x);
-          _yVals.Add(y);
+          slf._xVals.Add(x);
+          slf._yVals.Add(y);
         }
+
+        _loadedFunctions.Add(slf);
       }
       else if (type == "REAL_FUNCTION_EQUALLY_SPACED")
       {
