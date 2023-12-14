@@ -37,10 +37,18 @@ namespace MML_RealFunctionVisualizer
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
       List<Color> colors = new List<Color>();
+      colors.Add(Colors.Black);
       colors.Add(Colors.Blue);
       colors.Add(Colors.Red);
       colors.Add(Colors.Green);
       colors.Add(Colors.Yellow);
+
+      List<Brush> brushes= new List<Brush>();
+      brushes.Add(Brushes.Black);
+      brushes.Add(Brushes.Blue);
+      brushes.Add(Brushes.Red);
+      brushes.Add(Brushes.Green);
+      brushes.Add(Brushes.Yellow);
 
       for (int i = 0; i < _multiFuncX.Elements.Length; i++)
       {
@@ -55,7 +63,7 @@ namespace MML_RealFunctionVisualizer
         for (int j = 0; j < _multiFuncY.Rows; j++)
         {
           Line xAxis = new Line();
-          xAxis.Stroke = Brushes.Black;
+          xAxis.Stroke = brushes[j];
 
           double x1 = coordSysParams._centerX + _multiFuncX.Elements[i] * coordSysParams._scaleX;
           double y1 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i) * coordSysParams._scaleY;
