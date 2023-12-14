@@ -44,6 +44,11 @@ namespace MML_RealFunctionVisualizer
   abstract class LoadedFunction
   {
     public abstract void Draw(Canvas mainCanvas, CoordSystemParams inParams);
+    public abstract double GetMinX();
+    public abstract double GetMaxX();
+    public abstract double GetMinY();
+    public abstract double GetMaxY();
+
   }
 
   class SingleLoadedFunction : LoadedFunction
@@ -51,6 +56,25 @@ namespace MML_RealFunctionVisualizer
     public LoadedType _loadedType;
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
+
+    public override double GetMinX()
+    {
+      return _xVals.Min();
+    }
+
+    public override double GetMaxX()
+    {
+      return _xVals.Max();
+    }
+
+    public override double GetMinY()
+    {
+      return _yVals.Min();
+    }
+    public override double GetMaxY()
+    {
+      return _yVals.Max();
+    }
 
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
@@ -78,6 +102,24 @@ namespace MML_RealFunctionVisualizer
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
 
+    public override double GetMinX()
+    {
+      return _multiFuncX.Elements.Min();
+    }
+
+    public override double GetMaxX()
+    {
+      return _multiFuncX.Elements.Max();
+    }
+
+    public override double GetMinY()
+    {
+      return 5;
+    }
+    public override double GetMaxY()
+    {
+      return -15;
+    }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
       double xMin = _multiFuncX.Elements.Min();
@@ -145,10 +187,10 @@ namespace MML_RealFunctionVisualizer
 
     private void InitializeCoordSysParams()
     {
-      _coordSystemParams._xMin = _loadedFunctions[0]._xVals.Min();
-      _coordSystemParams._xMax = _xVals.Max();
-      _coordSystemParams._yMin = _yVals.Min();
-      _coordSystemParams._yMax = _yVals.Max();
+      _coordSystemParams._xMin = _loadedFunctions[0].GetMinX();
+      _coordSystemParams._xMax = _loadedFunctions[0].GetMaxX();
+      _coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
+      _coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
 
       _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
       _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
@@ -159,8 +201,8 @@ namespace MML_RealFunctionVisualizer
       // inače E notacija
       _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
       _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
-      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 + (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2 * _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams.xMin) + _coordSystemParams._windowWidth / 20;
-      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams.yMin) + _coordSystemParams._windowHeight / 20;
+      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 + (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2 * _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) + _coordSystemParams._windowWidth / 20;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
 
     }
 
