@@ -54,6 +54,9 @@ namespace MML_RealFunctionVisualizer
       double yMin = _yVals.Min();
       double yMax = _yVals.Max();
 
+      coordSysParams._windowWidth = mainCanvas.ActualWidth;
+      coordSysParams._windowHeight = mainCanvas.ActualHeight;
+
       // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
       // prilagođavanje skaliranja i centra
       // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
@@ -70,13 +73,13 @@ namespace MML_RealFunctionVisualizer
 
         Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], Colors.Blue);
 
-        Rectangle rect = new Rectangle();
-        rect.Width = 100;
-        rect.Height = 100;
-        rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-        mainCanvas.Children.Add(rect);
-        Canvas.SetLeft(rect, 10);
-        Canvas.SetTop(rect, 10);
+        //Rectangle rect = new Rectangle();
+        //rect.Width = 100;
+        //rect.Height = 100;
+        //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+        //mainCanvas.Children.Add(rect);
+        //Canvas.SetLeft(rect, 10);
+        //Canvas.SetTop(rect, 10);
       }
     }
   };
