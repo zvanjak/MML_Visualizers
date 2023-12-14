@@ -192,8 +192,8 @@ namespace MML_RealFunctionVisualizer
       _coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
       _coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
 
-      _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
-      _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
+      _coordSystemParams._windowWidth = mainCanvas.Width;
+      _coordSystemParams._windowHeight = mainCanvas.Height;
 
       // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
       // prilagođavanje skaliranja i centra
