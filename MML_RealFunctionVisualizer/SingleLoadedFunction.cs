@@ -13,7 +13,12 @@ namespace MML_RealFunctionVisualizer
     public LoadedType _loadedType;
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
+    private int _index;
 
+    SingleLoadedFunction(int inIndex)
+    {
+      _index = inIndex;
+    }
     public override double GetMinX()
     {
       return _xVals.Min();
@@ -35,13 +40,19 @@ namespace MML_RealFunctionVisualizer
 
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
+      List<Color> colors = new List<Color>();
+      colors.Add(Colors.Black);
+      colors.Add(Colors.Blue);
+      colors.Add(Colors.Red);
+      colors.Add(Colors.Green);
+      colors.Add(Colors.Yellow);
 
       for (int i = 0; i < _xVals.Count; i++)
       {
 
         Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
-        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], Colors.Blue);
+        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
 
         //Rectangle rect = new Rectangle();
         //rect.Width = 100;

@@ -85,6 +85,11 @@ namespace MML_RealFunctionVisualizer
 
       InitializeCoordSysParams();
 
+      txtXMin.Text = _coordSystemParams._xMin.ToString();
+      txtXMax.Text = _coordSystemParams._xMax.ToString();
+      txtYMin.Text = _coordSystemParams._yMin.ToString();
+      txtYMax.Text = _coordSystemParams._yMax.ToString();
+
       Redraw();
     }
 
