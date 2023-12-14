@@ -80,7 +80,7 @@ namespace MML_RealFunctionVisualizer
       {
         var fileName = args[i + 1];
 
-        LoadData(fileName);
+        LoadData(fileName, i);
       }
 
       InitializeCoordSysParams();
@@ -137,7 +137,7 @@ namespace MML_RealFunctionVisualizer
       }
     }
 
-    public bool LoadData(string inFileName)
+    public bool LoadData(string inFileName, int index)
     {
       if (File.Exists(inFileName) == false)
       {
@@ -150,7 +150,7 @@ namespace MML_RealFunctionVisualizer
 
       if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
       {
-        SingleLoadedFunction slf = new SingleLoadedFunction();
+        SingleLoadedFunction slf = new SingleLoadedFunction(index);
 
         slf._loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace MML_RealFunctionVisualizer
 {
@@ -15,7 +16,7 @@ namespace MML_RealFunctionVisualizer
     public List<double> _yVals = new List<double>();
     private int _index;
 
-    SingleLoadedFunction(int inIndex)
+    public SingleLoadedFunction(int inIndex)
     {
       _index = inIndex;
     }
@@ -47,6 +48,13 @@ namespace MML_RealFunctionVisualizer
       colors.Add(Colors.Green);
       colors.Add(Colors.Yellow);
 
+      List<Brush> brushes = new List<Brush>();
+      brushes.Add(Brushes.Black);
+      brushes.Add(Brushes.Blue);
+      brushes.Add(Brushes.Red);
+      brushes.Add(Brushes.Green);
+      brushes.Add(Brushes.Yellow);
+
       for (int i = 0; i < _xVals.Count; i++)
       {
 
@@ -61,6 +69,24 @@ namespace MML_RealFunctionVisualizer
         //mainCanvas.Children.Add(rect);
         //Canvas.SetLeft(rect, 10);
         //Canvas.SetTop(rect, 10);
+      }
+
+      for (int i = 0; i < _xVals.Count-1; i++)
+      {
+          Line xAxis = new Line();
+          xAxis.Stroke = brushes[_index];
+
+          double x1 = coordSysParams._centerX + _xVals[i] * coordSysParams._scaleX;
+          double y1 = coordSysParams._centerY - _yVals[i] * coordSysParams._scaleY;
+          double x2 = coordSysParams._centerX + _xVals[i+1] * coordSysParams._scaleX;
+          double y2 = coordSysParams._centerY - _yVals[i+1] * coordSysParams._scaleY;
+
+          xAxis.X1 = x1;
+          xAxis.Y1 = y1;
+          xAxis.X2 = x2;
+          xAxis.Y2 = y2;
+
+          mainCanvas.Children.Add(xAxis);
       }
     }
   };
