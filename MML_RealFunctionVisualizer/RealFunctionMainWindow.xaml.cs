@@ -165,6 +165,7 @@ namespace MML_RealFunctionVisualizer
     {
       InitializeComponent();
 
+      // REAL ARGS: func_sin_x_lin_interp.txt sin_func.txt
       var args = Environment.GetCommandLineArgs();
 
       if (args.Length < 2)
