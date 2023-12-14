@@ -29,10 +29,10 @@ namespace MML_RealFunctionVisualizer
 
   class CoordSystemParams
   {
-    private double _xMin;
-    private double _xMax;
-    private double _yMin;
-    private double _yMax;
+    public double _xMin;
+    public double _xMax;
+    public double _yMin;
+    public double _yMax;
 
     public double _windowWidth = 1000;
     public double _windowHeight = 800;
@@ -54,27 +54,11 @@ namespace MML_RealFunctionVisualizer
 
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      double xMin = _xVals.Min();
-      double xMax = _xVals.Max();
-      double yMin = _yVals.Min();
-      double yMax = _yVals.Max();
-
-      coordSysParams._windowWidth = mainCanvas.ActualWidth;
-      coordSysParams._windowHeight = mainCanvas.ActualHeight;
-
-      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-      // prilagođavanje skaliranja i centra
-      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
-      // inače E notacija
-      coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
-      coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
-      coordSysParams._centerX = coordSysParams._windowWidth / 2 + (xMin + xMax) / 2 * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
-      coordSysParams._centerY = coordSysParams._windowHeight / 2 + (yMin + yMax) / 2 * coordSysParams._windowHeight/ (yMax - yMin) + coordSysParams._windowHeight / 20;
 
       for (int i = 0; i < _xVals.Count; i++)
       {
 
-        Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
+        Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
         Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], Colors.Blue);
 
@@ -154,7 +138,30 @@ namespace MML_RealFunctionVisualizer
         LoadData(fileName);
       }
 
+      InitializeCoordSysParams();
+
       Redraw();
+    }
+
+    private void InitializeCoordSysParams()
+    {
+      _coordSystemParams._xMin = _loadedFunctions[0]._xVals.Min();
+      _coordSystemParams._xMax = _xVals.Max();
+      _coordSystemParams._yMin = _yVals.Min();
+      _coordSystemParams._yMax = _yVals.Max();
+
+      _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
+      _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
+
+      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      // prilagođavanje skaliranja i centra
+      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
+      // inače E notacija
+      _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
+      _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
+      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 + (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2 * _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams.xMin) + _coordSystemParams._windowWidth / 20;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams.yMin) + _coordSystemParams._windowHeight / 20;
+
     }
 
     private void Redraw()
