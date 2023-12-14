@@ -19,10 +19,12 @@
     <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="750">
     </Canvas>
     <Label Content="X min:" HorizontalAlignment="Left" Margin="19,0,0,0" VerticalAlignment="Center" Width="46"/>
-    <TextBox HorizontalAlignment="Left" Margin="93,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120"/>
+    <TextBox x:Name="txtXMin" HorizontalAlignment="Left" Margin="93,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
     <Label Content="X max:" HorizontalAlignment="Left" Margin="231,0,0,0" VerticalAlignment="Center" Width="46"/>
     <TextBox HorizontalAlignment="Left" Margin="305,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120"/>
-    <Label Content="X min:" HorizontalAlignment="Left" Margin="491,0,0,0" VerticalAlignment="Center" Width="46"/>
+    <Label Content="Y min:" HorizontalAlignment="Left" Margin="491,0,0,0" VerticalAlignment="Center" Width="46"/>
     <TextBox HorizontalAlignment="Left" Margin="565,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120"/>
+    <Label Content="Y max:" HorizontalAlignment="Left" Margin="716,0,0,0" VerticalAlignment="Center" Width="46"/>
+    <TextBox HorizontalAlignment="Left" Margin="790,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120"/>
   </Grid>
 </Window>
