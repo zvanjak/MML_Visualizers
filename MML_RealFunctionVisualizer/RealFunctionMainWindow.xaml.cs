@@ -29,6 +29,11 @@ namespace MML_RealFunctionVisualizer
 
   class CoordSystemParams
   {
+    private double _xMin;
+    private double _xMax;
+    private double _yMin;
+    private double _yMax;
+
     public double _windowWidth = 1000;
     public double _windowHeight = 800;
     public double _centerX = 100;
@@ -63,8 +68,8 @@ namespace MML_RealFunctionVisualizer
       // inače E notacija
       coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
       coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
-      coordSysParams._centerX = coordSysParams._windowWidth / 2 + (xMin + xMax)/2 * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
-      coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
+      coordSysParams._centerX = coordSysParams._windowWidth / 2 + (xMin + xMax) / 2 * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
+      coordSysParams._centerY = coordSysParams._windowHeight / 2 + (yMin + yMax) / 2 * coordSysParams._windowHeight/ (yMax - yMin) + coordSysParams._windowHeight / 20;
 
       for (int i = 0; i < _xVals.Count; i++)
       {
