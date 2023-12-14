@@ -114,29 +114,14 @@ namespace MML_RealFunctionVisualizer
 
     public override double GetMinY()
     {
-      return 5;
+      return -15;
     }
     public override double GetMaxY()
     {
-      return -15;
+      return 5;
     }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      //double xMin = _multiFuncX.Elements.Min();
-      //double xMax = _multiFuncX.Elements.Max();
-      //double yMin = -5; // _multiFuncY.Min();
-      //double yMax = 15; // _multiFuncY.Max();
-
-      //// izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-      //// prilagođavanje skaliranja i centra
-      //// kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
-      //// inače E notacija
-      //coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
-      //coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
-      //coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
-      //coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
-
-      // Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
       List<Color> colors = new List<Color>();
@@ -210,7 +195,7 @@ namespace MML_RealFunctionVisualizer
       // kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
       // inače E notacija
       double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
-      double midPointY = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
       // ako je 0, onda je tocno sredina
       // ako je manje od 0 , onda je vise sredina prema xMin
 
@@ -218,7 +203,7 @@ namespace MML_RealFunctionVisualizer
       _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
       _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
       _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
-      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 - midPointY * _coordSystemParams._scaleY;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
       //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
 
     }
