@@ -49,33 +49,34 @@ namespace MML_RealFunctionVisualizer
 
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
+      double xMin = _xVals.Min();
+      double xMax = _xVals.Max();
+      double yMin = _yVals.Min();
+      double yMax = _yVals.Max();
+
+      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      // prilagođavanje skaliranja i centra
+      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
+      // inače E notacija
+      coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
+      coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
+      coordSysParams._centerX = coordSysParams._windowWidth / 2 + (xMin + xMax)/2 * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
+      coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
+
       for (int i = 0; i < _xVals.Count; i++)
       {
-        double xMin = _xVals.Min();
-        double xMax = _xVals.Max();
-        double yMin = _yVals.Min();
-        double yMax = _yVals.Max();
-
-        // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-        // prilagođavanje skaliranja i centra
-        // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
-        // inače E notacija
-        coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
-        coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
-        coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
-        coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
         Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
 
         Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], Colors.Blue);
 
-        //Rectangle rect = new Rectangle();
-        //rect.Width = 100;
-        //rect.Height = 100;
-        //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-        //mainCanvas.Children.Add(rect);
-        //Canvas.SetLeft(rect, 100);
-        //Canvas.SetTop(rect, 100);
+        Rectangle rect = new Rectangle();
+        rect.Width = 100;
+        rect.Height = 100;
+        rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
+        mainCanvas.Children.Add(rect);
+        Canvas.SetLeft(rect, 10);
+        Canvas.SetTop(rect, 10);
       }
     }
   };
@@ -145,6 +146,11 @@ namespace MML_RealFunctionVisualizer
         LoadData(fileName);
       }
 
+      Redraw();
+    }
+
+    private void Redraw()
+    {
       for (int i = 0; i < _loadedFunctions.Count; i++)
       {
         _loadedFunctions[i].Draw(mainCanvas, _coordSystemParams);
@@ -249,7 +255,12 @@ namespace MML_RealFunctionVisualizer
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       //MessageBox.Show("Size changed");
-      InvalidateVisual();
+      // clear canvas
+      mainCanvas.Children.Clear();
+
+      // redraw
+      Redraw();
+
     }
   }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "MML_RealFunctionVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "ode_2.txt"
+      "commandLineArgs": "sin_func.txt"
     }
   }
 }
