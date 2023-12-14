@@ -19,7 +19,7 @@ namespace MML_RealFunctionVisualizer
       circle.Fill = new SolidColorBrush(inColor);
       mainCanvas.Children.Add(circle);
       Canvas.SetLeft(circle, coordSysParams._centerX + x * coordSysParams._scaleX - 2.5);
-      Canvas.SetTop(circle, coordSysParams._centerY - y * coordSysParams._scaleY - 2.5);
+      Canvas.SetTop(circle, coordSysParams._centerY + y * coordSysParams._scaleY - 2.5);
     }
     public static void DrawCoordSystem(Canvas mainCanvas, CoordSystemParams coordSysParams, double xMin, double xMax, double yMin, double yMax)
     {

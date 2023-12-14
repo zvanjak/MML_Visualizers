@@ -122,21 +122,22 @@ namespace MML_RealFunctionVisualizer
     }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      double xMin = _multiFuncX.Elements.Min();
-      double xMax = _multiFuncX.Elements.Max();
-      double yMin = -5; // _multiFuncY.Min();
-      double yMax = 15; // _multiFuncY.Max();
+      //double xMin = _multiFuncX.Elements.Min();
+      //double xMax = _multiFuncX.Elements.Max();
+      //double yMin = -5; // _multiFuncY.Min();
+      //double yMax = 15; // _multiFuncY.Max();
 
-      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-      // prilagođavanje skaliranja i centra
-      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
-      // inače E notacija
-      coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
-      coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
-      coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
-      coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
+      //// izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      //// prilagođavanje skaliranja i centra
+      //// kod prikazivanja tksta, dok je unutar 0.001, 1000, s deimalama
+      //// inače E notacija
+      //coordSysParams._scaleX = coordSysParams._windowWidth / (xMax - xMin) * 0.9;
+      //coordSysParams._scaleY = coordSysParams._windowHeight / (yMax - yMin) * 0.9;
+      //coordSysParams._centerX = xMin * coordSysParams._windowWidth / (xMax - xMin) + coordSysParams._windowWidth / 20;
+      //coordSysParams._centerY = -yMin * coordSysParams._windowHeight / (yMax - yMin) - coordSysParams._windowHeight / 20;
 
-      Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
+      // Utils.DrawCoordSystem(mainCanvas, coordSysParams, xMin, xMax, yMin, yMax);
+      Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
       List<Color> colors = new List<Color>();
       colors.Add(Colors.Blue);
@@ -192,17 +193,32 @@ namespace MML_RealFunctionVisualizer
       _coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
       _coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
 
+      for (int i = 1; i < _loadedFunctions.Count; i++)
+      {
+        _coordSystemParams._xMin = Math.Min(_coordSystemParams._xMin, _loadedFunctions[i].GetMinX());
+        _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedFunctions[i].GetMaxX());
+        _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedFunctions[i].GetMinY());
+        _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedFunctions[i].GetMaxY());
+      } 
+
       _coordSystemParams._windowWidth = mainCanvas.Width;
       _coordSystemParams._windowHeight = mainCanvas.Height;
 
       // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
       // prilagođavanje skaliranja i centra
-      // kod prikazivanja tksta, dok je unutar 0.001, 1000, s decimalama
+      // kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
       // inače E notacija
+      double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      double midPointY = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      // ako je 0, onda je tocno sredina
+      // ako je manje od 0 , onda je vise sredina prema xMin
+
+
       _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
       _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
-      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 + (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2 * _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) + _coordSystemParams._windowWidth / 20;
-      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
+      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 - midPointY * _coordSystemParams._scaleY;
+      //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
 
     }
 
@@ -272,13 +288,10 @@ namespace MML_RealFunctionVisualizer
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();
 
-        int dim = int.Parse(lines[1]);
-
-        int numPoints = int.Parse(lines[2]);
-
-        double xMin = double.Parse(lines[3], CultureInfo.InvariantCulture);
-
-        double xMax = double.Parse(lines[4], CultureInfo.InvariantCulture);
+        int    dim       = int.Parse(lines[1]);
+        int    numPoints = int.Parse(lines[2]);
+        double xMin      = double.Parse(lines[3], CultureInfo.InvariantCulture);
+        double xMax      = double.Parse(lines[4], CultureInfo.InvariantCulture);
 
         mlf._multiFuncX = new MML.Vector(numPoints);
         mlf._multiFuncY = new MML.Matrix(dim, numPoints);
@@ -311,7 +324,6 @@ namespace MML_RealFunctionVisualizer
 
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-      //MessageBox.Show("Size changed");
       // clear canvas
       mainCanvas.Children.Clear();
 
