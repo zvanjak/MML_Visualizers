@@ -70,7 +70,7 @@ namespace MML_VectorFieldVisualizer
       {
         double baseWidth = vec.Vec.Norm();
         double len = 5 * vec.Vec.Norm();
-        MeshGeometry3D vektor = Geometries.CreateVectorArrow(baseWidth, len, 10, 5, 1, 2);
+        MeshGeometry3D vektor = Geometries.CreateVectorArrow(baseWidth, len, 10, 5, baseWidth/2.0, len/3.0);
         var valjakMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
         GeometryModel3D valjakModel = new GeometryModel3D(vektor, valjakMaterial);
 
