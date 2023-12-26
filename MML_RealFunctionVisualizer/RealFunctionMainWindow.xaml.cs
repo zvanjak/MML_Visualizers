@@ -33,6 +33,7 @@ namespace MML_RealFunctionVisualizer
     public double _xMax;
     public double _yMin;
     public double _yMax;
+    public int _numPoints;
 
     public double _windowWidth = 1000;
     public double _windowHeight = 800;
@@ -48,11 +49,9 @@ namespace MML_RealFunctionVisualizer
     public abstract double GetMaxX();
     public abstract double GetMinY();
     public abstract double GetMaxY();
+    public abstract int GetNumPoints();
 
   }
-
-  
-
 
   /// <summary>
   /// Interaction logic for MainWindow.xaml
@@ -61,6 +60,7 @@ namespace MML_RealFunctionVisualizer
   {
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
+    private string _title;
 
     public MainWindow()
     {
@@ -89,6 +89,8 @@ namespace MML_RealFunctionVisualizer
       txtXMax.Text = _coordSystemParams._xMax.ToString();
       txtYMin.Text = _coordSystemParams._yMin.ToString();
       txtYMax.Text = _coordSystemParams._yMax.ToString();
+      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+      txtTitle.Content = _title;
 
       Redraw();
     }
@@ -99,6 +101,7 @@ namespace MML_RealFunctionVisualizer
       _coordSystemParams._xMax = _loadedFunctions[0].GetMaxX();
       _coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
       _coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
+      _coordSystemParams._numPoints = _loadedFunctions[0].GetNumPoints();
 
       for (int i = 1; i < _loadedFunctions.Count; i++)
       {
@@ -195,24 +198,27 @@ namespace MML_RealFunctionVisualizer
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();
 
-        int    dim       = int.Parse(lines[1]);
-        int    numPoints = int.Parse(lines[2]);
-        double xMin      = double.Parse(lines[3], CultureInfo.InvariantCulture);
-        double xMax      = double.Parse(lines[4], CultureInfo.InvariantCulture);
+        string title     = lines[1];
+        int    dim       = int.Parse(lines[2]);
+        int    numPoints = int.Parse(lines[3]);
+        double xMin      = double.Parse(lines[4], CultureInfo.InvariantCulture);
+        double xMax      = double.Parse(lines[5], CultureInfo.InvariantCulture);
+
+        _title = title;
 
         mlf._multiFuncX = new MML.Vector(numPoints);
         mlf._multiFuncY = new MML.Matrix(dim, numPoints);
 
-        for (int i = 5; i < lines.Length; i++)
+        for (int i = 6; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
           double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          mlf._multiFuncX.Elements[i-5] = x;
+          mlf._multiFuncX.Elements[i-6] = x;
           for (int j = 0; j < dim; j++)
           {
             double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
-            mlf._multiFuncY.SetElemAt(j, i - 5, y);
+            mlf._multiFuncY.SetElemAt(j, i - 6, y);
           }
         }
 

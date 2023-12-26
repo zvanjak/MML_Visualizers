@@ -26,6 +26,8 @@
     <TextBox x:Name="txtYMin" HorizontalAlignment="Left" Margin="430,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80"/>
     <Label Content="Y max:" HorizontalAlignment="Left" Margin="554,13,0,0" VerticalAlignment="Top" Width="46"/>
     <TextBox x:Name="txtYMax" HorizontalAlignment="Left" Margin="621,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-    <Label Content="Components of solution to Lorenz system" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top" Width="769" Height="32" FontSize="16" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+    <Label x:Name="txtTitle" Content="Components of solution to Lorenz system" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top" Width="769" Height="32" FontSize="16" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+    <Label Content="Num points:" HorizontalAlignment="Left" Margin="757,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.948,-0.191"/>
+    <TextBox x:Name="txtNumPoints" HorizontalAlignment="Left" Margin="843,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77"/>
   </Grid>
 </Window>

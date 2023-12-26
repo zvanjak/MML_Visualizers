@@ -20,6 +20,12 @@ namespace MML_RealFunctionVisualizer
     {
       _index = inIndex;
     }
+
+    public override int GetNumPoints()
+    {
+      return _xVals.Count;
+    }
+
     public override double GetMinX()
     {
       return _xVals.Min();

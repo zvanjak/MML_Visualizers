@@ -14,6 +14,11 @@ namespace MML_RealFunctionVisualizer
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
 
+    public override int GetNumPoints()
+    {
+      return _multiFuncX.Elements.Length;
+    }
+
     public override double GetMinX()
     {
       return _multiFuncX.Elements.Min();
