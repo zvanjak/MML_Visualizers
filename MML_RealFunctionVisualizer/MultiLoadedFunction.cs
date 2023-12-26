@@ -26,35 +26,48 @@ namespace MML_RealFunctionVisualizer
 
     public override double GetMinY()
     {
-      return -15;
+      double min = _multiFuncY.ElemAt(0, 0);
+      for (int j = 0; j < _multiFuncY.Rows; j++)
+        for (int i = 0; i < _multiFuncY.Cols; i++)
+          if (_multiFuncY.ElemAt(j, i) < min)
+            min = _multiFuncY.ElemAt(j, i);
+
+      return min;
     }
     public override double GetMaxY()
     {
-      return 5;
+      double max = _multiFuncY.ElemAt(0, 0);
+      for (int j = 0; j < _multiFuncY.Rows; j++)
+      for (int i = 0; i < _multiFuncY.Cols; i++)
+        if (_multiFuncY.ElemAt(j, i) > max)
+          max = _multiFuncY.ElemAt(j, i);
+
+      return max;
     }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
+      Utils.DrawCoordSystem(mainCanvas, coordSysParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
+//      Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
       List<Color> colors = new List<Color>();
-      colors.Add(Colors.Black);
-      colors.Add(Colors.Blue);
+      colors.Add(Colors.Yellow);
+      colors.Add(Colors.DeepSkyBlue);
       colors.Add(Colors.Red);
-      colors.Add(Colors.Green);
+      colors.Add(Colors.DarkOrange);
       colors.Add(Colors.Yellow);
 
       List<Brush> brushes= new List<Brush>();
-      brushes.Add(Brushes.Black);
-      brushes.Add(Brushes.Blue);
+      brushes.Add(Brushes.Yellow);
+      brushes.Add(Brushes.DeepSkyBlue);
       brushes.Add(Brushes.Red);
-      brushes.Add(Brushes.Green);
+      brushes.Add(Brushes.DarkOrange);
       brushes.Add(Brushes.Yellow);
 
       for (int i = 0; i < _multiFuncX.Elements.Length; i++)
       {
         // idemo po pojedinacnim funkcijama, odnosno njihovim redovim u matrici
-        for (int j = 0; j < _multiFuncY.Rows; j++)
-          Utils.DrawPoint(mainCanvas, coordSysParams, _multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
+        //for (int j = 0; j < _multiFuncY.Rows; j++)
+        //  Utils.DrawPoint(mainCanvas, coordSysParams, _multiFuncX.Elements[i], _multiFuncY.ElemAt(j, i), colors[j]);
       }
 
       for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)

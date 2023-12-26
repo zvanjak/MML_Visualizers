@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "helix.txt"
+      "commandLineArgs": "ode_1_param_curve.txt"
     }
   }
 }
