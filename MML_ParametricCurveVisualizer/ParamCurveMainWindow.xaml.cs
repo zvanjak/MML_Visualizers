@@ -58,9 +58,14 @@ namespace MML_ParametricCurveVisualizer
         ambLight.Color = Colors.Gray;
         myModel3DGroup.Children.Add(ambLight);
 
+        DirectionalLight myDirectionalLight1 = new DirectionalLight();
+        myDirectionalLight1.Color = Colors.White;
+        myDirectionalLight1.Direction = new Vector3D(-0.31, 0.2, -0.61);
+        myModel3DGroup.Children.Add(myDirectionalLight1);
+
         DirectionalLight myDirectionalLight2 = new DirectionalLight();
         myDirectionalLight2.Color = Colors.White;
-        myDirectionalLight2.Direction = new Vector3D(-0.31, 0.2, -0.61);
+        myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
         myModel3DGroup.Children.Add(myDirectionalLight2);
 
         myViewport3D.Camera = _helper._myCamera;
