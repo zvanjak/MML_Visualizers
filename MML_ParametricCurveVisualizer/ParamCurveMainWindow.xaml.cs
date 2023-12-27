@@ -70,7 +70,7 @@ namespace MML_ParametricCurveVisualizer
           myModel3DGroup.Children.Add(sphereModel);
         }
 
-        MeshGeometry3D line = Geometries.CreateLine(0, 100, 10, 1, 10);
+        MeshGeometry3D line = Geometries.CreateLine2(_curveTrace, 0.5, 6);
         var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
