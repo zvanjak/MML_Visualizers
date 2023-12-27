@@ -52,7 +52,17 @@ namespace MML_ParametricCurveVisualizer
         Model3DGroup myModel3DGroup = new Model3DGroup();
 
         _helper.InitCamera(new Point3D(180, 80, 150));
-        _helper.InitLights(myModel3DGroup);
+        //_helper.InitLights(myModel3DGroup);
+
+        AmbientLight ambLight = new AmbientLight();
+        ambLight.Color = Colors.Gray;
+        myModel3DGroup.Children.Add(ambLight);
+
+        DirectionalLight myDirectionalLight2 = new DirectionalLight();
+        myDirectionalLight2.Color = Colors.White;
+        myDirectionalLight2.Direction = new Vector3D(-0.31, 0.2, -0.61);
+        myModel3DGroup.Children.Add(myDirectionalLight2);
+
         myViewport3D.Camera = _helper._myCamera;
         
         ModelVisual3D myModelVisual3D = new ModelVisual3D();
@@ -63,15 +73,15 @@ namespace MML_ParametricCurveVisualizer
         Utils.DrawCoordSystem(myModel3DGroup);
         foreach (var vec in _curveTrace)
         {
-          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.5);
+          MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.2);
           var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
           GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
 
           myModel3DGroup.Children.Add(sphereModel);
         }
 
-        MeshGeometry3D line = Geometries.CreateLine2(_curveTrace, 0.5, 6);
-        var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+        MeshGeometry3D line = Geometries.CreateLine2(_curveTrace, 0.12, 10);
+        var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         myModel3DGroup.Children.Add(lineModel);
