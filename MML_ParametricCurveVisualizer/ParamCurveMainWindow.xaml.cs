@@ -132,7 +132,8 @@ namespace MML_ParametricCurveVisualizer
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_MULTI")
       {
-
+        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_2D not yet supported");
+        return false;
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
       {
