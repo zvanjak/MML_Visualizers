@@ -55,7 +55,7 @@ namespace MML_ParametricCurveVisualizer
         //_helper.InitLights(myModel3DGroup);
 
         AmbientLight ambLight = new AmbientLight();
-        ambLight.Color = Colors.Gray;
+        ambLight.Color = Colors.White;
         myModel3DGroup.Children.Add(ambLight);
 
         DirectionalLight myDirectionalLight1 = new DirectionalLight();
