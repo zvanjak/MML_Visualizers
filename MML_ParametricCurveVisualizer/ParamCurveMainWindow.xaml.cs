@@ -132,32 +132,12 @@ namespace MML_ParametricCurveVisualizer
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_MULTI")
       {
-        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_2D not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_2D not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_CARTESIAN_2D_AT_POINTS")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_2D_AT_POINTS not yet supported");
+        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_MULTI not yet supported");
         return false;
       }
       else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS")
       {
         MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_POLAR")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_POLAR not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_POLAR_AT_POINTS")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_POLAR_AT_POINTS not yet supported");
         return false;
       }
       else if (type == "PARAMETRIC_CURVE_SPHERICAL")

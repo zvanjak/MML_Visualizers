@@ -61,12 +61,12 @@ namespace MML_RealFunctionVisualizer
       brushes.Add(Brushes.Green);
       brushes.Add(Brushes.Yellow);
 
+      Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
+
       for (int i = 0; i < _xVals.Count; i++)
       {
 
-        Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
-
-        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
+        //Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
 
         //Rectangle rect = new Rectangle();
         //rect.Width = 100;
