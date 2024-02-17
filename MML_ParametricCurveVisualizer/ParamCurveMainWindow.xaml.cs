@@ -163,30 +163,30 @@ namespace MML_ParametricCurveVisualizer
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
     }
-
     private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonUp();
     }
-
     private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonDown(e.GetPosition(this));
     }
-
     private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonUp();
     }
-
     private void Window_MouseMove(object sender, MouseEventArgs e)
     {
       _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
     }
-
     public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
     }
-  }
+
+    private void cmdAnimate_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+   }
 }
