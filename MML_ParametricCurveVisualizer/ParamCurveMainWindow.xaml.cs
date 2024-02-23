@@ -69,24 +69,6 @@ namespace MML_ParametricCurveVisualizer
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         _myModel3DGroup.Children.Add(lineModel);
-
-
-        //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
-
-        //TranslateTransform3D Off = new TranslateTransform3D();
-        //Off.OffsetX = _sphere.X;
-        //Off.OffsetY = _sphere.Y;
-        //Off.OffsetZ = _sphere.Z;
-
-        //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
-        //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
-
-        //sphereModel.Transform = Off;
-
-        //_sphere.RefGeomModel = sphereModel;
-
-        //_myModel3DGroup.Children.Add(sphereModel);
-
       }
     }
 
