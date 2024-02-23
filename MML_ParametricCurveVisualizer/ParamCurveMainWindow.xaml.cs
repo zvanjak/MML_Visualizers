@@ -224,6 +224,16 @@ namespace MML_ParametricCurveVisualizer
     {
       for (int t = 0; t < numSteps; t += 1)
       {
+        //if (t > 0)
+        //{
+        //  MeshGeometry3D line = Geometries.CreateSimpleLine(_curveTrace[t - 1], _curveTrace[t], 10, 5);
+
+        //  var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+        //  GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
+
+        //  _myModel3DGroup.Children.Add(lineModel);
+        //}
+
         this.Dispatcher.Invoke((Action)(() =>
         {
           TranslateTransform3D Off = new TranslateTransform3D();
@@ -234,8 +244,7 @@ namespace MML_ParametricCurveVisualizer
           _sphere.RefGeomModel.Transform = Off;
         }));
 
-        if (t % 10 == 0)
-          Thread.Sleep(1);
+        Thread.Sleep(10);
       }
     }
   }
