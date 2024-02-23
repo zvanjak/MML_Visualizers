@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -206,7 +207,7 @@ namespace MML_ParametricCurveVisualizer
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
-      int numSteps = 10000; // Convert.ToInt16(txtNumSteps.Text);
+      int numSteps = _curveTrace.Count; // Convert.ToInt16(txtNumSteps.Text);
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
 
@@ -219,6 +220,23 @@ namespace MML_ParametricCurveVisualizer
 
     private void Animate(double dt, int numSteps, int refreshEvery)
     {
+      for (int t = 0; t < numSteps; t += 1)
+      {
+
+        //if (t % 10 == 0)
+        {
+          this.Dispatcher.Invoke((Action)(() =>
+          {
+            TranslateTransform3D Off = new TranslateTransform3D();
+            Off.OffsetX = _curveTrace[t].X;
+            Off.OffsetY = _curveTrace[t].Y;
+            Off.OffsetZ = _curveTrace[t].Z;
+
+            _sphere.RefGeomModel.Transform = Off;
+          }));
+        }
+        Thread.Sleep(10);
+      }
 
     }
   }
