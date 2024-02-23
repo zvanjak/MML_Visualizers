@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "demo5_lorenz_system_as_parametric_curve_1.txt\r\ndemo5_lorenz_system_as_parametric_curve_2.txt\r\ndemo5_lorenz_system_as_parametric_curve_3.txt"
+      "commandLineArgs": "demo5_lorenz_system_as_parametric_curve_1.txt\r\ndemo5_lorenz_system_as_parametric_curve_2.txt\r\ndemo5_lorenz_system_as_parametric_curve_3.txt\r\ndemo5_lorenz_system_as_parametric_curve_4.txt\r\ndemo5_lorenz_system_as_parametric_curve_5.txt\r\n"
     }
   }
 }

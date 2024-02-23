@@ -40,7 +40,7 @@ namespace MML_ParametricCurveVisualizer
 
     Model3DGroup _myModel3DGroup = new Model3DGroup();
 
-    Sphere _sphere = new Sphere();
+    List<Sphere> _spheres = new List<Sphere>();
 
     public MainWindow()
     {
@@ -63,11 +63,6 @@ namespace MML_ParametricCurveVisualizer
         _curves.Add(loadedCurve);
       }
 
-      //var fileName = args[1];
-
-      //var loadedCurve = LoadData(fileName);
-      //_curves.Add(loadedCurve);
-
       InitScene();
 
       //foreach (var vec in _curveTrace)
@@ -78,20 +73,22 @@ namespace MML_ParametricCurveVisualizer
 
       //    _myModel3DGroup.Children.Add(sphereModel);
       //}
+      List<SolidColorBrush> brushes = new List<SolidColorBrush>();
+      brushes.Add(new SolidColorBrush(Colors.Black));
+      brushes.Add(new SolidColorBrush(Colors.Blue));
+      brushes.Add(new SolidColorBrush(Colors.Red));
+      brushes.Add(new SolidColorBrush(Colors.Green));
+      brushes.Add(new SolidColorBrush(Colors.Yellow));
 
-      for(int i=0; i < _curves.Count; i++)
+      
+      for (int i=0; i < _curves.Count; i++)
       {
         MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.12, 10);
-        var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+        DiffuseMaterial lineMaterial = new DiffuseMaterial(brushes[i]);
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         _myModel3DGroup.Children.Add(lineModel);
       }
-      //MeshGeometry3D line = Geometries.CreateLine2(_curves[0]._curveTrace, 0.12, 10);
-      //var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
-      //GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
-
-      //_myModel3DGroup.Children.Add(lineModel);
     }
 
     private void InitScene()
