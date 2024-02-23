@@ -92,8 +92,6 @@ namespace MML_ParametricCurveVisualizer
 
     private void InitScene()
     {
-      // Declare scene objects.
-
       _helper.InitCamera(new Point3D(180, 80, 150));
       //_helper.InitLights(myModel3DGroup);
 
@@ -102,13 +100,9 @@ namespace MML_ParametricCurveVisualizer
       _myModel3DGroup.Children.Add(ambLight);
 
       DirectionalLight myDirectionalLight1 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(-0.31, 0.2, -0.61));
-      //myDirectionalLight1.Color = Colors.White;
-      //myDirectionalLight1.Direction = new Vector3D(-0.31, 0.2, -0.61);
       _myModel3DGroup.Children.Add(myDirectionalLight1);
 
-      DirectionalLight myDirectionalLight2 = new DirectionalLight();
-      myDirectionalLight2.Color = Colors.White;
-      myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
+      DirectionalLight myDirectionalLight2 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(0.31, 0.2, -0.61));
       _myModel3DGroup.Children.Add(myDirectionalLight2);
 
       myViewport3D.Camera = _helper._myCamera;
@@ -237,7 +231,7 @@ namespace MML_ParametricCurveVisualizer
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
 
-      // setup the scene
+      // run animations in a separate thread
       Task.Run(() =>
       {
         Animate(dt, numSteps, refreshEvery);
