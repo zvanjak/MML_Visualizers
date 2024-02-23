@@ -53,33 +53,8 @@ namespace MML_ParametricCurveVisualizer
 
       if (LoadData(fileName))
       {
-        // Declare scene objects.
+        InitScene();
 
-        _helper.InitCamera(new Point3D(180, 80, 150));
-        //_helper.InitLights(myModel3DGroup);
-
-        AmbientLight ambLight = new AmbientLight();
-        ambLight.Color = Colors.White;
-        _myModel3DGroup.Children.Add(ambLight);
-
-        DirectionalLight myDirectionalLight1 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(-0.31, 0.2, -0.61));
-        //myDirectionalLight1.Color = Colors.White;
-        //myDirectionalLight1.Direction = new Vector3D(-0.31, 0.2, -0.61);
-        _myModel3DGroup.Children.Add(myDirectionalLight1);
-
-        DirectionalLight myDirectionalLight2 = new DirectionalLight();
-        myDirectionalLight2.Color = Colors.White;
-        myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
-        _myModel3DGroup.Children.Add(myDirectionalLight2);
-
-        myViewport3D.Camera = _helper._myCamera;
-
-        ModelVisual3D myModelVisual3D = new ModelVisual3D();
-        myModelVisual3D.Content = _myModel3DGroup;
-
-        myViewport3D.Children.Add(myModelVisual3D);
-
-        Utils.DrawCoordSystem(_myModel3DGroup);
         //foreach (var vec in _curveTrace)
         //{
         //    MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.2);
@@ -96,23 +71,54 @@ namespace MML_ParametricCurveVisualizer
         _myModel3DGroup.Children.Add(lineModel);
 
 
-        MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
+        //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
 
-        TranslateTransform3D Off = new TranslateTransform3D();
-        Off.OffsetX = _sphere.X;
-        Off.OffsetY = _sphere.Y;
-        Off.OffsetZ = _sphere.Z;
+        //TranslateTransform3D Off = new TranslateTransform3D();
+        //Off.OffsetX = _sphere.X;
+        //Off.OffsetY = _sphere.Y;
+        //Off.OffsetZ = _sphere.Z;
 
-        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
-        GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+        //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
+        //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
 
-        sphereModel.Transform = Off;
+        //sphereModel.Transform = Off;
 
-        _sphere.RefGeomModel = sphereModel;
+        //_sphere.RefGeomModel = sphereModel;
 
-        _myModel3DGroup.Children.Add(sphereModel);
+        //_myModel3DGroup.Children.Add(sphereModel);
 
       }
+    }
+
+    private void InitScene()
+    {
+      // Declare scene objects.
+
+      _helper.InitCamera(new Point3D(180, 80, 150));
+      //_helper.InitLights(myModel3DGroup);
+
+      AmbientLight ambLight = new AmbientLight();
+      ambLight.Color = Colors.White;
+      _myModel3DGroup.Children.Add(ambLight);
+
+      DirectionalLight myDirectionalLight1 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(-0.31, 0.2, -0.61));
+      //myDirectionalLight1.Color = Colors.White;
+      //myDirectionalLight1.Direction = new Vector3D(-0.31, 0.2, -0.61);
+      _myModel3DGroup.Children.Add(myDirectionalLight1);
+
+      DirectionalLight myDirectionalLight2 = new DirectionalLight();
+      myDirectionalLight2.Color = Colors.White;
+      myDirectionalLight2.Direction = new Vector3D(0.31, 0.2, -0.61);
+      _myModel3DGroup.Children.Add(myDirectionalLight2);
+
+      myViewport3D.Camera = _helper._myCamera;
+
+      ModelVisual3D myModelVisual3D = new ModelVisual3D();
+      myModelVisual3D.Content = _myModel3DGroup;
+
+      myViewport3D.Children.Add(myModelVisual3D);
+
+      Utils.DrawCoordSystem(_myModel3DGroup);
     }
 
     bool LoadData(string inFileName)
@@ -207,6 +213,26 @@ namespace MML_ParametricCurveVisualizer
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
+      _myModel3DGroup.Children.Clear();
+
+      InitScene();
+
+      MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
+
+      TranslateTransform3D Off = new TranslateTransform3D();
+      Off.OffsetX = _sphere.X;
+      Off.OffsetY = _sphere.Y;
+      Off.OffsetZ = _sphere.Z;
+
+      var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
+      GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+      sphereModel.Transform = Off;
+
+      _sphere.RefGeomModel = sphereModel;
+
+      _myModel3DGroup.Children.Add(sphereModel);
+
       int numSteps = _curveTrace.Count; // Convert.ToInt16(txtNumSteps.Text);
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
@@ -235,7 +261,6 @@ namespace MML_ParametricCurveVisualizer
         if (t % 10 == 0)
           Thread.Sleep(1);
       }
-
     }
   }
 }
