@@ -61,6 +61,9 @@ namespace MML_ParametricCurveVisualizer
 
         var loadedCurve = LoadData(fileName2);
         _curves.Add(loadedCurve);
+
+        Sphere newSphere = new Sphere();
+        _spheres.Add(newSphere);
       }
 
       InitScene();
@@ -73,15 +76,17 @@ namespace MML_ParametricCurveVisualizer
 
       //    _myModel3DGroup.Children.Add(sphereModel);
       //}
-      List<SolidColorBrush> brushes = new List<SolidColorBrush>();
-      brushes.Add(new SolidColorBrush(Colors.Black));
-      brushes.Add(new SolidColorBrush(Colors.Blue));
-      brushes.Add(new SolidColorBrush(Colors.Red));
-      brushes.Add(new SolidColorBrush(Colors.Green));
-      brushes.Add(new SolidColorBrush(Colors.Yellow));
+      List<SolidColorBrush> brushes = new List<SolidColorBrush>() { new SolidColorBrush(Colors.Black),
+        new SolidColorBrush(Colors.Blue), new SolidColorBrush(Colors.Red), new SolidColorBrush(Colors.Green), new SolidColorBrush(Colors.Yellow) };
 
-      
-      for (int i=0; i < _curves.Count; i++)
+      //brushes.Add(new SolidColorBrush(Colors.Black));
+      //brushes.Add(new SolidColorBrush(Colors.Blue));
+      //brushes.Add(new SolidColorBrush(Colors.Red));
+      //brushes.Add(new SolidColorBrush(Colors.Green));
+      //brushes.Add(new SolidColorBrush(Colors.Yellow));
+
+
+      for (int i = 0; i < _curves.Count; i++)
       {
         MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.12, 10);
         DiffuseMaterial lineMaterial = new DiffuseMaterial(brushes[i]);
@@ -214,21 +219,25 @@ namespace MML_ParametricCurveVisualizer
 
       InitScene();
 
-      MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
+      for (int i = 0; i < _curves.Count; i++)
+      {
+        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
 
-      TranslateTransform3D Off = new TranslateTransform3D();
-      Off.OffsetX = _sphere.X;
-      Off.OffsetY = _sphere.Y;
-      Off.OffsetZ = _sphere.Z;
+        TranslateTransform3D Off = new TranslateTransform3D();
+        Off.OffsetX = _spheres[i].X;
+        Off.OffsetY = _spheres[i].Y;
+        Off.OffsetZ = _spheres[i].Z;
 
-      var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
-      GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
+        GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
 
-      sphereModel.Transform = Off;
+        sphereModel.Transform = Off;
 
-      _sphere.RefGeomModel = sphereModel;
+        _spheres[i].RefGeomModel = sphereModel;
 
-      _myModel3DGroup.Children.Add(sphereModel);
+        _myModel3DGroup.Children.Add(sphereModel);
+      }
+
 
       int numSteps = _curves[0]._curveTrace.Count; // Convert.ToInt16(txtNumSteps.Text);
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
@@ -255,15 +264,18 @@ namespace MML_ParametricCurveVisualizer
         //  _myModel3DGroup.Children.Add(lineModel);
         //}
 
-        this.Dispatcher.Invoke((Action)(() =>
+        for (int i = 0; i < _curves.Count; i++)
         {
-          TranslateTransform3D Off = new TranslateTransform3D();
-          Off.OffsetX = _curves[0]._curveTrace[t].X;
-          Off.OffsetY = _curves[0]._curveTrace[t].Y;
-          Off.OffsetZ = _curves[0]._curveTrace[t].Z;
+          this.Dispatcher.Invoke((Action)(() =>
+          {
+            TranslateTransform3D Off = new TranslateTransform3D();
+            Off.OffsetX = _curves[i]._curveTrace[t].X;
+            Off.OffsetY = _curves[i]._curveTrace[t].Y;
+            Off.OffsetZ = _curves[i]._curveTrace[t].Z;
 
-          _sphere.RefGeomModel.Transform = Off;
-        }));
+            _spheres[i].RefGeomModel.Transform = Off;
+          }));
+        }
 
         Thread.Sleep(10);
       }
