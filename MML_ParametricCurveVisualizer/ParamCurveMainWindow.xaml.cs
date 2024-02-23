@@ -222,20 +222,18 @@ namespace MML_ParametricCurveVisualizer
     {
       for (int t = 0; t < numSteps; t += 1)
       {
-
-        //if (t % 10 == 0)
+        this.Dispatcher.Invoke((Action)(() =>
         {
-          this.Dispatcher.Invoke((Action)(() =>
-          {
-            TranslateTransform3D Off = new TranslateTransform3D();
-            Off.OffsetX = _curveTrace[t].X;
-            Off.OffsetY = _curveTrace[t].Y;
-            Off.OffsetZ = _curveTrace[t].Z;
+          TranslateTransform3D Off = new TranslateTransform3D();
+          Off.OffsetX = _curveTrace[t].X;
+          Off.OffsetY = _curveTrace[t].Y;
+          Off.OffsetZ = _curveTrace[t].Z;
 
-            _sphere.RefGeomModel.Transform = Off;
-          }));
-        }
-        Thread.Sleep(10);
+          _sphere.RefGeomModel.Transform = Off;
+        }));
+
+        if (t % 10 == 0)
+          Thread.Sleep(1);
       }
 
     }
