@@ -24,12 +24,17 @@ using WPF3DHelperLib;
 
 namespace MML_ParametricCurveVisualizer
 {
+  class LoadedCurve
+  {
+    public List<Vector3Cartesian> _curveTrace = new List<Vector3Cartesian>();
+
+  }
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
-    readonly List<Vector3Cartesian> _curveTrace = new List<Vector3Cartesian>();
+    List<LoadedCurve> _curves = new List<LoadedCurve>();
 
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
@@ -49,27 +54,44 @@ namespace MML_ParametricCurveVisualizer
         return;
       }
 
-      var fileName = args[1];
-
-      if (LoadData(fileName))
+      int numInputs = args.Length - 1;
+      for (int i = 0; i < numInputs; i++)
       {
-        InitScene();
+        var fileName2 = args[i + 1];
 
-        //foreach (var vec in _curveTrace)
-        //{
-        //    MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.2);
-        //    var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
-        //    GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+        var loadedCurve = LoadData(fileName2);
+        _curves.Add(loadedCurve);
+      }
 
-        //    _myModel3DGroup.Children.Add(sphereModel);
-        //}
+      //var fileName = args[1];
 
-        MeshGeometry3D line = Geometries.CreateLine2(_curveTrace, 0.12, 10);
+      //var loadedCurve = LoadData(fileName);
+      //_curves.Add(loadedCurve);
+
+      InitScene();
+
+      //foreach (var vec in _curveTrace)
+      //{
+      //    MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.2);
+      //    var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LimeGreen));
+      //    GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+      //    _myModel3DGroup.Children.Add(sphereModel);
+      //}
+
+      for(int i=0; i < _curves.Count; i++)
+      {
+        MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.12, 10);
         var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         _myModel3DGroup.Children.Add(lineModel);
       }
+      //MeshGeometry3D line = Geometries.CreateLine2(_curves[0]._curveTrace, 0.12, 10);
+      //var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+      //GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
+
+      //_myModel3DGroup.Children.Add(lineModel);
     }
 
     private void InitScene()
@@ -97,12 +119,14 @@ namespace MML_ParametricCurveVisualizer
       Utils.DrawCoordSystem(_myModel3DGroup);
     }
 
-    bool LoadData(string inFileName)
+    LoadedCurve LoadData(string inFileName)
     {
+      LoadedCurve ret = new LoadedCurve();
+
       if (File.Exists(inFileName) == false)
       {
         MessageBox.Show("File does not exist: " + inFileName);
-        return false;
+        return ret;
       }
 
       string[] lines = File.ReadAllLines(inFileName);
@@ -130,36 +154,36 @@ namespace MML_ParametricCurveVisualizer
 
           Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
 
-          _curveTrace.Add(pos);
+          ret._curveTrace.Add(pos);
         }
       }
-      else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_MULTI")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_MULTI not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_SPHERICAL")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL not yet supported");
-        return false;
-      }
-      else if (type == "PARAMETRIC_CURVE_SPHERICAL_AT_POINTS")
-      {
-        MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL_AT_POINTS not yet supported");
-        return false;
-      }
-      else
-      {
-        MessageBox.Show("Unsupported format: " + type);
-        return false;
-      }
+      //else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_MULTI")
+      //{
+      //  MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_MULTI not yet supported");
+      //  return false;
+      //}
+      //else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS")
+      //{
+      //  MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS not yet supported");
+      //  return false;
+      //}
+      //else if (type == "PARAMETRIC_CURVE_SPHERICAL")
+      //{
+      //  MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL not yet supported");
+      //  return false;
+      //}
+      //else if (type == "PARAMETRIC_CURVE_SPHERICAL_AT_POINTS")
+      //{
+      //  MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL_AT_POINTS not yet supported");
+      //  return false;
+      //}
+      //else
+      //{
+      //  MessageBox.Show("Unsupported format: " + type);
+      //  return false;
+      //}
 
-      return true;
+      return ret;
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -209,7 +233,7 @@ namespace MML_ParametricCurveVisualizer
 
       _myModel3DGroup.Children.Add(sphereModel);
 
-      int numSteps = _curveTrace.Count; // Convert.ToInt16(txtNumSteps.Text);
+      int numSteps = _curves[0]._curveTrace.Count; // Convert.ToInt16(txtNumSteps.Text);
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
 
@@ -237,9 +261,9 @@ namespace MML_ParametricCurveVisualizer
         this.Dispatcher.Invoke((Action)(() =>
         {
           TranslateTransform3D Off = new TranslateTransform3D();
-          Off.OffsetX = _curveTrace[t].X;
-          Off.OffsetY = _curveTrace[t].Y;
-          Off.OffsetZ = _curveTrace[t].Z;
+          Off.OffsetX = _curves[0]._curveTrace[t].X;
+          Off.OffsetY = _curves[0]._curveTrace[t].Y;
+          Off.OffsetZ = _curves[0]._curveTrace[t].Z;
 
           _sphere.RefGeomModel.Transform = Off;
         }));
