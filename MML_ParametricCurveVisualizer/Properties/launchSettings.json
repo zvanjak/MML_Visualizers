@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "ode_1_param_curve.txt"
+      "commandLineArgs": "demo5_lorenz_system_as_parametric_curve_1.txt"
     }
   }
 }
