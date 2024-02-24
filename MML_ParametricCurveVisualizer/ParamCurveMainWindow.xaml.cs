@@ -34,6 +34,14 @@ namespace MML_ParametricCurveVisualizer
   /// </summary>
   public partial class MainWindow : Window
   {
+    readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
+        new SolidColorBrush(Colors.Black),
+        new SolidColorBrush(Colors.Blue),
+        new SolidColorBrush(Colors.Red),
+        new SolidColorBrush(Colors.Green),
+        new SolidColorBrush(Colors.Yellow)
+      };
+
     List<LoadedCurve> _curves = new List<LoadedCurve>();
 
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
@@ -76,20 +84,11 @@ namespace MML_ParametricCurveVisualizer
 
       //    _myModel3DGroup.Children.Add(sphereModel);
       //}
-      List<SolidColorBrush> brushes = new List<SolidColorBrush>() { new SolidColorBrush(Colors.Black),
-        new SolidColorBrush(Colors.Blue), new SolidColorBrush(Colors.Red), new SolidColorBrush(Colors.Green), new SolidColorBrush(Colors.Yellow) };
-
-      //brushes.Add(new SolidColorBrush(Colors.Black));
-      //brushes.Add(new SolidColorBrush(Colors.Blue));
-      //brushes.Add(new SolidColorBrush(Colors.Red));
-      //brushes.Add(new SolidColorBrush(Colors.Green));
-      //brushes.Add(new SolidColorBrush(Colors.Yellow));
-
 
       for (int i = 0; i < _curves.Count; i++)
       {
         MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.12, 10);
-        DiffuseMaterial lineMaterial = new DiffuseMaterial(brushes[i]);
+        DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         _myModel3DGroup.Children.Add(lineModel);
@@ -228,7 +227,7 @@ namespace MML_ParametricCurveVisualizer
         Off.OffsetY = _spheres[i].Y;
         Off.OffsetZ = _spheres[i].Z;
 
-        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush { Color = Color.FromArgb(255, 0, 0, 255) });
+        var sphereMaterial = new DiffuseMaterial(_brushes[i]);
         GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
 
         sphereModel.Transform = Off;
