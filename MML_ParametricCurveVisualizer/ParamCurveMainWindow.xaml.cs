@@ -87,7 +87,7 @@ namespace MML_ParametricCurveVisualizer
 
       for (int i = 0; i < _curves.Count; i++)
       {
-        MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.12, 10);
+        MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.25, 10);
         DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
@@ -97,7 +97,7 @@ namespace MML_ParametricCurveVisualizer
 
     private void InitScene()
     {
-      _helper.InitCamera(new Point3D(180, 80, 150));
+      _helper.InitCamera(new Point3D(350, 100, 350));
       //_helper.InitLights(myModel3DGroup);
 
       AmbientLight ambLight = new AmbientLight();
@@ -220,7 +220,11 @@ namespace MML_ParametricCurveVisualizer
 
       for (int i = 0; i < _curves.Count; i++)
       {
-        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
+        MeshGeometry3D sphereGeometry;
+        if ( i==0 )
+          sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 5);
+        else
+          sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
 
         TranslateTransform3D Off = new TranslateTransform3D();
         Off.OffsetX = _spheres[i].X;

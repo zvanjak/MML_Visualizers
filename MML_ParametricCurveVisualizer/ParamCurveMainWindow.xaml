@@ -6,23 +6,23 @@
         xmlns:local="clr-namespace:MML_ParametricCurveVisualizer"
         mc:Ignorable="d"
         Title="Parametric curve visualizer" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
-    <Grid Background="Gray">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="200" />
-        </Grid.ColumnDefinitions>
+  <Grid Background="Gray">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="200" />
+    </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120" HorizontalAlignment="Center"/>
-        <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
+    <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Gravity simulation of five bodies" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+    <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
 
-        <Viewbox Grid.Row="1" Grid.Column="0">
-            <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="800" Canvas.Left="0" Canvas.Top="0" >
-            </Viewport3D>
-        </Viewbox>
-    </Grid>
+    <Viewbox Grid.Row="1" Grid.Column="0">
+      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="800" Canvas.Left="0" Canvas.Top="0" >
+      </Viewport3D>
+    </Viewbox>
+  </Grid>
 
 </Window>
