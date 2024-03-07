@@ -11,6 +11,8 @@ namespace MML_RealFunctionVisualizer
 {
   class MultiLoadedFunction : LoadedFunction
   {
+    public string _title;
+
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
 

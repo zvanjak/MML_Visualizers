@@ -157,16 +157,20 @@ namespace MML_RealFunctionVisualizer
 
         slf._loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
 
-        string[] partsX1 = lines[1].Split(' ');
+        slf._title = lines[1];
+        
+        _title = slf._title;
+
+        string[] partsX1 = lines[2].Split(' ');
         double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
-        string[] partsX2 = lines[2].Split(' ');
+        string[] partsX2 = lines[3].Split(' ');
         double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
-        string[] partsNumPoints = lines[3].Split(' ');
+        string[] partsNumPoints = lines[4].Split(' ');
         int numPoints = int.Parse(partsNumPoints[1]);
 
-        for (int i = 4; i < lines.Length; i++)
+        for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
@@ -198,13 +202,13 @@ namespace MML_RealFunctionVisualizer
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();
 
-        string title     = lines[1];
+        mlf._title       = lines[1];
         int    dim       = int.Parse(lines[2]);
         int    numPoints = int.Parse(lines[3]);
         double xMin      = double.Parse(lines[4], CultureInfo.InvariantCulture);
         double xMax      = double.Parse(lines[5], CultureInfo.InvariantCulture);
 
-        _title = title;
+        _title = mlf._title;
 
         mlf._multiFuncX = new MML.Vector(numPoints);
         mlf._multiFuncY = new MML.Matrix(dim, numPoints);

@@ -29,6 +29,8 @@ namespace MML_VectorFieldVisualizer
   {
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
+    string _title;
+
     public MainWindow()
     {
       InitializeComponent();
@@ -44,6 +46,8 @@ namespace MML_VectorFieldVisualizer
       var fileName = args[1];
 
       var listVecs = LoadData(fileName);
+
+      txtTitle.Text = _title;
 
       // analizirati podatke
       // naci bounding cube, da se vidi GDJE iscrtavamo polje
@@ -100,10 +104,14 @@ namespace MML_VectorFieldVisualizer
       }
 
       string[] lines = File.ReadAllLines(inFileName);
+      
       string type = lines[0];
+      
+      _title = lines[1];
+      
       if (type == "VECTOR_FIELD_3D_CARTESIAN")
       {
-        for (int i = 1; i < lines.Length; i++)
+        for (int i = 2; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 

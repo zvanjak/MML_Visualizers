@@ -29,6 +29,7 @@ namespace MML_ScalarFunction2Visualizer
   public partial class MainWindow : Window
   {
     private Matrix _vals;
+
     private double _xMin;
     private double _xMax;
     private int _numPointsX;
@@ -155,6 +156,13 @@ namespace MML_ScalarFunction2Visualizer
 
           _vals.SetElemAt(count / _numPointsY, count % _numPointsY, z);
           count++;
+        }
+
+        // provjeriti count da se slaze s _numPointsX i _numPointsY
+        if( count != _numPointsX * _numPointsY )
+        {
+          MessageBox.Show("Count does not match _numPointsX and _numPointsY. \nCount = " + count.ToString() + " numPoints X*Y = " + (_numPointsX * _numPointsY).ToString());
+          return false;
         }
       }
       else

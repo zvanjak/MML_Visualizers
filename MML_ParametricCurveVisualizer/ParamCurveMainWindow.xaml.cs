@@ -50,6 +50,8 @@ namespace MML_ParametricCurveVisualizer
 
     List<Sphere> _spheres = new List<Sphere>();
 
+    string _title;
+
     public MainWindow()
     {
       InitializeComponent();
@@ -135,16 +137,18 @@ namespace MML_ParametricCurveVisualizer
 
       if (type == "PARAMETRIC_CURVE_CARTESIAN_3D")
       {
-        string[] partsT1 = lines[1].Split(' ');
+        _title = lines[1];
+
+        string[] partsT1 = lines[2].Split(' ');
         double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
 
-        string[] partsT2 = lines[2].Split(' ');
+        string[] partsT2 = lines[3].Split(' ');
         double t2 = double.Parse(partsT2[1], CultureInfo.InvariantCulture);
 
-        string[] partsNumPoints = lines[3].Split(' ');
+        string[] partsNumPoints = lines[4].Split(' ');
         int numPoints = int.Parse(partsNumPoints[1]);
 
-        for (int i = 4; i < lines.Length; i++)
+        for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 

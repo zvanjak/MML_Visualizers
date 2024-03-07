@@ -11,6 +11,7 @@ namespace MML_RealFunctionVisualizer
 {
   class SingleLoadedFunction : LoadedFunction
   {
+    public string _title;
     public LoadedType _loadedType;
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
