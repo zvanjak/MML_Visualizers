@@ -16,9 +16,12 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
+    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="400" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+
     <Viewbox Grid.Row="1" Grid.Column="0">
       <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0" >
       </Viewport3D>
     </Viewbox>
+    <CheckBox x:Name="checkShowSurfacePoints" Grid.Column="1" Content="Show surface points" HorizontalAlignment="Center" Margin="0,24,0,0" Grid.Row="1" VerticalAlignment="Top" Checked="checkShowSurfacePoints_Checked"/>
   </Grid>
 </Window>

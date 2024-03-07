@@ -36,8 +36,11 @@ namespace MML_ScalarFunction2Visualizer
     private double _yMax;
     private int _numPointsY;
 
+    string _title = "";
+
     double _scaleX = 10;
     double _scaleY = 10;
+    bool _bShowSurfacePoints = false;
 
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
@@ -72,6 +75,8 @@ namespace MML_ScalarFunction2Visualizer
 
       if (LoadData(fileName))
       {
+        txtTitle.Text = _title;
+
         for (int i = 0; i < _vals.Rows; i++)
           for (int j = 0; j < _vals.Cols; j++)
           {
@@ -79,11 +84,14 @@ namespace MML_ScalarFunction2Visualizer
             double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
             double z = _vals.ElemAt(i, j);
 
-            MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
-            var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-            GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
+            if (_bShowSurfacePoints)
+            {
+              MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
+              var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+              GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
 
-            myModel3DGroup.Children.Add(cubeModel);
+              myModel3DGroup.Children.Add(cubeModel);
+            }
 
             //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
             //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
@@ -114,28 +122,30 @@ namespace MML_ScalarFunction2Visualizer
 
       if (type == "SCALAR_FUNCTION_CARTESIAN_2D")
       {
-        string[] partsX1 = lines[1].Split(' ');
+        _title = lines[1];
+
+        string[] partsX1 = lines[2].Split(' ');
         _xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
-        string[] partsX2 = lines[2].Split(' ');
+        string[] partsX2 = lines[3].Split(' ');
         _xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
-        string[] partsNumPointsX = lines[3].Split(' ');
+        string[] partsNumPointsX = lines[4].Split(' ');
         _numPointsX = int.Parse(partsNumPointsX[1]);
 
-        string[] partsY1 = lines[4].Split(' ');
+        string[] partsY1 = lines[5].Split(' ');
         _yMin = double.Parse(partsY1[1], CultureInfo.InvariantCulture);
 
-        string[] partsY2 = lines[5].Split(' ');
+        string[] partsY2 = lines[6].Split(' ');
         _yMax = double.Parse(partsY2[1], CultureInfo.InvariantCulture);
 
-        string[] partsNumPointsY = lines[6].Split(' ');
+        string[] partsNumPointsY = lines[7].Split(' ');
         _numPointsY = int.Parse(partsNumPointsY[1]);
 
         _vals = new Matrix(_numPointsX, _numPointsY);
 
         int count = 0;
-        for (int i = 7; i < lines.Length; i++)
+        for (int i = 8; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
 
@@ -184,6 +194,20 @@ namespace MML_ScalarFunction2Visualizer
     private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
+    }
+
+    private void checkShowSurfacePoints_Checked(object sender, RoutedEventArgs e)
+    {
+      if( checkShowSurfacePoints.IsChecked == true )
+      {
+        _bShowSurfacePoints = true;
+      }
+      else
+      {
+        _bShowSurfacePoints = false;
+      }
+
+      myViewport3D.InvalidateVisual();
     }
   }
 }
