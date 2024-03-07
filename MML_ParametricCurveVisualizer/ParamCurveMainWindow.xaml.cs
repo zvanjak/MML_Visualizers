@@ -87,7 +87,7 @@ namespace MML_ParametricCurveVisualizer
 
       for (int i = 0; i < _curves.Count; i++)
       {
-        MeshGeometry3D line = Geometries.CreateLine2(_curves[i]._curveTrace, 0.25, 10);
+        MeshGeometry3D line = Geometries.CreatePolyLine(_curves[i]._curveTrace, 0.25, 10);
         DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
