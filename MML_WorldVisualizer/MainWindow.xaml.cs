@@ -37,14 +37,28 @@ namespace MML_WorldVisualizer
       if (args.Length < 2)
       {
         MessageBox.Show("No file name specified.");
-        return;
+        //return;
+        //var fileName = args[1];
       }
 
-      var fileName = args[1];
 
-      if (LoadData(fileName))
-      {
-      }
+      //if (LoadData(fileName))
+      //{
+      //}
+
+            // Declare scene objects.
+      Model3DGroup myModel3DGroup = new Model3DGroup();
+
+      _helper.InitCamera(new Point3D(180, 80, 150));
+      _helper.InitLights(myModel3DGroup);
+      myViewport3D.Camera = _helper._myCamera;
+
+      ModelVisual3D myModelVisual3D = new ModelVisual3D();
+      myModelVisual3D.Content = myModel3DGroup;
+
+      myViewport3D.Children.Add(myModelVisual3D);
+
+      Utils.DrawCoordSystem(myModel3DGroup);
     }
 
     bool LoadData(string inFileName)
