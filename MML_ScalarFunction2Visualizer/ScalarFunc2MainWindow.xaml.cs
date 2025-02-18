@@ -41,7 +41,7 @@ namespace MML_ScalarFunction2Visualizer
 
     double _scaleX = 10;
     double _scaleY = 10;
-    bool _bShowSurfacePoints = false;
+    bool _bShowSurfacePoints = true;
 
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 

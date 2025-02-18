@@ -53,14 +53,14 @@ namespace MML_RealFunctionVisualizer
       colors.Add(Colors.Blue);
       colors.Add(Colors.Red);
       colors.Add(Colors.Green);
-      colors.Add(Colors.Yellow);
+      colors.Add(Colors.Orange);
 
       List<Brush> brushes = new List<Brush>();
       brushes.Add(Brushes.Black);
       brushes.Add(Brushes.Blue);
       brushes.Add(Brushes.Red);
       brushes.Add(Brushes.Green);
-      brushes.Add(Brushes.Yellow);
+      brushes.Add(Brushes.Orange);
 
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
