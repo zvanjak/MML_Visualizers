@@ -39,7 +39,7 @@ namespace MML_ParametricCurveVisualizer
         new SolidColorBrush(Colors.Blue),
         new SolidColorBrush(Colors.Red),
         new SolidColorBrush(Colors.Green),
-        new SolidColorBrush(Colors.Yellow)
+        new SolidColorBrush(Colors.Orange)
       };
 
     List<LoadedCurve> _curves = new List<LoadedCurve>();
