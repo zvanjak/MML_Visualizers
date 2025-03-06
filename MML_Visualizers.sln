@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibCSharp", "..\MathLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurve3D_Visualizer", "MML_ParametricCurveVisualizer\MML_ParametricCurve3D_Visualizer.csproj", "{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2Visualizer", "MML_ScalarFunction2Visualizer\MML_ScalarFunction2Visualizer.csproj", "{B3829DBE-D979-4C47-9008-935F3D2E28E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2D_Visualizer", "MML_ScalarFunction2Visualizer\MML_ScalarFunction2D_Visualizer.csproj", "{B3829DBE-D979-4C47-9008-935F3D2E28E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction3Visualizer", "MML_ScalarFunction3Visualizer\MML_ScalarFunction3Visualizer.csproj", "{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction3D_Visualizer", "MML_ScalarFunction3Visualizer\MML_ScalarFunction3D_Visualizer.csproj", "{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_WorldVisualizer", "MML_WorldVisualizer\MML_WorldVisualizer.csproj", "{9EA2F264-D689-477C-837A-2ABC52061326}"
 EndProject
