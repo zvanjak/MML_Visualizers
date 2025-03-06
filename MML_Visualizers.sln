@@ -20,9 +20,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction3D_Visualizer", "MML_ScalarFunction3D_Visualizer\MML_ScalarFunction3D_Visualizer.csproj", "{B889249A-0B96-41D7-9A50-DF1F0207BCC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8151BBC-59C4-4ADF-95B8-BF32BB234CE9}"
-	ProjectSection(SolutionItems) = preProject
-		MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.csproj = MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.csproj
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_VectorField3D_Visualizer", "MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.csproj", "{DBFACD17-8537-4150-B289-465912C68E59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_VectorField2D_Visualizer", "MML_VectorField2D_Visualizer\MML_VectorField2D_Visualizer.csproj", "{644313DB-A9DE-447D-8783-CC591C726B3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParticleVisualizer2D", "MML_ParticleVisualizer2D\MML_ParticleVisualizer2D.csproj", "{6B85AF5D-0292-49EE-AB1E-C1A25074FF87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParticleVisualizer3D", "MML_ParticleVisualizer3D\MML_ParticleVisualizer3D.csproj", "{0B9F5682-CB5C-4D4A-AC23-D281F42F2060}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +67,22 @@ Global
 		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBFACD17-8537-4150-B289-465912C68E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBFACD17-8537-4150-B289-465912C68E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBFACD17-8537-4150-B289-465912C68E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBFACD17-8537-4150-B289-465912C68E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{644313DB-A9DE-447D-8783-CC591C726B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{644313DB-A9DE-447D-8783-CC591C726B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{644313DB-A9DE-447D-8783-CC591C726B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{644313DB-A9DE-447D-8783-CC591C726B3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B85AF5D-0292-49EE-AB1E-C1A25074FF87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B85AF5D-0292-49EE-AB1E-C1A25074FF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B85AF5D-0292-49EE-AB1E-C1A25074FF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B85AF5D-0292-49EE-AB1E-C1A25074FF87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B9F5682-CB5C-4D4A-AC23-D281F42F2060}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B9F5682-CB5C-4D4A-AC23-D281F42F2060}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B9F5682-CB5C-4D4A-AC23-D281F42F2060}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B9F5682-CB5C-4D4A-AC23-D281F42F2060}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
