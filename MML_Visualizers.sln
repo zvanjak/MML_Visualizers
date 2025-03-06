@@ -5,21 +5,24 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_RealFunctionVisualizer", "MML_RealFunctionVisualizer\MML_RealFunctionVisualizer.csproj", "{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_VectorFieldVisualizer", "MML_VectorFieldVisualizer\MML_VectorFieldVisualizer.csproj", "{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibCSharp", "..\MathLibCSharp\MathLibCSharp\MathLibCSharp.csproj", "{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurve3D_Visualizer", "MML_ParametricCurveVisualizer\MML_ParametricCurve3D_Visualizer.csproj", "{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2D_Visualizer", "MML_ScalarFunction2Visualizer\MML_ScalarFunction2D_Visualizer.csproj", "{B3829DBE-D979-4C47-9008-935F3D2E28E1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction3D_Visualizer", "MML_ScalarFunction3Visualizer\MML_ScalarFunction3D_Visualizer.csproj", "{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_WorldVisualizer", "MML_WorldVisualizer\MML_WorldVisualizer.csproj", "{9EA2F264-D689-477C-837A-2ABC52061326}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF3DHelperLib", "..\WPF_3D_Helper\WPF3DHelperLib\WPF3DHelperLib.csproj", "{6BDAACA7-A7D5-4CE8-8700-C074E35758C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurve2D_Visualizer", "MML_ParametricCurve2D_Visualizer\MML_ParametricCurve2D_Visualizer.csproj", "{7E0BAE6D-F259-4027-A1C6-A4CF720DC410}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurve3D_Visualizer", "MML_ParametricCurve3D_Visualizer\MML_ParametricCurve3D_Visualizer.csproj", "{A729CBC1-8445-41B4-82C9-256E27085BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2D_Visualizer", "MML_ScalarFunction2D_Visualizer\MML_ScalarFunction2D_Visualizer.csproj", "{540047F8-2133-4F5F-896B-70838B0A8E6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction3D_Visualizer", "MML_ScalarFunction3D_Visualizer\MML_ScalarFunction3D_Visualizer.csproj", "{B889249A-0B96-41D7-9A50-DF1F0207BCC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8151BBC-59C4-4ADF-95B8-BF32BB234CE9}"
+	ProjectSection(SolutionItems) = preProject
+		MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.csproj = MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.csproj
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,26 +34,10 @@ Global
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F0F1835-7AC9-4C4B-B3DB-557DDD218465}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57AC989C-E2A9-4A2D-9517-81A7B4B2F8CC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3829DBE-D979-4C47-9008-935F3D2E28E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB4481B2-7A65-4C1B-B93A-C130DB8FBBBA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9EA2F264-D689-477C-837A-2ABC52061326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9EA2F264-D689-477C-837A-2ABC52061326}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EA2F264-D689-477C-837A-2ABC52061326}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,6 +50,18 @@ Global
 		{7E0BAE6D-F259-4027-A1C6-A4CF720DC410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E0BAE6D-F259-4027-A1C6-A4CF720DC410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E0BAE6D-F259-4027-A1C6-A4CF720DC410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A729CBC1-8445-41B4-82C9-256E27085BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A729CBC1-8445-41B4-82C9-256E27085BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A729CBC1-8445-41B4-82C9-256E27085BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A729CBC1-8445-41B4-82C9-256E27085BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{540047F8-2133-4F5F-896B-70838B0A8E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{540047F8-2133-4F5F-896B-70838B0A8E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{540047F8-2133-4F5F-896B-70838B0A8E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{540047F8-2133-4F5F-896B-70838B0A8E6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B889249A-0B96-41D7-9A50-DF1F0207BCC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
