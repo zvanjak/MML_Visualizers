@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_VectorFieldVisualizer",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibCSharp", "..\MathLibCSharp\MathLibCSharp\MathLibCSharp.csproj", "{228B1D60-6FFD-4C16-8867-8DEA4DCEC6D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurveVisualizer", "MML_ParametricCurveVisualizer\MML_ParametricCurveVisualizer.csproj", "{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ParametricCurve3D_Visualizer", "MML_ParametricCurveVisualizer\MML_ParametricCurve3D_Visualizer.csproj", "{32828A08-37CC-4A4C-A6A1-A7B74DE1D276}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MML_ScalarFunction2Visualizer", "MML_ScalarFunction2Visualizer\MML_ScalarFunction2Visualizer.csproj", "{B3829DBE-D979-4C47-9008-935F3D2E28E1}"
 EndProject

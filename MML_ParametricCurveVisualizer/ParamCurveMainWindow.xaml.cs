@@ -22,7 +22,7 @@ using MML;
 using MML_VectorFieldVisualizer;
 using WPF3DHelperLib;
 
-namespace MML_ParametricCurveVisualizer
+namespace MML_ParametricCurve3D_Visualizer
 {
   class LoadedCurve
   {

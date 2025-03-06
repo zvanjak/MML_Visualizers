@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MML_ParametricCurveVisualizer
+namespace MML_ParametricCurve3D_Visualizer
 {
   /// <summary>
   /// Interaction logic for App.xaml
