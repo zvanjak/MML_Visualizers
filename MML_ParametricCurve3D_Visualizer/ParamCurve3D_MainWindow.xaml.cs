@@ -50,7 +50,7 @@ namespace MML_ParametricCurve3D_Visualizer
 
     List<Sphere> _spheres = new List<Sphere>();
 
-    string _title;
+    string _title = "Visualizing param curve";
 
     public MainWindow()
     {
@@ -95,6 +95,8 @@ namespace MML_ParametricCurve3D_Visualizer
 
         _myModel3DGroup.Children.Add(lineModel);
       }
+
+      txtTitle.Text = _title;
     }
 
     private void InitScene()
