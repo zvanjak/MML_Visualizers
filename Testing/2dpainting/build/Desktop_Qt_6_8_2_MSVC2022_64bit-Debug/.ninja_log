@@ -1,0 +1,12 @@
+# ninja log v6
+18	438	7633022833258605	2dpainting_autogen/timestamp	c31b087fc7568ceb
+18	438	7633022833258605	2dpainting_autogen/mocs_compilation.cpp	c31b087fc7568ceb
+18	438	7633022833258605	C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/2dpainting_autogen/timestamp	c31b087fc7568ceb
+18	438	7633022833258605	C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/2dpainting_autogen/mocs_compilation.cpp	c31b087fc7568ceb
+455	2400	7633022833955477	CMakeFiles/2dpainting.dir/main.cpp.obj	f4a5637907226c06
+458	2414	7633022833985478	CMakeFiles/2dpainting.dir/widget.cpp.obj	5e060bf8b63283a0
+448	2429	7633022833880444	CMakeFiles/2dpainting.dir/glwidget.cpp.obj	5eca91573d05adc4
+444	2465	7633022833836327	CMakeFiles/2dpainting.dir/2dpainting_autogen/mocs_compilation.cpp.obj	d10a2123701dad57
+462	2472	7633022834015489	CMakeFiles/2dpainting.dir/window.cpp.obj	5db4801dacfb5a03
+452	2519	7633022833915489	CMakeFiles/2dpainting.dir/helper.cpp.obj	8d72d5695d1f6a5e
+2519	2855	7633022854587655	2dpainting.exe	fcc1ebd405598aa5

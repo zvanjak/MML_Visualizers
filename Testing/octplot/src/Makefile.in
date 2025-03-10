@@ -1,0 +1,94 @@
+## based on octave-forge
+
+@SET_MAKE@
+
+SHELL = /bin/sh
+
+## canonical_host_type = @canonical_host_type@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+mandir = @mandir@
+libdir = @libdir@
+datadir = @datadir@
+infodir = @infodir@
+includedir = @includedir@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALLOCT=octinst.sh
+
+RANLIB = @RANLIB@
+STRIP = @STRIP@
+LN_S = @LN_S@
+EXEEXT = @EXEEXT@
+RM = @RM@
+
+CXX = @CXX@
+CXXFLAGS = @CXXFLAGS@
+
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+
+OCTAVE = @OCTAVE@
+MKOCTFILE = @MKOCTFILE@ -DHAVE_OCTAVE_$(ver) -v
+
+ver = @ver@
+MPATH = @mpath@
+OPATH = @opath@
+XPATH = @xpath@
+
+CXXCOMPILE = $(CXX) $(CPPFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $@
+
+
+%.o: %.c ; $(MKOCTFILE) -c $<
+%.o: %.f ; $(MKOCTFILE) -c $<
+%.o: %.cc ; $(MKOCTFILE) -c $<
+%.oct: %.cc ; $(MKOCTFILE) $<
+
+%.o: %.cpp ; $(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+
+%.d: %.cpp
+	$(SHELL) -ec '$(CXX) -MM $(CXXFLAGS) $< \
+		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
+		[ -s $@ ] || rm -f $@'
+
+%.d: %.c
+	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $< \
+		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
+		[ -s $@ ] || rm -f $@'
+
+octplot_OBJECTS = \
+  caselessless.o  octplot_main.o  object.o octplotapp.o figure.o \
+  axes.o text.o root.o property.o op_com.o gl2ps.o figurewindow.o \
+  line.o util.o
+
+
+all: octplot$(EXEEXT) octplot_command.oct octplot_redraw.oct contourl.oct \
+  oset.m ohold.m
+
+octplot_command.oct: octplot_command.o op_com.o 
+	$(MKOCTFILE) op_com.o octplot_command.o -o octplot_command.oct
+ 
+octplot_redraw.oct : octplot_command.oct
+	$(LN_S) octplot_command.oct octplot_redraw.oct
+
+# builtin octave functions override using dispatch
+oset.m: set.m
+	$(LN_S) set.m oset.m
+
+ohold.m: hold.m
+	$(LN_S) hold.m ohold.m
+
+octplot$(EXEEXT): $(octplot_OBJECTS) $(octplot_DEPENDENCIES) 
+	$(RM) -f octplot$(EXEEXT)
+	$(CXXLINK) $(octplot_LDFLAGS) $(octplot_OBJECTS) $(octplot_LDADD) $(LIBS)
+# this last line is needed on MAC OS X
+	fltk-config --post octplot$(EXEEXT)
+
+clean:
+	$(RM) -f *.o *.oct *.d octplot$(EXEEXT)
+
+include $(octplot_OBJECTS:.o=.d)

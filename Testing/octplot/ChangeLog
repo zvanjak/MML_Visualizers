@@ -1,0 +1,110 @@
+Release 0.2.0
+
+	* contour.m contourc.m contourl.cc
+	fixed some bugs hopefully they work now
+
+	* axes.cpp
+	fixed some bugs, auto limits should work on first redraw
+
+	* added our own definition of NaN (swiped from octave)
+
+	* line.cpp , axes.cpp, text.cpp , loglog.m, semilogx.m , semilogy.m
+	log axis support
+
+	* line.cpp, line.h
+	Added missing value (NaN) support in lines
+
+	* subplot.m
+	added subplot support
+
+	* util.cpp
+	Added the ::Set commands for easy and safe setting of properties
+
+	* figure.cpp,axes.cpp
+	Added GL2PS_BSP_SORT to printing so that eps files look 
+	as they should (mainly, text now shows on the canvas)
+
+	* axes.cpp , xlabel.m , ylabel.m
+	Added support for x & y label still far from perfect.
+
+	* Axes::draw
+	clipping is now done with clipping planes so that the ps 
+	output is also clipped
+
+	* stem.m
+	added stem.m
+
+	* __plt__, set
+	fixed bug when plotting matrix vs. matrix
+	set can now set a handle vector
+
+	* Figurewindow::handle
+	shift-click now also unzooms
+	'a' unzooms
+	'g' toggles grid
+
+	* Text
+	added fontname & fontsize properties
+
+	* Axes::SetPrinting
+	fixed bug where children's printing was always set to true
+
+	* Axes::AutoTicks, Axes::AutoTicksAxis
+	better autoticks -- now they actually work !
+
+	* Axes::draw
+	first gridline is not drawn if it coinsident with axis
+
+	* __pltopt__
+	set marker to be the same color as line
+
+=================================================
+Release 0.1.5
+
+	* ohold
+	fixed ohold to use strcmp 
+	Request ID 985270
+
+	* FigureWindow::handle
+	fixed zoom working in status line 
+	Request ID 985381
+
+	* main
+	made the "bug" window have a border on Win with fltk <=1.1.4 
+	Request ID 985294
+
+	* Axes::Draw
+	added gridline support with new gridlinestyle property
+
+	* grid , octplot_setup , Makefile.in
+	added grid command
+
+	* plot , op_com.h , octplot_command , Axes::Parse , cla
+	added cla command, made plot call cla, not clf
+
+	* Axis::AutoTicks Axis::TickInterval
+	better tick location if axis~= auto
+
+	* Figure::Figure figure.m
+	Added the number property and the ability to select the figure
+
+	*Figure::Parse octplot_command op_com.h axes.m
+	added axes command to add new axes
+
+	*Line::draw
+	Added support for gl2ps line stipple -- still not working consistently. 
+	Corrected * marker style
+	fixed bug 993662 
+
+	*text::draw
+	gl2ps alignment is now done by fltk also thanks to the suggestion by Christophe Geuzaine
+
+	print.m
+	Added basic postscript printing command
+
+	__pltopt__.m
+	if no linestyle exists, set linestyle to none. 
+	added support for "x" marker style
+
+	README.in
+	added recommendation for octave-forge >= 2004.07.07

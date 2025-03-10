@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-0e2afd13beec14089046.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "2dpainting",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "2dpainting::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-2dpainting-Debug-92b3dee7fae74bb780ae.json",
+					"name" : "2dpainting",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "2dpainting_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-2dpainting_autogen-Debug-ae88137e984c4ea1bec9.json",
+					"name" : "2dpainting_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "2dpainting_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-2dpainting_autogen_timestamp_deps-Debug-f30e211db90ac0cbf68e.json",
+					"name" : "2dpainting_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug",
+		"source" : "C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

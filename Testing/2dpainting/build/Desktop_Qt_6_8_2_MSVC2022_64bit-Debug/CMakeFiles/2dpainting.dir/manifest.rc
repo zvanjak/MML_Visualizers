@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/2dpainting.dir/embed.manifest"

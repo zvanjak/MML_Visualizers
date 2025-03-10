@@ -1,0 +1,8 @@
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/2dpainting.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/edit_cache.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/list_install_components.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/install.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/install/local.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/2dpainting_autogen_timestamp_deps.dir
+C:/Dev/Qt/Examples/Qt-6.8.2/opengl/2dpainting/build/Desktop_Qt_6_8_2_MSVC2022_64bit-Debug/CMakeFiles/2dpainting_autogen.dir

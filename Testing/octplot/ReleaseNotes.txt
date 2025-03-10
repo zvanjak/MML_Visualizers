@@ -1,0 +1,53 @@
+Release notes for 0.2.0
+
+Major new features in this release:
+
+* subplots -- look at subplot.m
+* log axis -- look at loglog.m, semilogx.m, semilogy.m
+* contour -- look at contour.m
+* missing value support using NaN
+* better auto ticks
+* better eps output -- look at print.m
+
+RoadMap:
+
+Release 0.2.5 
+
+mainly a bug fixing release 
+
+
+Release 0.3.0
+
+The "Text release": Axis labels, tick marks, legends, and titles should
+work flawlessly. This includes a complete overhaul of the text object:
+
+* move to the FTGL rendering library for rotateable, anti-alised fonts.
+* adding a "femtoTeX" parser which will parse at least the following
+TeX constructs: ^ _ {} \Alpha-\Zeta \alpha-\zeta
+
+These enhancements will affect all text objects including axis labels,
+titles, and tick marks
+
+
+Release 0.3.5 
+
+mainly a bug fixing release 
+
+
+Release 0.4.0
+
+The "2D release": I will add all the missing 2d functionality -- patch
+objects and the following functions
+
+patch, piechart, bar, area
+
+maybe arrow and errorbar
+
+
+Release 0.4.5 
+
+mainly a bug fixing release. 
+
+At this point octplot should prove to be a viable alternative to gnuplot
+for 2d graphs
+

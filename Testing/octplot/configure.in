@@ -1,0 +1,179 @@
+# Copyright (C) 2003 Shai Ayal <shaiay@yahoo.com>
+#  
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without 
+# modifications, as long as this notice is preserved.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+AC_INIT(src/object.h)
+AC_CONFIG_HEADERS(config.h:configh.in)
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AC_PROG_LN_S
+AC_CHECK_PROG(RM,rm,rm)
+AC_PROG_CC
+AC_PROG_CXX
+AC_CHECK_HEADERS(ieeefp.h)
+
+dnl Check for mkoctfile
+AC_CHECK_PROG(MKOCTFILE,mkoctfile,mkoctfile)
+test -z "$MKOCTFILE" && AC_MSG_WARN([no mkoctfile found on path])
+                                                                                
+AC_SUBST(ver)
+AC_SUBST(subver)
+AC_SUBST(mpath)
+AC_SUBST(opath)
+AC_SUBST(xpath)
+AC_SUBST(debugf)
+                                                                                
+AC_ARG_WITH(path,
+        [  --with-path             install path prefix],
+        [ path=$withval ])
+AC_ARG_WITH(mpath,
+        [  --with-mpath            override path for m-files],
+        [mpath=$withval])
+AC_ARG_WITH(opath,
+        [  --with-opath            override path for oct-files],
+        [opath=$withval])
+AC_ARG_WITH(xpath,
+        [  --with-xpath            override path for executables],
+        [xpath=$withval])
+AC_ARG_WITH(debugf,
+        [  --with-debug            verbose debug during run],
+        [debugf=$withval , debugf=""])
+                                                                                
+if test -n "$path" ; then
+   test -z "$mpath" && mpath=$path
+   test -z "$opath" && opath=$path/oct
+   test -z "$xpath" && xpath=$path/bin
+fi
+
+dnl add no-debug flag unless debug is requested
+test -z "$debugf" && CXXFLAGS="$CXXFLAGS -DNDEBUG"
+               
+dnl Don't query if path/ver are given in the configure environment
+if test -z "$mpath" || test -z "$opath" || test -z "$xpath" || test -z "$ver" ;
+then
+                                                                                
+   dnl Construct program to get mkoctfile version and local install paths
+   cat > conftest.cc <<EOF
+#include <octave/config.h>
+#include <octave/version.h>
+#include <octave/defaults.h>
+                                                                                
+#define INFOV "\nINFOV=" OCTAVE_VERSION "\n"
+                                                                                
+#ifdef OCTAVE_LOCALVERFCNFILEDIR
+# define INFOM "\nINFOM=" OCTAVE_LOCALVERFCNFILEDIR "\n"
+#else
+# define INFOM "\nINFOM=" OCTAVE_LOCALFCNFILEPATH "\n"
+#endif
+                                                                                
+#ifdef OCTAVE_LOCALVEROCTFILEDIR
+# define INFOO "\nINFOO=" OCTAVE_LOCALVEROCTFILEDIR "\n"
+#else
+# define INFOO "\nINFOO=" OCTAVE_LOCALOCTFILEPATH  "\n"
+#endif
+                                                                                
+#ifdef OCTAVE_LOCALVERARCHLIBDIR
+# define INFOX "\nINFOX=" OCTAVE_LOCALVERARCHLIBDIR  "\n"
+#else
+# define INFOX "\nINFOX=" OCTAVE_LOCALARCHLIBDIR  "\n"
+#endif
+                                                                                
+const char *infom = INFOM;
+const char *infoo = INFOO;
+const char *infox = INFOX;
+const char *infov = INFOV;
+EOF
+                                                                                
+   dnl Compile program perhaps with a special version of mkoctfile
+   $MKOCTFILE conftest.cc || AC_MSG_ERROR(Could not run $MKOCTFILE)
+                                                                                
+ 
+   dnl Strip the config info from the compiled file
+   eval `strings conftest.o | grep "^INFO.=" | sed -e "s,//.*$,,"`
+   rm -rf conftest*
+                                                                                
+   dnl set the appropriate variables if they are not already set
+   ver=`echo $INFOV | sed -e "s/\.//" -e "s/\..*$//"`
+   subver=`echo $INFOV | sed -e "s/^[^.]*[.][^.]*[.]//"`
+   test -z "$mpath" && mpath=$INFOM/octplot
+   test -z "$opath" && opath=$INFOO/octplot
+   test -z "$xpath" && xpath=$INFOX
+fi
+                                                                                
+AC_CHECK_PROG(OCTAVE,octave,octave)
+OCTAVE_VERSION=`echo "disp(OCTAVE_VERSION)" | $OCTAVE -qf`
+
+dnl Check for the fltk library
+dnl
+dnl Get the cflags and libraries from the fltk-config script
+dnl
+AC_ARG_WITH(fltk-prefix,[  --with-fltk-prefix=PFX   Prefix where FLTK is installed (optional)],
+            fltk_prefix="$withval", fltk_prefix="")
+AC_ARG_WITH(fltk-exec-prefix,[  --with-fltk-exec-prefix=PFX Exec prefix where FLTK is installed (optional)],
+            fltk_exec_prefix="$withval", fltk_exec_prefix="")
+
+if test x$fltk_exec_prefix != x ; then
+     fltk_args="$fltk_args --exec-prefix=$fltk_exec_prefix"
+     if test x${FLTK_CONFIG+set} != xset ; then
+        FLTK_CONFIG=$fltk_exec_prefix/bin/fltk-config
+     fi
+fi
+if test x$fltk_prefix != x ; then
+     fltk_args="$fltk_args --prefix=$fltk_prefix"
+     if test x${FLTK_CONFIG+set} != xset ; then
+        FLTK_CONFIG=$fltk_prefix/bin/fltk-config
+     fi
+fi
+AC_PATH_PROG(FLTK_CONFIG, fltk-config, no)
+no_fltk=""
+if test "$FLTK_CONFIG" = "no" ; then
+    AC_MSG_ERROR([
+*** Unable to find Fltk2 library (http://www.fltk.org/)
+])
+else
+    CFLAGS="$CFLAGS `$FLTK_CONFIG $fltkconf_args --use-gl --cflags`"
+    CXXFLAGS="$CXXFLAGS `$FLTK_CONFIG $fltkconf_args --use-gl --cxxflags`"
+    LIBS="$LIBS `$FLTK_CONFIG $fltkconf_args --use-gl --libs`"
+    LIBS="$LIBS `$FLTK_CONFIG $fltkconf_args --use-gl --ldflags`"
+    FLTK_VERSION=`$FLTK_CONFIG $fltkconf_args --version`
+fi
+
+AC_MSG_CHECKING(for OpenGL support in fltk)
+cat > conftest.cc <<EOF
+#include <FL/gl.h>
+int nothing=0;
+EOF
+$CXX $CXXFLAGS -c conftest.cc || AC_MSG_ERROR([
+*** your fltk was not compiled with OpenGL support
+*** consult README for help
+])
+AC_MSG_RESULT(yes)
+
+AC_DEFINE_UNQUOTED(MPATH, "$mpath", m-file install path)
+AC_DEFINE_UNQUOTED(OPATH, "$opath", oct-file install path)
+AC_DEFINE_UNQUOTED(XPATH, "$xpath",  binary install path -- this is where the octplot binary will reside)
+
+AC_OUTPUT(README src/Makefile)
+
+AC_MSG_RESULT([
+ocplot commands will install into the following directories:
+   m-files:   $mpath
+   oct-files: $opath
+   binaries:  $xpath
+                                                                                
+octplot is configured with
+   fltk:        version $FLTK_VERSION with OpenGl support
+   octave:      $OCTAVE (version $OCTAVE_VERSION)
+   mkoctfile:   $MKOCTFILE for Octave $subver
+])
+
+echo "  \"\$prefix\" is $prefix"
+echo "  \"\$exec_prefix\" is $exec_prefix"
+ 
+ 

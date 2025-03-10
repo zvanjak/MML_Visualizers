@@ -1,0 +1,113 @@
+Welcome to octplot.
+
+octplot is free software. Please see the file COPYING for details. For
+documentation, please see the files in the doc
+subdirectory. (currently no useful files).
+
+In this release, there is no install target, so compile octplot, and
+then cd to the "src" directory. From there run the "setup_octplot"
+script. Now you can try all the "m" files. Example:
+
+############################################
+## first, setup octplot
+setup_octplot
+
+## simple sin with line property settings
+h=plot(sin( (0:10000)/10000*2*pi),"b-");
+
+## change line style and add markers -- might be slow since there are
+## 1e4 data points
+set(h,"linestyle","--","marker","o");
+
+## now change x-axis to log
+set(gca(),"XScale","log");
+
+## now make an eps hardcopy
+print("demo.eps");
+
+###############################################
+## freqz plot (requires octave-forge for butter.m)
+## shows off subplots
+[b,a]=butter(5,[0.4,0.6],"stop");
+freqz(b,a);
+
+##############################################
+## simple contour plot
+clf();
+[x,y]=meshgrid(-2:.2:2, -2:.2:3); 
+z = x.*exp(-x.^2 - y.^2);
+contour(x,y,z);
+grid("on");
+
+try zooming using the left mouse button, zoom-out using the right
+mouse button, double click to transfer curentmouse coords to
+clipboard. press "g" to toggle grid
+
+for help on object properties try:
+help figure_props
+help axes_props
+help line_props
+help text_props
+
+Enjoy, and report the numerous bugs you find to me at sourceforge.
+
+==================================================
+
+Prequisites:
+
+of course octave is needed to run (not to compile though, except for
+the oct files). I recommend using octave version >= 2.1.50. Octplot
+also requires octave-forge, currently only for the dispatch function,
+but in the future, I will make use of many more functions from
+octave-forge. I recommend octave-forge >= 2004.07.07 because it has a
+superior dispatch function.
+
+Octplot relies on fltk (tested with fltk-1.1.4) compiled with OpenGL
+support. fltk is available from www.fltk.org and in binary form for a
+lot of platforms (I know of redhat, fedora, cygwin) If you are
+compiling fltk from source, be sure to enable OpenGL support in fltk
+by runing fltk's configure with at least the "--enable-gl" flag before
+compiling it i.e.:
+
+cd fltk-1.1.4
+./configure --enable-gl
+make
+make install
+
+LINUX:
+
+you might also want to add "--enable-xft" if your system supports it
+for nicer fonts, but this is not essential. If you don't have OpenGL
+support from your graphics card, use MESA www.mese.org to get software
+OpenGL. Most recent Linux distributions include MESA.
+
+If you do use MESA, set the GL_SWAP_TYPE enviroment variable to COPY
+to overcome some bugs and improve preformance
+
+WINDOWS:
+
+Your octave distribution must support oct file creation
+(i.e. mkoctfile must exist and do something usefull). I compiled
+octave-2.1.50 under cygwin with the "--enable-shared" flag and all
+works well for me (I have WinXP pro when not in Linux).
+
+You will need some sort of cygwin installation to compile
+octplot. fltk does come with cygwin, but I'm not sure it is configured
+correctly. If octplot's configure script fails, follow the instruction
+above on compiling fltk but add the "--enable-cygwin" flag to
+configure i.e.:
+
+cd fltk-1.1.4
+./configure --enable-gl --enable-cygwin
+make
+make install
+
+MAC:
+
+fltk and octave both support the mac. Paul Keinzle reports no
+particular problem compiling using fltk 1.1.5rc1.
+
+
+
+
+
