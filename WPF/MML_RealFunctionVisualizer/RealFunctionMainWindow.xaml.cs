@@ -50,7 +50,6 @@ namespace MML_RealFunctionVisualizer
     public abstract double GetMinY();
     public abstract double GetMaxY();
     public abstract int GetNumPoints();
-
   }
 
   /// <summary>

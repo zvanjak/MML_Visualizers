@@ -26,7 +26,6 @@ namespace MML_RealFunctionVisualizer
     {
       return _xVals.Count;
     }
-
     public override double GetMinX()
     {
       return _xVals.Min();
