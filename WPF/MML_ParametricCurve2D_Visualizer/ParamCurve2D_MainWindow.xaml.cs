@@ -22,13 +22,12 @@ namespace MML_ParametricCurve2D_Visualizer
   {
     List<LoadedParamCurve2D> _loadedCurves = new List<LoadedParamCurve2D>();
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
-    private string _title;
+    private string _title = "";
 
     public MainWindow()
     {
       InitializeComponent();
 
-      // REAL ARGS: func_sin_x_lin_interp.txt sin_func.txt
       var args = Environment.GetCommandLineArgs();
 
       if (args.Length < 2)
@@ -58,10 +57,10 @@ namespace MML_ParametricCurve2D_Visualizer
     }
     private void Redraw()
     {
-      //for (int i = 0; i < _loadedFunctions.Count; i++)
-      //{
-      //  _loadedFunctions[i].Draw(mainCanvas, _coordSystemParams);
-      //}
+      for (int i = 0; i < _loadedCurves.Count; i++)
+      {
+        _loadedCurves[i].Draw(mainCanvas, _coordSystemParams);
+      }
     }
 
     public bool LoadData(string inFileName, int index)
@@ -101,38 +100,38 @@ namespace MML_ParametricCurve2D_Visualizer
 
     private void InitializeCoordSysParams()
     {
-      //_coordSystemParams._xMin = _loadedFunctions[0].GetMinX();
-      //_coordSystemParams._xMax = _loadedFunctions[0].GetMaxX();
-      //_coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
-      //_coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
-      //_coordSystemParams._numPoints = _loadedFunctions[0].GetNumPoints();
+      _coordSystemParams._xMin = _loadedCurves[0].GetMinX();
+      _coordSystemParams._xMax = _loadedCurves[0].GetMaxX();
+      _coordSystemParams._yMin = _loadedCurves[0].GetMinY();
+      _coordSystemParams._yMax = _loadedCurves[0].GetMaxY();
+      _coordSystemParams._numPoints = _loadedCurves[0].GetNumPoints();
 
-      //for (int i = 1; i < _loadedFunctions.Count; i++)
-      //{
-      //  _coordSystemParams._xMin = Math.Min(_coordSystemParams._xMin, _loadedFunctions[i].GetMinX());
-      //  _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedFunctions[i].GetMaxX());
-      //  _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedFunctions[i].GetMinY());
-      //  _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedFunctions[i].GetMaxY());
-      //}
+      for (int i = 1; i < _loadedCurves.Count; i++)
+      {
+        _coordSystemParams._xMin = Math.Min(_coordSystemParams._xMin, _loadedCurves[i].GetMinX());
+        _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedCurves[i].GetMaxX());
+        _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedCurves[i].GetMinY());
+        _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedCurves[i].GetMaxY());
+      }
 
-      //_coordSystemParams._windowWidth = mainCanvas.Width;
-      //_coordSystemParams._windowHeight = mainCanvas.Height;
+      _coordSystemParams._windowWidth = mainCanvas.Width;
+      _coordSystemParams._windowHeight = mainCanvas.Height;
 
-      //// izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-      //// prilagođavanje skaliranja i centra
-      //// kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
-      //// inače E notacija
-      //double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
-      //double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
-      //// ako je 0, onda je tocno sredina
-      //// ako je manje od 0 , onda je vise sredina prema xMin
+      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      // prilagođavanje skaliranja i centra
+      // kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
+      // inače E notacija
+      double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
+      // ako je 0, onda je tocno sredina
+      // ako je manje od 0 , onda je vise sredina prema xMin
 
 
-      //_coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
-      //_coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
-      //_coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
-      //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
-      ////_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
+      _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
+      _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
+      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
+      //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
 
     }
   }

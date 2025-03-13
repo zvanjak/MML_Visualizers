@@ -21,6 +21,28 @@ namespace MML_ParametricCurve2D_Visualizer
     public List<double> _xVals = new List<double>();
     public List<double> _yVals = new List<double>();
 
+    public int GetNumPoints()
+    {
+      return _xVals.Count;
+    }
+    public double GetMinX()
+    {
+      return _xVals.Min();
+    }
+
+    public double GetMaxX()
+    {
+      return _xVals.Max();
+    }
+
+    public double GetMinY()
+    {
+      return _yVals.Min();
+    }
+    public double GetMaxY()
+    {
+      return _yVals.Max();
+    }
 
     public void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
@@ -40,7 +62,7 @@ namespace MML_ParametricCurve2D_Visualizer
 
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
-      for (int i = 0; i < _xVals.Count; i++)
+      for (int i = 0; i < _tVals.Count; i++)
       {
 
         //Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
@@ -54,7 +76,7 @@ namespace MML_ParametricCurve2D_Visualizer
         //Canvas.SetTop(rect, 10);
       }
 
-      for (int i = 0; i < _xVals.Count - 1; i++)
+      for (int i = 0; i < _tVals.Count - 1; i++)
       {
         Line xAxis = new Line();
         xAxis.Stroke = brushes[_index];
