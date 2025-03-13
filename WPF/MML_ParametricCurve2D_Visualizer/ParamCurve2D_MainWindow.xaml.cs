@@ -46,11 +46,11 @@ namespace MML_ParametricCurve2D_Visualizer
 
       InitializeCoordSysParams();
 
-      //txtXMin.Text = _coordSystemParams._xMin.ToString();
-      //txtXMax.Text = _coordSystemParams._xMax.ToString();
-      //txtYMin.Text = _coordSystemParams._yMin.ToString();
-      //txtYMax.Text = _coordSystemParams._yMax.ToString();
-      //txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+      txtXMin.Text = _coordSystemParams._xMin.ToString();
+      txtXMax.Text = _coordSystemParams._xMax.ToString();
+      txtYMin.Text = _coordSystemParams._yMin.ToString();
+      txtYMax.Text = _coordSystemParams._yMax.ToString();
+      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
       txtTitle.Content = _title;
 
       Redraw();
