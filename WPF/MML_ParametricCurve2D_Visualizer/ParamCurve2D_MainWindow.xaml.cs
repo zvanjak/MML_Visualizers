@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -82,20 +83,34 @@ namespace MML_ParametricCurve2D_Visualizer
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
 
-      if (type == "PARAMETRIC_CURVE_2D")
+      if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
       {
         LoadedParamCurve2D newCurve = new LoadedParamCurve2D();
+
         newCurve._title = lines[1];
-        for (int i = 2; i < lines.Length; i++)
+        
+        string[] partsT1 = lines[2].Split(' ');
+        double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
+
+        string[] partsT2 = lines[3].Split(' ');
+        double t2 = double.Parse(partsT2[1], CultureInfo.InvariantCulture);
+
+        string[] partsNumPoints = lines[4].Split(' ');
+        int numPoints = int.Parse(partsNumPoints[1]);
+
+        for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
-          newCurve._xVals.Add(double.Parse(parts[0]));
-          newCurve._yVals.Add(double.Parse(parts[1]));
+          newCurve._tVals.Add(double.Parse(parts[0]));
+          newCurve._xVals.Add(double.Parse(parts[1]));
+          newCurve._yVals.Add(double.Parse(parts[2]));
         }
         _loadedCurves.Add(newCurve);
+
+        return true;
       }
 
-      return true;
+      return false;
     }
 
     private void InitializeCoordSysParams()
