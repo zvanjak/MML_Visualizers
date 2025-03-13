@@ -11,24 +11,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using WPF3DHelperLib;
+
 namespace MML_ParametricCurve2D_Visualizer
 {
-  class CoordSystemParams
-  {
-    public double _xMin;
-    public double _xMax;
-    public double _yMin;
-    public double _yMax;
-    public int _numPoints;
-
-    public double _windowWidth = 1000;
-    public double _windowHeight = 800;
-    public double _centerX = 100;
-    public double _centerY = 400;
-    public double _scaleX = 40;
-    public double _scaleY = 40;
-  }
-
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
