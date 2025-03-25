@@ -6,28 +6,28 @@
         xmlns:local="clr-namespace:MML_ParametricCurve2D_Visualizer"
         mc:Ignorable="d"
         Title="Parametric curve 2D visualizer" Height="850" Width="1200">
-<Grid Background="White">
-  <Grid.RowDefinitions>
-    <RowDefinition Height="100"/>
-    <RowDefinition Height="*"/>
-  </Grid.RowDefinitions>
-  <Grid.ColumnDefinitions>
-    <ColumnDefinition Width="*"/>
-    <ColumnDefinition Width="200" />
-  </Grid.ColumnDefinitions>
+  <Grid Background="White">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="100"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="200" />
+    </Grid.ColumnDefinitions>
 
-  <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700">
-  </Canvas>
-  <Label Content="X min:" HorizontalAlignment="Left" Margin="13,14,0,0" VerticalAlignment="Top" Width="46"/>
-  <TextBox x:Name="txtXMin" HorizontalAlignment="Left" Margin="64,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
-  <Label Content="X max:" HorizontalAlignment="Left" Margin="183,13,0,0" VerticalAlignment="Top" Width="46"/>
-  <TextBox x:Name="txtXMax" HorizontalAlignment="Left" Margin="234,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
-  <Label Content="Y min:" HorizontalAlignment="Left" Margin="373,13,0,0" VerticalAlignment="Top" Width="46"/>
-  <TextBox x:Name="txtYMin" HorizontalAlignment="Left" Margin="430,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80"/>
-  <Label Content="Y max:" HorizontalAlignment="Left" Margin="554,13,0,0" VerticalAlignment="Top" Width="46"/>
-  <TextBox x:Name="txtYMax" HorizontalAlignment="Left" Margin="621,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-  <Label x:Name="txtTitle" Content="Title" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top" Width="769" Height="32" FontSize="16" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-  <Label Content="Num points:" HorizontalAlignment="Left" Margin="757,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.948,-0.191"/>
-  <TextBox x:Name="txtNumPoints" HorizontalAlignment="Left" Margin="843,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77"/>
-</Grid>
+    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700">
+    </Canvas>
+    <Label Content="X min:" HorizontalAlignment="Left" Margin="13,14,0,0" VerticalAlignment="Top" Width="46"/>
+    <TextBox x:Name="txtXMin" HorizontalAlignment="Left" Margin="64,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
+    <Label Content="X max:" HorizontalAlignment="Left" Margin="183,13,0,0" VerticalAlignment="Top" Width="46"/>
+    <TextBox x:Name="txtXMax" HorizontalAlignment="Left" Margin="234,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
+    <Label Content="Y min:" HorizontalAlignment="Left" Margin="373,13,0,0" VerticalAlignment="Top" Width="46"/>
+    <TextBox x:Name="txtYMin" HorizontalAlignment="Left" Margin="430,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80"/>
+    <Label Content="Y max:" HorizontalAlignment="Left" Margin="554,13,0,0" VerticalAlignment="Top" Width="46"/>
+    <TextBox x:Name="txtYMax" HorizontalAlignment="Left" Margin="621,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
+    <Label x:Name="txtTitle" Content="Title" HorizontalAlignment="Left" Margin="125,54,0,0" VerticalAlignment="Top" Width="769" Height="36" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+    <Label Content="Num points:" HorizontalAlignment="Left" Margin="757,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.948,-0.191"/>
+    <TextBox x:Name="txtNumPoints" HorizontalAlignment="Left" Margin="843,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77"/>
+  </Grid>
 </Window>
