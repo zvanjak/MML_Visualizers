@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ScalarFunction2Visualizer": {
       "commandName": "Project",
-      "commandLineArgs": "func_cart_2d.txt"
+      "commandLineArgs": "example3_wpf_surface2.txt"
     }
   }
 }

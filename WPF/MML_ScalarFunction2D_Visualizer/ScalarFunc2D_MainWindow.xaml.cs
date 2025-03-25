@@ -99,14 +99,12 @@ namespace MML_ScalarFunction2Visualizer
             //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
 
             //myModel3DGroup.Children.Add(sphereModel);
-
-            MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
-            var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-            GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
-
-            myModel3DGroup.Children.Add(surfaceModel);
-
           }
+        MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
+        var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+        GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
+
+        myModel3DGroup.Children.Add(surfaceModel);
       }
     }
 
@@ -159,7 +157,7 @@ namespace MML_ScalarFunction2Visualizer
         }
 
         // provjeriti count da se slaze s _numPointsX i _numPointsY
-        if( count != _numPointsX * _numPointsY )
+        if (count != _numPointsX * _numPointsY)
         {
           MessageBox.Show("Count does not match _numPointsX and _numPointsY. \nCount = " + count.ToString() + " numPoints X*Y = " + (_numPointsX * _numPointsY).ToString());
           return false;
@@ -206,7 +204,7 @@ namespace MML_ScalarFunction2Visualizer
 
     private void checkShowSurfacePoints_Checked(object sender, RoutedEventArgs e)
     {
-      if( checkShowSurfacePoints.IsChecked == true )
+      if (checkShowSurfacePoints.IsChecked == true)
       {
         _bShowSurfacePoints = true;
       }
