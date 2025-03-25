@@ -60,6 +60,10 @@ namespace MML_ScalarFunction2Visualizer
 
       var fileName = args[1];
 
+      _helper.InitCamera(new Point3D(180, 80, 150));
+      if(_bShowSurfacePoints == true)
+        checkShowSurfacePoints.IsChecked = true;
+
       if (LoadData(fileName))
         InitializeScene();
     }
@@ -74,7 +78,6 @@ namespace MML_ScalarFunction2Visualizer
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
 
-      _helper.InitCamera(new Point3D(180, 80, 150));
       _helper.InitLights(myModel3DGroup);
       myViewport3D.Camera = _helper._myCamera;
 
