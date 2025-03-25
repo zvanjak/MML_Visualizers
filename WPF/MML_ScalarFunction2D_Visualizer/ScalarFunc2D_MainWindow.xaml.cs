@@ -60,22 +60,22 @@ namespace MML_ScalarFunction2Visualizer
 
       var fileName = args[1];
 
-      // Declare scene objects.
-      Model3DGroup myModel3DGroup = new Model3DGroup();
-
-      _helper.InitCamera(new Point3D(180, 80, 150));
-      _helper.InitLights(myModel3DGroup);
-      myViewport3D.Camera = _helper._myCamera;
-
-      ModelVisual3D myModelVisual3D = new ModelVisual3D();
-      myModelVisual3D.Content = myModel3DGroup;
-
-      myViewport3D.Children.Add(myModelVisual3D);
-
-      Utils.DrawCoordSystem(myModel3DGroup);
-
       if (LoadData(fileName))
       {
+        // Declare scene objects.
+        Model3DGroup myModel3DGroup = new Model3DGroup();
+
+        _helper.InitCamera(new Point3D(180, 80, 150));
+        _helper.InitLights(myModel3DGroup);
+        myViewport3D.Camera = _helper._myCamera;
+
+        ModelVisual3D myModelVisual3D = new ModelVisual3D();
+        myModelVisual3D.Content = myModel3DGroup;
+
+        myViewport3D.Children.Add(myModelVisual3D);
+
+        Utils.DrawCoordSystem(myModel3DGroup);
+
         txtTitle.Text = _title;
 
         for (int i = 0; i < _vals.Rows; i++)
