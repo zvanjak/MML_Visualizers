@@ -16,8 +16,7 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700">
-    </Canvas>
+    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700"/>
     <Label Content="X min:" HorizontalAlignment="Left" Margin="13,14,0,0" VerticalAlignment="Top" Width="46"/>
     <TextBox x:Name="txtXMin" HorizontalAlignment="Left" Margin="64,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
     <Label Content="X max:" HorizontalAlignment="Left" Margin="183,13,0,0" VerticalAlignment="Top" Width="46"/>
