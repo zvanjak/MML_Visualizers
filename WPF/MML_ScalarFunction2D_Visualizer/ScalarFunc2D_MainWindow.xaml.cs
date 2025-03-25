@@ -61,51 +61,59 @@ namespace MML_ScalarFunction2Visualizer
       var fileName = args[1];
 
       if (LoadData(fileName))
-      {
-        // Declare scene objects.
-        Model3DGroup myModel3DGroup = new Model3DGroup();
+        InitializeScene();
+    }
+    private void ClearScene()
+    {
+      myViewport3D.Children.Clear();
+    }
 
-        _helper.InitCamera(new Point3D(180, 80, 150));
-        _helper.InitLights(myModel3DGroup);
-        myViewport3D.Camera = _helper._myCamera;
+    private void InitializeScene()
+    {
 
-        ModelVisual3D myModelVisual3D = new ModelVisual3D();
-        myModelVisual3D.Content = myModel3DGroup;
+      // Declare scene objects.
+      Model3DGroup myModel3DGroup = new Model3DGroup();
 
-        myViewport3D.Children.Add(myModelVisual3D);
+      _helper.InitCamera(new Point3D(180, 80, 150));
+      _helper.InitLights(myModel3DGroup);
+      myViewport3D.Camera = _helper._myCamera;
 
-        Utils.DrawCoordSystem(myModel3DGroup);
+      ModelVisual3D myModelVisual3D = new ModelVisual3D();
+      myModelVisual3D.Content = myModel3DGroup;
 
-        txtTitle.Text = _title;
+      myViewport3D.Children.Add(myModelVisual3D);
 
-        for (int i = 0; i < _vals.Rows; i++)
-          for (int j = 0; j < _vals.Cols; j++)
+      Utils.DrawCoordSystem(myModel3DGroup);
+
+      txtTitle.Text = _title;
+
+      for (int i = 0; i < _vals.Rows; i++)
+        for (int j = 0; j < _vals.Cols; j++)
+        {
+          double x = _scaleX * (_xMin + i * (_xMax - _xMin) / _numPointsX);
+          double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
+          double z = _vals.ElemAt(i, j);
+
+          if (_bShowSurfacePoints)
           {
-            double x = _scaleX * (_xMin + i * (_xMax - _xMin) / _numPointsX);
-            double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
-            double z = _vals.ElemAt(i, j);
+            MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
+            var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+            GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
 
-            if (_bShowSurfacePoints)
-            {
-              MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
-              var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-              GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
-
-              myModel3DGroup.Children.Add(cubeModel);
-            }
-
-            //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
-            //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-            //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
-
-            //myModel3DGroup.Children.Add(sphereModel);
+            myModel3DGroup.Children.Add(cubeModel);
           }
-        MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
-        var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-        GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
 
-        myModel3DGroup.Children.Add(surfaceModel);
-      }
+          //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
+          //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+          //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+          //myModel3DGroup.Children.Add(sphereModel);
+        }
+      MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
+      var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
+
+      myModel3DGroup.Children.Add(surfaceModel);
     }
 
     bool LoadData(string inFileName)
@@ -213,7 +221,10 @@ namespace MML_ScalarFunction2Visualizer
         _bShowSurfacePoints = false;
       }
 
-      myViewport3D.InvalidateVisual();
+      // clear the scene
+      myViewport3D.Children.Clear();
+
+      InitializeScene();
     }
   }
 }
