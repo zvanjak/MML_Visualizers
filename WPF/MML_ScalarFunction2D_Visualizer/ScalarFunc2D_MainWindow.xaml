@@ -22,6 +22,6 @@
       <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0" >
       </Viewport3D>
     </Viewbox>
-    <CheckBox x:Name="checkShowSurfacePoints" Grid.Column="1" Content="Show surface points" HorizontalAlignment="Center" Margin="0,24,0,0" Grid.Row="1" VerticalAlignment="Top" Checked="checkShowSurfacePoints_Checked"/>
+    <CheckBox x:Name="checkShowSurfacePoints" Grid.Column="1" Content="Show surface points" HorizontalAlignment="Center" Margin="0,24,0,0" Grid.Row="1" VerticalAlignment="Top" Click="checkShowSurfacePoints_Click"/>
   </Grid>
 </Window>

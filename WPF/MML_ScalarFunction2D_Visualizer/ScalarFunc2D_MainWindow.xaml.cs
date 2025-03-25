@@ -210,7 +210,7 @@ namespace MML_ScalarFunction2Visualizer
       _helper.Window_MouseWheel(myViewport3D, sender, e);
     }
 
-    private void checkShowSurfacePoints_Checked(object sender, RoutedEventArgs e)
+    private void checkShowSurfacePoints_Click(object sender, RoutedEventArgs e)
     {
       if (checkShowSurfacePoints.IsChecked == true)
       {
@@ -221,9 +221,7 @@ namespace MML_ScalarFunction2Visualizer
         _bShowSurfacePoints = false;
       }
 
-      // clear the scene
-      myViewport3D.Children.Clear();
-
+      ClearScene();
       InitializeScene();
     }
   }
