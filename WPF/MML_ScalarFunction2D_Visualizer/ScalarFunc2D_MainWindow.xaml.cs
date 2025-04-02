@@ -60,10 +60,24 @@ namespace MML_ScalarFunction2Visualizer
 
       var fileName = args[1];
 
+      _helper.InitCamera(new Point3D(180, 80, 150));
+      if(_bShowSurfacePoints == true)
+        checkShowSurfacePoints.IsChecked = true;
+
+      if (LoadData(fileName))
+        InitializeScene();
+    }
+    private void ClearScene()
+    {
+      myViewport3D.Children.Clear();
+    }
+
+    private void InitializeScene()
+    {
+
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
 
-      _helper.InitCamera(new Point3D(180, 80, 150));
       _helper.InitLights(myModel3DGroup);
       myViewport3D.Camera = _helper._myCamera;
 
@@ -74,40 +88,35 @@ namespace MML_ScalarFunction2Visualizer
 
       Utils.DrawCoordSystem(myModel3DGroup);
 
-      if (LoadData(fileName))
-      {
-        txtTitle.Text = _title;
+      txtTitle.Text = _title;
 
-        for (int i = 0; i < _vals.Rows; i++)
-          for (int j = 0; j < _vals.Cols; j++)
+      for (int i = 0; i < _vals.Rows; i++)
+        for (int j = 0; j < _vals.Cols; j++)
+        {
+          double x = _scaleX * (_xMin + i * (_xMax - _xMin) / _numPointsX);
+          double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
+          double z = _vals.ElemAt(i, j);
+
+          if (_bShowSurfacePoints)
           {
-            double x = _scaleX * (_xMin + i * (_xMax - _xMin) / _numPointsX);
-            double y = _scaleY * (_yMin + j * (_yMax - _yMin) / _numPointsY);
-            double z = _vals.ElemAt(i, j);
+            MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
+            var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+            GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
 
-            if (_bShowSurfacePoints)
-            {
-              MeshGeometry3D cube = Geometries.CreateCube(new Point3D(x, y, z), 0.75);
-              var cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-              GeometryModel3D cubeModel = new GeometryModel3D(cube, cubeMaterial);
-
-              myModel3DGroup.Children.Add(cubeModel);
-            }
-
-            //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
-            //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
-            //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
-
-            //myModel3DGroup.Children.Add(sphereModel);
-
-            MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
-            var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-            GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
-
-            myModel3DGroup.Children.Add(surfaceModel);
-
+            myModel3DGroup.Children.Add(cubeModel);
           }
-      }
+
+          //MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(x, y, z), 0.75);
+          //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+          //GeometryModel3D sphereModel = new GeometryModel3D(sphere, sphereMaterial);
+
+          //myModel3DGroup.Children.Add(sphereModel);
+        }
+      MeshGeometry3D surface = Geometries.CreateSurface(_vals, _xMin, _xMax, _yMin, _yMax, _scaleX, _scaleY);
+      var surfaceMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      GeometryModel3D surfaceModel = new GeometryModel3D(surface, surfaceMaterial);
+
+      myModel3DGroup.Children.Add(surfaceModel);
     }
 
     bool LoadData(string inFileName)
@@ -159,7 +168,7 @@ namespace MML_ScalarFunction2Visualizer
         }
 
         // provjeriti count da se slaze s _numPointsX i _numPointsY
-        if( count != _numPointsX * _numPointsY )
+        if (count != _numPointsX * _numPointsY)
         {
           MessageBox.Show("Count does not match _numPointsX and _numPointsY. \nCount = " + count.ToString() + " numPoints X*Y = " + (_numPointsX * _numPointsY).ToString());
           return false;
@@ -204,9 +213,9 @@ namespace MML_ScalarFunction2Visualizer
       _helper.Window_MouseWheel(myViewport3D, sender, e);
     }
 
-    private void checkShowSurfacePoints_Checked(object sender, RoutedEventArgs e)
+    private void checkShowSurfacePoints_Click(object sender, RoutedEventArgs e)
     {
-      if( checkShowSurfacePoints.IsChecked == true )
+      if (checkShowSurfacePoints.IsChecked == true)
       {
         _bShowSurfacePoints = true;
       }
@@ -215,7 +224,8 @@ namespace MML_ScalarFunction2Visualizer
         _bShowSurfacePoints = false;
       }
 
-      myViewport3D.InvalidateVisual();
+      ClearScene();
+      InitializeScene();
     }
   }
 }

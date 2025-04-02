@@ -73,7 +73,8 @@ namespace MML_ParametricCurve2D_Visualizer
         LoadedParamCurve2D newCurve = new LoadedParamCurve2D();
 
         newCurve._title = lines[1];
-        
+        _title = newCurve._title;
+
         string[] partsT1 = lines[2].Split(' ');
         double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
 
@@ -86,9 +87,9 @@ namespace MML_ParametricCurve2D_Visualizer
         for (int i = 5; i < lines.Length; i++)
         {
           string[] parts = lines[i].Split(' ');
-          newCurve._tVals.Add(double.Parse(parts[0]));
-          newCurve._xVals.Add(double.Parse(parts[1]));
-          newCurve._yVals.Add(double.Parse(parts[2]));
+          newCurve._tVals.Add(double.Parse(parts[0], CultureInfo.InvariantCulture));
+          newCurve._xVals.Add(double.Parse(parts[1], CultureInfo.InvariantCulture));
+          newCurve._yVals.Add(double.Parse(parts[2], CultureInfo.InvariantCulture));
         }
         _loadedCurves.Add(newCurve);
 
