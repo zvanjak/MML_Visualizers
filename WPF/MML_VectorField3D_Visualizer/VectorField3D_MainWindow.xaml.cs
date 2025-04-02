@@ -93,9 +93,9 @@ namespace MML_VectorFieldVisualizer
       }
     }
 
-    public List<VecRepr> LoadData(string inFileName)
+    public List<Vector3Repr> LoadData(string inFileName)
     {
-      List<VecRepr> ret = new List<VecRepr>();
+      List<Vector3Repr> ret = new List<Vector3Repr>();
 
       if (File.Exists(inFileName) == false)
       {
@@ -126,7 +126,7 @@ namespace MML_VectorFieldVisualizer
           Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
           Vector3Cartesian vel = new Vector3Cartesian(vx, vy, vz);
 
-          ret.Add(new VecRepr(pos, vel));
+          ret.Add(new Vector3Repr(pos, vel));
         }
       }
       else if (type == "VECTOR_FIELD_SPHERICAL")
