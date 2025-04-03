@@ -20,7 +20,7 @@ using System.IO;
 using MML;
 using WPF3DHelperLib;
 
-namespace MML_VectorFieldVisualizer
+namespace MML_VectorField3D_Visualizer
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml

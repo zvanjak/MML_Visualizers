@@ -1,7 +1,7 @@
-﻿<Application x:Class="MML_VectorFieldVisualizer.App"
+﻿<Application x:Class="MML_VectorField3D_Visualizer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MML_VectorFieldVisualizer"
+             xmlns:local="clr-namespace:MML_VectorField3D_Visualizer"
              StartupUri="VectorField3D_MainWindow.xaml">
     <Application.Resources>
          

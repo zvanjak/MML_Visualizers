@@ -136,7 +136,7 @@ namespace MML_RealFunctionVisualizer
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
 
-      if (type == "REAL_FUNCTION_EQUALLY_SPACED_DETAILED")
+      if (type == "REAL_FUNCTION")
       {
         SingleLoadedFunction slf = new SingleLoadedFunction(index);
 
@@ -182,7 +182,7 @@ namespace MML_RealFunctionVisualizer
 
         return false;
       }
-      else if (type == "MULTI_REAL_FUNCTION_VARIABLE_SPACED")
+      else if (type == "MULTI_REAL_FUNCTION")
       {
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();

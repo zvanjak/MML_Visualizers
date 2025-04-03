@@ -19,7 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MML;
-using MML_VectorFieldVisualizer;
+using MML_VectorField3D_Visualizer;
 using WPF3DHelperLib;
 
 namespace MML_ParametricCurve3D_Visualizer
