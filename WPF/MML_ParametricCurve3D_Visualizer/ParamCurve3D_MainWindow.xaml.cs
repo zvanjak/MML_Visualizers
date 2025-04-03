@@ -164,31 +164,6 @@ namespace MML_ParametricCurve3D_Visualizer
           ret._curveTrace.Add(pos);
         }
       }
-      //else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_MULTI")
-      //{
-      //  MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_MULTI not yet supported");
-      //  return false;
-      //}
-      //else if (type == "PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS")
-      //{
-      //  MessageBox.Show("PARAMETRIC_CURVE_CARTESIAN_3D_AT_POINTS not yet supported");
-      //  return false;
-      //}
-      //else if (type == "PARAMETRIC_CURVE_SPHERICAL")
-      //{
-      //  MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL not yet supported");
-      //  return false;
-      //}
-      //else if (type == "PARAMETRIC_CURVE_SPHERICAL_AT_POINTS")
-      //{
-      //  MessageBox.Show("PARAMETRIC_CURVE_SPHERICAL_AT_POINTS not yet supported");
-      //  return false;
-      //}
-      //else
-      //{
-      //  MessageBox.Show("Unsupported format: " + type);
-      //  return false;
-      //}
 
       return ret;
     }
