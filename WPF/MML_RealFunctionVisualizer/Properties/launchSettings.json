@@ -2,7 +2,7 @@
   "profiles": {
     "MML_RealFunctionVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "multi_func_3.txt"
+      "commandLineArgs": "multi_real_func.txt"
     }
   }
 }
