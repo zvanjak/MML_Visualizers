@@ -65,6 +65,12 @@ namespace MML_ParametricCurve2D_Visualizer
 
     public bool LoadData(string inFileName, int index)
     {
+      if (File.Exists(inFileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + inFileName);
+        return false;
+      }
+
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
 
