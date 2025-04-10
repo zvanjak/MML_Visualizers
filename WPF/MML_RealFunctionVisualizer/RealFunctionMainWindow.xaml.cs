@@ -187,39 +187,47 @@ namespace MML_RealFunctionVisualizer
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();
 
-        mlf._title       = lines[1];
-        int    dim       = int.Parse(lines[2]);
-
-        string[] partsX1 = lines[3].Split(' ');
-        double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
-
-        string[] partsX2 = lines[4].Split(' ');
-        double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
-
-        string[] partsNumPoints = lines[5].Split(' ');
-        int numPoints = int.Parse(partsNumPoints[1]);
-
-        _title = mlf._title;
-
-        mlf._multiFuncX = new MML.Vector(numPoints);
-        mlf._multiFuncY = new MML.Matrix(dim, numPoints);
-
-        for (int i = 6; i < lines.Length; i++)
+        // TODO - add exception handling!!!
+        try
         {
-          string[] parts = lines[i].Split(' ');
+          mlf._title = lines[1];
+          int dim = int.Parse(lines[2]);
 
-          double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          mlf._multiFuncX.Elements[i-6] = x;
-          for (int j = 0; j < dim; j++)
+          string[] partsX1 = lines[3].Split(' ');
+          double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
+
+          string[] partsX2 = lines[4].Split(' ');
+          double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
+
+          string[] partsNumPoints = lines[5].Split(' ');
+          int numPoints = int.Parse(partsNumPoints[1]);
+
+          _title = mlf._title;
+
+          mlf._multiFuncX = new MML.Vector(numPoints);
+          mlf._multiFuncY = new MML.Matrix(dim, numPoints);
+
+          for (int i = 6; i < lines.Length; i++)
           {
-            double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
-            mlf._multiFuncY.SetElemAt(j, i - 6, y);
+            string[] parts = lines[i].Split(' ');
+
+            double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
+            mlf._multiFuncX.Elements[i - 6] = x;
+            for (int j = 0; j < dim; j++)
+            {
+              double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
+              mlf._multiFuncY.SetElemAt(j, i - 6, y);
+            }
           }
+
+          _loadedFunctions.Add(mlf);
+
+          return true;
         }
-
-        _loadedFunctions.Add(mlf);  
-
-        return true;
+        catch (Exception e) {
+          MessageBox.Show("Error loading file " + inFileName + "\nMessage: " + e.Message);
+          return false; 
+        }
       }
       else
       {
