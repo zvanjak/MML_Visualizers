@@ -23,6 +23,7 @@ namespace MML_VectorField2D_Visualizer
   public partial class VectorField2D_MainWindow : Window
   {
     List<Vector2Repr> _listVecs = new List<Vector2Repr>();
+    CoordSystemParams _coordSystemParams = new CoordSystemParams();
     string _title = "";
 
     public VectorField2D_MainWindow()
@@ -40,11 +41,40 @@ namespace MML_VectorField2D_Visualizer
 
       _listVecs = LoadData(fileName);
 
+      InitializeCoordSysParams();
+
       txtTitle.Text = _title;
 
       Redraw();
     }
+    private void InitializeCoordSysParams()
+    {
+      _coordSystemParams._xMin = -10; // _loadedFunctions[0].GetMinX();
+      _coordSystemParams._xMax = 10; // _loadedFunctions[0].GetMaxX();
+      _coordSystemParams._yMin = 10; //_loadedFunctions[0].GetMinY();
+      _coordSystemParams._yMax = -10; // _loadedFunctions[0].GetMaxY();
+      _coordSystemParams._numPoints = _listVecs.Count;
 
+      _coordSystemParams._windowWidth = mainCanvas.Width;
+      _coordSystemParams._windowHeight = mainCanvas.Height;
+
+      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
+      // prilagođavanje skaliranja i centra
+      // kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
+      // inače E notacija
+      double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
+      // ako je 0, onda je tocno sredina
+      // ako je manje od 0 , onda je vise sredina prema xMin
+
+
+      _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
+      _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
+      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
+      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
+      //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
+
+    }
     void Redraw()
     {
       // Clear the canvas
@@ -53,7 +83,8 @@ namespace MML_VectorField2D_Visualizer
       for (int i = 0; i < _listVecs.Count; i++)
       {
 
-        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
+        Utils.DrawPoint(mainCanvas, _coordSystemParams, _listVecs[i].Pos.X, _listVecs[i].Pos.Y, Colors.Black);
+
       }
         // Draw the coordinate system
         //Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());

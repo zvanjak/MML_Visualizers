@@ -18,6 +18,6 @@
 
     <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700"/>
     
-    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold"/>
+    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold"/>
   </Grid>
 </Window>
