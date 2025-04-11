@@ -49,10 +49,22 @@ namespace MML_VectorField2D_Visualizer
     }
     private void InitializeCoordSysParams()
     {
-      _coordSystemParams._xMin = -10; // _loadedFunctions[0].GetMinX();
-      _coordSystemParams._xMax = 10; // _loadedFunctions[0].GetMaxX();
-      _coordSystemParams._yMin = 10; //_loadedFunctions[0].GetMinY();
-      _coordSystemParams._yMax = -10; // _loadedFunctions[0].GetMaxY();
+      _coordSystemParams._xMin = 1e30;
+      _coordSystemParams._xMax = -1e30; 
+      _coordSystemParams._yMin = 1e30; 
+      _coordSystemParams._yMax = -1e30;
+
+      foreach ( var v in _listVecs) {
+        if (v.Pos.X < _coordSystemParams._xMin)
+          _coordSystemParams._xMin = v.Pos.X;
+        if (v.Pos.Y < _coordSystemParams._yMin)
+          _coordSystemParams._yMin = v.Pos.Y;
+        if (v.Pos.X > _coordSystemParams._xMax)
+          _coordSystemParams._xMax = v.Pos.X;
+        if (v.Pos.Y > _coordSystemParams._yMax)
+          _coordSystemParams._yMax = v.Pos.Y;
+      }
+
       _coordSystemParams._numPoints = _listVecs.Count;
 
       _coordSystemParams._windowWidth = mainCanvas.Width;
@@ -104,9 +116,9 @@ namespace MML_VectorField2D_Visualizer
         double arrowAngle = 35;
         double angle = Math.Atan2(_listVecs[i].Vec.Y, _listVecs[i].Vec.X);
         double xArrow1 = x2 - arrowSize * Math.Cos(angle + Math.PI * arrowAngle / 180);
-        double yArrow1 = y2 - arrowSize * Math.Sin(angle + Math.PI * arrowAngle / 180);
+        double yArrow1 = y2 + arrowSize * Math.Sin(angle + Math.PI * arrowAngle / 180);
         double xArrow2 = x2 - arrowSize * Math.Cos(angle - Math.PI * arrowAngle / 180);
-        double yArrow2 = y2 - arrowSize * Math.Sin(angle - Math.PI * arrowAngle / 180);
+        double yArrow2 = y2 + arrowSize * Math.Sin(angle - Math.PI * arrowAngle / 180);
         
         Line arrow1 = new Line();
         arrow1.Stroke = Brushes.Black;
@@ -127,8 +139,7 @@ namespace MML_VectorField2D_Visualizer
 
       }
       // Draw the coordinate system
-      //Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
-
+      Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, _coordSystemParams._xMin, _coordSystemParams._xMax, _coordSystemParams._yMin, _coordSystemParams._yMax);
     }
 
     public List<Vector2Repr> LoadData(string inFileName)
