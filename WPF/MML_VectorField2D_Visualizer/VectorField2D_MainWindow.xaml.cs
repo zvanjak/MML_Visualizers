@@ -83,12 +83,29 @@ namespace MML_VectorField2D_Visualizer
       for (int i = 0; i < _listVecs.Count; i++)
       {
 
-        Utils.DrawPoint(mainCanvas, _coordSystemParams, _listVecs[i].Pos.X, _listVecs[i].Pos.Y, Colors.Black);
+        //Utils.DrawPoint(mainCanvas, _coordSystemParams, _listVecs[i].Pos.X, _listVecs[i].Pos.Y, Colors.Black);
+
+        double mul = 0.5;
+
+        Line xAxis = new Line();
+        xAxis.Stroke = Brushes.Black;
+
+        double x1 = _coordSystemParams._centerX + _listVecs[i].Pos.X * _coordSystemParams._scaleX;
+        double y1 = _coordSystemParams._centerY - _listVecs[i].Pos.Y * _coordSystemParams._scaleY;
+        double x2 = _coordSystemParams._centerX + (_listVecs[i].Pos.X + mul * _listVecs[i].Vec.X) * _coordSystemParams._scaleX;
+        double y2 = _coordSystemParams._centerY - (_listVecs[i].Pos.Y + mul * _listVecs[i].Vec.Y) * _coordSystemParams._scaleY;
+
+        xAxis.X1 = x1;
+        xAxis.Y1 = y1;
+        xAxis.X2 = x2;
+        xAxis.Y2 = y2;
+
+        mainCanvas.Children.Add(xAxis);
 
       }
-        // Draw the coordinate system
-        //Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
-      
+      // Draw the coordinate system
+      //Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
+
     }
 
     public List<Vector2Repr> LoadData(string inFileName)
