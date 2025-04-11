@@ -22,7 +22,7 @@ namespace MML_RealFunctionVisualizer
 {
   enum LoadedType
   {
-    REAL_FUNCTION_EQUALLY_SPACED_DETAILED,
+    REAL_FUNCTION,
     REAL_FUNCTION_EQUALLY_SPACED,
     REAL_FUNCTION_VARIABLE_SPACED,
     MULTI_REAL_FUNCTION
@@ -139,7 +139,7 @@ namespace MML_RealFunctionVisualizer
       {
         SingleLoadedFunction slf = new SingleLoadedFunction(index);
 
-        slf._loadedType = LoadedType.REAL_FUNCTION_EQUALLY_SPACED_DETAILED;
+        slf._loadedType = LoadedType.REAL_FUNCTION;
 
         slf._title = lines[1];
         
@@ -186,7 +186,6 @@ namespace MML_RealFunctionVisualizer
         //_loadedType = LoadedType.MULTI_REAL_FUNCTION_VARIABLE_SPACED;
         MultiLoadedFunction mlf = new MultiLoadedFunction();
 
-        // TODO - add exception handling!!!
         try
         {
           mlf._title = lines[1];

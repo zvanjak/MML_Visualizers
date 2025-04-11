@@ -22,6 +22,7 @@ namespace MML_VectorField2D_Visualizer
   /// </summary>
   public partial class VectorField2D_MainWindow : Window
   {
+    List<Vector2Repr> _listVecs = new List<Vector2Repr>();
     string _title = "";
 
     public VectorField2D_MainWindow()
@@ -35,12 +36,28 @@ namespace MML_VectorField2D_Visualizer
         MessageBox.Show("No file name specified.");
         return;
       }
-
       var fileName = args[1];
 
-      var listVecs = LoadData(fileName);
+      _listVecs = LoadData(fileName);
 
       txtTitle.Text = _title;
+
+      Redraw();
+    }
+
+    void Redraw()
+    {
+      // Clear the canvas
+      mainCanvas.Children.Clear();
+
+      for (int i = 0; i < _listVecs.Count; i++)
+      {
+
+        Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
+      }
+        // Draw the coordinate system
+        //Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
+      
     }
 
     public List<Vector2Repr> LoadData(string inFileName)
