@@ -82,9 +82,6 @@ namespace MML_VectorField2D_Visualizer
 
       for (int i = 0; i < _listVecs.Count; i++)
       {
-
-        //Utils.DrawPoint(mainCanvas, _coordSystemParams, _listVecs[i].Pos.X, _listVecs[i].Pos.Y, Colors.Black);
-
         double mul = 0.5;
 
         Line xAxis = new Line();
@@ -101,6 +98,32 @@ namespace MML_VectorField2D_Visualizer
         xAxis.Y2 = y2;
 
         mainCanvas.Children.Add(xAxis);
+
+        // now let's add arrow on top
+        double arrowSize = 10;
+        double arrowAngle = 35;
+        double angle = Math.Atan2(_listVecs[i].Vec.Y, _listVecs[i].Vec.X);
+        double xArrow1 = x2 - arrowSize * Math.Cos(angle + Math.PI * arrowAngle / 180);
+        double yArrow1 = y2 - arrowSize * Math.Sin(angle + Math.PI * arrowAngle / 180);
+        double xArrow2 = x2 - arrowSize * Math.Cos(angle - Math.PI * arrowAngle / 180);
+        double yArrow2 = y2 - arrowSize * Math.Sin(angle - Math.PI * arrowAngle / 180);
+        
+        Line arrow1 = new Line();
+        arrow1.Stroke = Brushes.Black;
+        arrow1.X1 = x2;
+        arrow1.Y1 = y2;
+        arrow1.X2 = xArrow1;
+        arrow1.Y2 = yArrow1;
+        
+        Line arrow2 = new Line();
+        arrow2.Stroke = Brushes.Black;
+        arrow2.X1 = x2;
+        arrow2.Y1 = y2;
+        arrow2.X2 = xArrow2;
+        arrow2.Y2 = yArrow2;
+        mainCanvas.Children.Add(arrow1);
+        mainCanvas.Children.Add(arrow2);
+
 
       }
       // Draw the coordinate system
