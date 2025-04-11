@@ -45,13 +45,12 @@ namespace MML_RealFunctionVisualizer
   {
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
-    private string _title;
+    private string _title = "";
 
     public MainWindow()
     {
       InitializeComponent();
 
-      // REAL ARGS: func_sin_x_lin_interp.txt sin_func.txt
       var args = Environment.GetCommandLineArgs();
 
       if (args.Length < 2)

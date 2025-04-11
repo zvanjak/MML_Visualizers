@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MML_VectorField2D_Visualizer": {
+      "commandName": "Project",
+      "commandLineArgs": "example3_wpf_vector_field_2d.txt"
+    }
+  }
+}
