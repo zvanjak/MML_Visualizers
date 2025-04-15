@@ -23,6 +23,8 @@ namespace MML_ParametricCurve2D_Visualizer
     List<LoadedParamCurve2D> _loadedCurves = new List<LoadedParamCurve2D>();
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
     private string _title = "";
+    List<Brush> _brushes = new List<Brush>();
+
 
     public MainWindow()
     {
@@ -53,13 +55,19 @@ namespace MML_ParametricCurve2D_Visualizer
       txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
       txtTitle.Content = _title;
 
+      _brushes.Add(Brushes.Black);
+      _brushes.Add(Brushes.Blue);
+      _brushes.Add(Brushes.Red);
+      _brushes.Add(Brushes.Green);
+      _brushes.Add(Brushes.Orange);
+
       Redraw();
     }
     private void Redraw()
     {
       for (int i = 0; i < _loadedCurves.Count; i++)
       {
-        _loadedCurves[i].Draw(mainCanvas, _coordSystemParams);
+        _loadedCurves[i].Draw(mainCanvas, _coordSystemParams, _brushes[i]);
       }
     }
 

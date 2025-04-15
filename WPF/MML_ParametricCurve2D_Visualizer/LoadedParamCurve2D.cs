@@ -44,7 +44,7 @@ namespace MML_ParametricCurve2D_Visualizer
       return _yVals.Max();
     }
 
-    public void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
+    public void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams, Brush drawBrush)
     {
       List<Color> colors = new List<Color>();
       colors.Add(Colors.Black);
@@ -53,12 +53,7 @@ namespace MML_ParametricCurve2D_Visualizer
       colors.Add(Colors.Green);
       colors.Add(Colors.Orange);
 
-      List<Brush> brushes = new List<Brush>();
-      brushes.Add(Brushes.Black);
-      brushes.Add(Brushes.Blue);
-      brushes.Add(Brushes.Red);
-      brushes.Add(Brushes.Green);
-      brushes.Add(Brushes.Orange);
+
 
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
@@ -79,7 +74,7 @@ namespace MML_ParametricCurve2D_Visualizer
       for (int i = 0; i < _tVals.Count - 1; i++)
       {
         Line xAxis = new Line();
-        xAxis.Stroke = brushes[_index];
+        xAxis.Stroke = drawBrush;
 
         double x1 = coordSysParams._centerX + _xVals[i] * coordSysParams._scaleX;
         double y1 = coordSysParams._centerY - _yVals[i] * coordSysParams._scaleY;
