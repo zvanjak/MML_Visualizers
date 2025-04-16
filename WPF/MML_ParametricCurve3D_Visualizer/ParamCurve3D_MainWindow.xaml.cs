@@ -86,6 +86,7 @@ namespace MML_ParametricCurve3D_Visualizer
         new SolidColorBrush(Colors.Orange)
       };
 
+    Point3D _cameraPoint = new Point3D(350, 100, 350);
     double _axisWidth = 0.5;
     double _axisLen = 500;
     double _lineWidth = 0.25;
@@ -142,7 +143,7 @@ namespace MML_ParametricCurve3D_Visualizer
     {
       _myModel3DGroup.Children.Clear();
 
-      _helper.InitCamera(new Point3D(350, 100, 350));
+      _helper.InitCamera(_cameraPoint);
       //_helper.InitLights(myModel3DGroup);
 
       AmbientLight ambLight = new AmbientLight();
@@ -222,26 +223,38 @@ namespace MML_ParametricCurve3D_Visualizer
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
+
+      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonUp();
+
+      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonDown(e.GetPosition(this));
+
+      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonUp();
+
+      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseMove(object sender, MouseEventArgs e)
     {
       _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
+
+      _cameraPoint = _helper._cameraPos;
     }
     public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
+    
+      _cameraPoint = _helper._cameraPos;
     }
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
@@ -319,7 +332,6 @@ namespace MML_ParametricCurve3D_Visualizer
     private void btnIncWidth_Click(object sender, RoutedEventArgs e)
     {
       _lineWidth *= 1.1;
-
       InitScene();
     }
 
