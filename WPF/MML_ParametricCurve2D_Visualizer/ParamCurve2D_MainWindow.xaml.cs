@@ -56,10 +56,15 @@ namespace MML_ParametricCurve2D_Visualizer
       txtTitle.Content = _title;
 
       _brushes.Add(Brushes.Black);
+      _brushes.Add(Brushes.Orange);
       _brushes.Add(Brushes.Blue);
       _brushes.Add(Brushes.Red);
       _brushes.Add(Brushes.Green);
-      _brushes.Add(Brushes.Orange);
+      _brushes.Add(Brushes.Purple);
+      _brushes.Add(Brushes.Cyan);
+      _brushes.Add(Brushes.Brown);
+      _brushes.Add(Brushes.Magenta);
+      _brushes.Add(Brushes.Yellow);
 
       Redraw();
     }

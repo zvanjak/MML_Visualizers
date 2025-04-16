@@ -155,9 +155,9 @@ namespace MML_ParametricCurve3D_Visualizer
           string[] parts = lines[i].Split(' ');
 
           double t = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
-          double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
-          double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
+          double x = 5.0 * double.Parse(parts[1], CultureInfo.InvariantCulture);
+          double y = 5.0 * double.Parse(parts[2], CultureInfo.InvariantCulture);
+          double z = 5.0 * double.Parse(parts[3], CultureInfo.InvariantCulture);
 
           Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
 

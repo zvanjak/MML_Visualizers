@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "body0.txt\r\nbody1.txt\r\nbody2.txt\r\nbody3.txt\r\nbody4.txt\r\n"
+      "commandLineArgs": "example3_wpf_lorentz_system.txt\r\n"
     }
   }
 }
