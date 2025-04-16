@@ -28,7 +28,51 @@ namespace MML_ParametricCurve3D_Visualizer
   {
     public List<Vector3Cartesian> _curveTrace = new List<Vector3Cartesian>();
 
-  }
+    public double getMinX()
+    {
+      double minX = 0.0;
+      if (_curveTrace.Count > 0)
+        minX = _curveTrace.Min(v => v.X);
+      return minX;
+    }
+    public double getMaxX()
+    {
+      double minX = 0.0;
+      if (_curveTrace.Count > 0)
+        minX = _curveTrace.Max(v => v.X);
+      return minX;
+    }
+
+    public double getMinY()
+    {
+      double minY = 0.0;
+      if (_curveTrace.Count > 0)
+        minY = _curveTrace.Min(v => v.Y);
+      return minY;
+    }
+    public double getMaxY()
+    {
+      double minY = 0.0;
+      if (_curveTrace.Count > 0)
+        minY = _curveTrace.Max(v => v.Y);
+      return minY;
+    }
+
+    public double getMinZ()
+    {
+      double minZ = 0.0;
+      if (_curveTrace.Count > 0)
+        minZ = _curveTrace.Min(v => v.Z);
+      return minZ;
+    }
+    public double getMaxZ()
+    {
+      double maxZ = 0.0;
+      if (_curveTrace.Count > 0)
+        maxZ = _curveTrace.Max(v => v.Z);
+      return maxZ;
+    }
+   }
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
@@ -41,6 +85,10 @@ namespace MML_ParametricCurve3D_Visualizer
         new SolidColorBrush(Colors.Green),
         new SolidColorBrush(Colors.Orange)
       };
+
+    double _axisWidth = 0.5;
+    double _axisLen = 500;
+    double _lineWidth = 0.25;
 
     List<LoadedCurve> _curves = new List<LoadedCurve>();
 
@@ -87,20 +135,13 @@ namespace MML_ParametricCurve3D_Visualizer
       //    _myModel3DGroup.Children.Add(sphereModel);
       //}
 
-      for (int i = 0; i < _curves.Count; i++)
-      {
-        MeshGeometry3D line = Geometries.CreatePolyLine(_curves[i]._curveTrace, 0.25, 10);
-        DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
-        GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
-
-        _myModel3DGroup.Children.Add(lineModel);
-      }
-
       txtTitle.Text = _title;
     }
 
     private void InitScene()
     {
+      _myModel3DGroup.Children.Clear();
+
       _helper.InitCamera(new Point3D(350, 100, 350));
       //_helper.InitLights(myModel3DGroup);
 
@@ -121,7 +162,17 @@ namespace MML_ParametricCurve3D_Visualizer
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      Utils.DrawCoordSystem(_myModel3DGroup);
+      Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+
+
+      for (int i = 0; i < _curves.Count; i++)
+      {
+        MeshGeometry3D line = Geometries.CreatePolyLine(_curves[i]._curveTrace, _lineWidth, 10);
+        DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
+        GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
+
+        _myModel3DGroup.Children.Add(lineModel);
+      }
     }
 
     LoadedCurve LoadData(string inFileName)
@@ -155,9 +206,9 @@ namespace MML_ParametricCurve3D_Visualizer
           string[] parts = lines[i].Split(' ');
 
           double t = double.Parse(parts[0], CultureInfo.InvariantCulture);
-          double x = 5.0 * double.Parse(parts[1], CultureInfo.InvariantCulture);
-          double y = 5.0 * double.Parse(parts[2], CultureInfo.InvariantCulture);
-          double z = 5.0 * double.Parse(parts[3], CultureInfo.InvariantCulture);
+          double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+          double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+          double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
 
           Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
 
@@ -263,6 +314,19 @@ namespace MML_ParametricCurve3D_Visualizer
 
         Thread.Sleep(10);
       }
+    }
+
+    private void btnIncWidth_Click(object sender, RoutedEventArgs e)
+    {
+      _lineWidth *= 1.1;
+
+      InitScene();
+    }
+
+    private void btnDecWidth_Click(object sender, RoutedEventArgs e)
+    {
+      _lineWidth *= 0.9;
+      InitScene();
     }
   }
 }

@@ -1,4 +1,5 @@
 PARAMETRIC_CURVE_CARTESIAN_3D
+Lorentz
 t1: 0
 t2: 20
 NumPoints: 1090

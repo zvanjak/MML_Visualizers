@@ -68,7 +68,7 @@ namespace MML_VectorField3D_Visualizer
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      Utils.DrawCoordSystem(myModel3DGroup);
+      Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
       foreach (var vec in listVecs)
       {

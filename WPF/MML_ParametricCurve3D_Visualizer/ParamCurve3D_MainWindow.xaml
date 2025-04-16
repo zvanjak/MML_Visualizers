@@ -23,6 +23,9 @@
       <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="800" Canvas.Left="0" Canvas.Top="0" >
       </Viewport3D>
     </Viewbox>
+    <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
+    <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
+    <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>
   </Grid>
 
 </Window>

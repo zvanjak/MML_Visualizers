@@ -86,7 +86,7 @@ namespace MML_ScalarFunction2Visualizer
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      Utils.DrawCoordSystem(myModel3DGroup);
+      Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
       txtTitle.Text = _title;
 
