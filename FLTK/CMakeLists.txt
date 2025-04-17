@@ -14,6 +14,7 @@
 #     https://www.fltk.org/bugs.php
 #
 ################################################################################
+cmake_minimum_required(VERSION 3.25)
 
 include(../CMake/fl_create_example.cmake)
 include(../CMake/FLTK-Functions.cmake)
