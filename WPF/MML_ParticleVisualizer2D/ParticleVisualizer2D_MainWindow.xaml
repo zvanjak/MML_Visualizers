@@ -5,8 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer2D"
         mc:Ignorable="d"
-        Title="Particle visualizer 2D" Height="450" Width="800">
-    <Grid>
+        Title="Particle visualizer 2D" Height="1085" Width="1245">
+  <Grid Margin="0,0,0,0" >
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30"/>
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
+    <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" HorizontalAlignment="Left" Margin="1027,4,0,0" VerticalAlignment="Top" Width="75" Click="btnStartSim_Click"/>
+    <TextBox x:Name="txtNumSteps" Grid.Row="0" HorizontalAlignment="Left" Margin="631,5,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="59"/>
+    <ComboBox x:Name="cmbSelectedSimulation" Grid.Row="0" HorizontalAlignment="Left" Margin="110,1,0,0" VerticalAlignment="Top" Width="152"/>
+    <Label Content="Selected sim." Grid.Row="0" HorizontalAlignment="Left" Margin="26,0,0,0" VerticalAlignment="Top"/>
+    <Label Content="Num. of steps:" Grid.Row="0" HorizontalAlignment="Left" Margin="540,1,0,0" VerticalAlignment="Top"/>
+    <Label Content="Refresh every " Grid.Row="0" HorizontalAlignment="Left" Margin="741,1,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" HorizontalAlignment="Left" Margin="831,5,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
+    <Label Content="steps" Grid.Row="0" HorizontalAlignment="Left" Margin="867,0,0,0" VerticalAlignment="Top"/>
+    <Label Content="dT = " Grid.Row="0" HorizontalAlignment="Left" Margin="377,3,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtDT" Grid.Row="0" HorizontalAlignment="Left" Margin="420,5,0,0" TextWrapping="Wrap" Text="0.1" VerticalAlignment="Top" Width="54"/>
 
-    </Grid>
+  </Grid>
 </Window>
