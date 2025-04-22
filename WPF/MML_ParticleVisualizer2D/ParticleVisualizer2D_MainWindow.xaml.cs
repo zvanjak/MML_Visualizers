@@ -20,5 +20,10 @@ namespace MML_ParticleVisualizer2D
     {
       InitializeComponent();
     }
+
+    public bool LoadData(string fileName)
+    {
+      return true;
+    }
   }
 }
