@@ -16,6 +16,8 @@ namespace MML_ParticleVisualizer2D
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
     List<Ball> _balls = new List<Ball>();
+    int _numSteps = 0;
+    int _stepDelayMiliSec = 1000;
     Ellipse[] _shapes;
 
     public ParticleVisualizer2D_MainWindow()
@@ -31,7 +33,14 @@ namespace MML_ParticleVisualizer2D
       }
       var fileName = args[1];
 
-      LoadData(fileName);
+      if( !LoadData(fileName) )
+      {
+        MessageBox.Show("Error loading data from file.");
+        return;
+      }
+
+      txtNumSteps.Text = _numSteps.ToString();
+      txtDT.Text = _stepDelayMiliSec.ToString();
 
       // let's visualize those balls
       var border = new Rectangle();
@@ -67,8 +76,6 @@ namespace MML_ParticleVisualizer2D
 
     public bool LoadData(string fileName)
     {
-      // load data about balls and their position from SimData.txt
-
       // get number of balls
       int numBalls = 0;
       string[] lines = System.IO.File.ReadAllLines(fileName);
@@ -106,6 +113,8 @@ namespace MML_ParticleVisualizer2D
         if (parts.Length != 2)
           throw new Exception("Invalid number of steps in SimData.txt");
         int numSteps = int.Parse(parts[1]);
+
+        _numSteps = numSteps;
 
         // read the steps
         for (int i = 0; i < numSteps; i++)
@@ -160,7 +169,7 @@ namespace MML_ParticleVisualizer2D
     {
       for (int t = 0; t < numSteps; t += 1)
       {
-        Thread.Sleep(100); // Simulate time delay
+        Thread.Sleep(_stepDelayMiliSec); // Simulate time delay
 
         if (t % refreshEvery == 0)
         {
