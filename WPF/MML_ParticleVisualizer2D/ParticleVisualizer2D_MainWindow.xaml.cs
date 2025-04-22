@@ -45,10 +45,12 @@ namespace MML_ParticleVisualizer2D
         
         numBalls = int.Parse(parts[1]);
 
+        int lineNumber = 2;
+
         // read the balls attributes - name, radius, type
         for (int i = 0; i < numBalls; i++)
         {
-          parts = lines[2 + i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
           
           if (parts.Length != 3)
             throw new Exception("Invalid ball attributes in SimData.txt");
@@ -62,7 +64,7 @@ namespace MML_ParticleVisualizer2D
         }
 
         // read number of steps
-        parts = lines[2 + numBalls].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length != 2)
           throw new Exception("Invalid number of steps in SimData.txt");
         int numSteps = int.Parse(parts[1]);
@@ -71,7 +73,7 @@ namespace MML_ParticleVisualizer2D
         for (int i = 0; i < numSteps; i++)
         {
           // we expect "Step 0" together with timing (ie, additional double to specify T)
-          parts = lines[3 + numBalls + i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
           if (parts.Length != 3)
             throw new Exception("Invalid number of steps in SimData.txt");
 
@@ -82,15 +84,11 @@ namespace MML_ParticleVisualizer2D
           double T = double.Parse(parts[2]);
 
           // read the positions of the balls
-          // each ball position is in its own row, starting wth the ball index
-          // and then the x and y coordinates
-          // for example: 0 1.0 2.0
-          // where 0 is the ball index, 1.0 is the x coordinate and 2.0 is the y coordinate
           for (int j = 0; j < numBalls; j++)
           {
-            parts = lines[3 + numBalls + i + 1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length != 3)
-              throw new Exception("Invalid number of ball positions in SimData.txt");
+              throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
 
             int index = int.Parse(parts[0]);
             double x = double.Parse(parts[1]);
@@ -101,7 +99,6 @@ namespace MML_ParticleVisualizer2D
             _balls[j].AddPos(pos);
           }
         }
-
       }
       else
       {
