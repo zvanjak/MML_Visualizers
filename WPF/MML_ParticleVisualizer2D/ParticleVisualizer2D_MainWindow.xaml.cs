@@ -19,12 +19,44 @@ namespace MML_ParticleVisualizer2D
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
     List<Ball> _balls = new List<Ball>();
+    Ellipse[] _shapes;
 
     public ParticleVisualizer2D_MainWindow()
     {
       InitializeComponent();
 
       LoadData("SimData.txt");
+
+      // let's visualize those balls
+      var border = new Rectangle();
+      border.Stroke = Brushes.Black;
+      border.Fill = Brushes.SkyBlue;
+      border.HorizontalAlignment = HorizontalAlignment.Left;
+      border.VerticalAlignment = VerticalAlignment.Center;
+      border.Width = 1000;
+      border.Height = 1000;
+
+      MyCanvas.Children.Add(border);
+
+      _shapes = new Ellipse[_balls.Count];
+
+      for (int i = 0; i < _balls.Count; i++)
+      {
+        _shapes[i] = new Ellipse();
+
+        // set Ellipse Fill to ball color
+        string colorName = _balls[i].Color;
+        Color color = (Color)ColorConverter.ConvertFromString(colorName);
+        _shapes[i].Fill = new SolidColorBrush(color);
+
+        _shapes[i].Width = _balls[i].Radius * 2;
+        _shapes[i].Height = _balls[i].Radius * 2;
+
+        Canvas.SetLeft(_shapes[i], _balls[i].Pos(0).X1 - _balls[i].Radius);
+        Canvas.SetTop(_shapes[i], _balls[i].Pos(0).X2 - _balls[i].Radius);
+
+        MyCanvas.Children.Add(_shapes[i]);
+      }
     }
 
     public bool LoadData(string fileName)
@@ -105,6 +137,37 @@ namespace MML_ParticleVisualizer2D
       }
 
       return true;
+    }
+
+    private void btnStartSim_Click(object sender, RoutedEventArgs e)
+    {
+      int numSteps = 5; // Convert.ToInt16(txtNumSteps.Text);
+      int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
+
+      Task.Run(() =>
+      {
+        Animate(numSteps, refreshEvery);
+      });
+    }
+
+    private void Animate(int numSteps, int refreshEvery)
+    {
+      for (int t = 0; t < numSteps; t += 1)
+      {
+        Thread.Sleep(100); // Simulate time delay
+
+        if (t % refreshEvery == 0)
+        {
+          for (int i = 0; i < _balls.Count; i++)
+          {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+              Canvas.SetLeft(_shapes[i], _balls[i].Pos(t).X1 - _balls[i].Radius);
+              Canvas.SetTop(_shapes[i], _balls[i].Pos(t).X2 - _balls[i].Radius);
+            }));
+          }
+        }
+      }
     }
   }
 }

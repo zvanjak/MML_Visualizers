@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer2D"
         mc:Ignorable="d"
-        Title="Particle visualizer 2D" Height="1085" Width="1245">
+        Title="Particle visualizer 2D" Height="885" Width="1245">
   <Grid Margin="0,0,0,0" >
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
       <RowDefinition />
     </Grid.RowDefinitions>
-    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
-    <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" HorizontalAlignment="Left" Margin="1027,4,0,0" VerticalAlignment="Top" Width="75"/>
+    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="800" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
+    <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" HorizontalAlignment="Left" Margin="1027,4,0,6" Width="75" Click="btnStartSim_Click"/>
     <TextBox x:Name="txtNumSteps" Grid.Row="0" HorizontalAlignment="Left" Margin="631,5,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="59"/>
     <ComboBox x:Name="cmbSelectedSimulation" Grid.Row="0" HorizontalAlignment="Left" Margin="110,1,0,0" VerticalAlignment="Top" Width="152"/>
     <Label Content="Selected sim." Grid.Row="0" HorizontalAlignment="Left" Margin="26,0,0,0" VerticalAlignment="Top"/>
