@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\MathLibCSharp\MathLibCSharp\MathLibCSharp.csproj" />
+    <ProjectReference Include="..\..\..\WPF_3D_Helper\WPF3DHelperLib\WPF3DHelperLib.csproj" />
+  </ItemGroup>
+
 </Project>
