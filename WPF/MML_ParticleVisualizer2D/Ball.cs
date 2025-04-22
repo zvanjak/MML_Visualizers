@@ -12,9 +12,13 @@ namespace MML_ParticleVisualizer2D
   {
     private List<Vector2Cartesian> _vecPos = new List<Vector2Cartesian>();
 
-    public double _radius;
-    public double _mass;
-    public int _type;
+    private string _name;
+    private double _radius;
+    private int    _type;
+
+    public int Type { get => _type; set => _type = value; }
+    public double Radius { get => _radius; set => _radius = value; }
+    public string Name { get => _name; set => _name = value; }
 
     public Vector2Cartesian Pos(int i)
     {
@@ -27,13 +31,10 @@ namespace MML_ParticleVisualizer2D
       _vecPos.Add(pos);
     }
 
-    public Ball(double radius, double mass, int type)
+    public Ball(double radius, int type)
     {
       _radius = radius;
-      _mass = mass;
       _type = type;
     }
-
-    public int Type { get => _type; set => _type = value; }
   }
 }

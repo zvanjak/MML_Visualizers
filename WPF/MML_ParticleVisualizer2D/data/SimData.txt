@@ -1,4 +1,4 @@
-SIMULATION
+PARTICLE_SIMULATION_DATA_2D
 NumBalls: 5
 Ball_1 Black 10
 Ball_2 Red 20
