@@ -18,7 +18,7 @@ namespace MML_ParticleVisualizer2D
   {
     List<Ball> _balls = new List<Ball>();
     int _numSteps = 0;
-    int _stepDelayMiliSec = 1000;
+    int _stepDelayMiliSec = 100;
     Ellipse[] _shapes;
 
     public ParticleVisualizer2D_MainWindow()
