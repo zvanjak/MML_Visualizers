@@ -13,9 +13,6 @@ using MML;
 
 namespace MML_ParticleVisualizer2D
 {
-  /// <summary>
-  /// Interaction logic for MainWindow.xaml
-  /// </summary>
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
     List<Ball> _balls = new List<Ball>();
@@ -25,12 +22,21 @@ namespace MML_ParticleVisualizer2D
     {
       InitializeComponent();
 
-      LoadData("SimData.txt");
+      var args = Environment.GetCommandLineArgs();
+
+      if (args.Length < 2)
+      {
+        MessageBox.Show("No file name specified.");
+        return;
+      }
+      var fileName = args[1];
+
+      LoadData(fileName);
 
       // let's visualize those balls
       var border = new Rectangle();
       border.Stroke = Brushes.Black;
-      border.Fill = Brushes.SkyBlue;
+      border.Fill = Brushes.AntiqueWhite;
       border.HorizontalAlignment = HorizontalAlignment.Left;
       border.VerticalAlignment = VerticalAlignment.Center;
       border.Width = 1000;

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MML_ParticleVisualizer2D": {
+      "commandName": "Project",
+      "commandLineArgs": "SimData.txt"
+    }
+  }
+}
