@@ -11,7 +11,7 @@
       <RowDefinition Height="30"/>
       <RowDefinition />
     </Grid.RowDefinitions>
-    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="800" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
+    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="750" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
     <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" HorizontalAlignment="Left" Margin="1027,4,0,6" Width="75" Click="btnStartSim_Click"/>
     <TextBox x:Name="txtNumSteps" Grid.Row="0" HorizontalAlignment="Left" Margin="631,5,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="59"/>
     <ComboBox x:Name="cmbSelectedSimulation" Grid.Row="0" HorizontalAlignment="Left" Margin="110,1,0,0" VerticalAlignment="Top" Width="152"/>

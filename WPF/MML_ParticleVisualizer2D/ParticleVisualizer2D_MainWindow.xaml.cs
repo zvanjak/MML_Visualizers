@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -49,7 +50,7 @@ namespace MML_ParticleVisualizer2D
       border.HorizontalAlignment = HorizontalAlignment.Left;
       border.VerticalAlignment = VerticalAlignment.Center;
       border.Width = 1000;
-      border.Height = 1000;
+      border.Height = 800;
 
       MyCanvas.Children.Add(border);
 
@@ -102,7 +103,7 @@ namespace MML_ParticleVisualizer2D
           
           string name = parts[0];
           string color = parts[1];
-          double radius = double.Parse(parts[2]);
+          double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
           Ball ball = new Ball(name, color, radius);
 
           _balls.Add(ball);
@@ -128,7 +129,7 @@ namespace MML_ParticleVisualizer2D
             throw new Exception("Invalid step in SimData.txt");
           if (parts[1] != i.ToString())
             throw new Exception("Invalid step number in SimData.txt");
-          double T = double.Parse(parts[2]);
+          double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
           // read the positions of the balls
           for (int j = 0; j < numBalls; j++)
@@ -138,8 +139,8 @@ namespace MML_ParticleVisualizer2D
               throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
 
             int index = int.Parse(parts[0]);
-            double x = double.Parse(parts[1]);
-            double y = double.Parse(parts[2]);
+            double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+            double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
             
             Vector2Cartesian pos = new Vector2Cartesian(x, y);
             
@@ -156,12 +157,11 @@ namespace MML_ParticleVisualizer2D
 
     private void btnStartSim_Click(object sender, RoutedEventArgs e)
     {
-      int numSteps = 5; // Convert.ToInt16(txtNumSteps.Text);
-      int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
+      _stepDelayMiliSec = int.Parse(txtDT.Text);
 
       Task.Run(() =>
       {
-        Animate(numSteps, refreshEvery);
+        Animate(_numSteps, 1);
       });
     }
 
