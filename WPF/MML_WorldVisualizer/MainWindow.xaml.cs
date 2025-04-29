@@ -61,7 +61,7 @@ namespace MML_WorldVisualizer
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
     }
 
-    bool LoadData(string inFileName)
+    private bool LoadData(string inFileName)
     {
       if (File.Exists(inFileName) == false)
       {

@@ -28,7 +28,7 @@ namespace MML_ParticleVisualizer3D
     double _lineWidth = 0.25;
 
     int _numSteps = 0;
-    int _stepDelayMiliSec = 100;
+    int _stepDelayMiliSec = 10;
 
     List<ParticleData3D> _balls = new List<ParticleData3D>();
     
@@ -212,6 +212,8 @@ namespace MML_ParticleVisualizer3D
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
       _myModel3DGroup.Children.Clear();
+      
+      _stepDelayMiliSec = int.Parse(txtDT.Text);
 
       InitScene();
 
@@ -276,7 +278,7 @@ namespace MML_ParticleVisualizer3D
           }));
         }
 
-        Thread.Sleep(100);
+        Thread.Sleep(_stepDelayMiliSec);
       }
     }
 
