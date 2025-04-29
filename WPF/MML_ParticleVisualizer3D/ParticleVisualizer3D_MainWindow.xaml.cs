@@ -31,6 +31,8 @@ namespace MML_ParticleVisualizer3D
     int _stepDelayMiliSec = 100;
 
     List<ParticleData3D> _balls = new List<ParticleData3D>();
+    
+    List<Sphere> _spheres = new List<Sphere>();
 
     Model3DGroup _myModel3DGroup = new Model3DGroup();
 
@@ -53,13 +55,16 @@ namespace MML_ParticleVisualizer3D
         return;
       }
 
+      //txtNumSteps.Text = _numSteps.ToString();
+      txtDT.Text = _stepDelayMiliSec.ToString();
+
       InitScene();
     }
-
 
     private void InitScene()
     {
       _myModel3DGroup.Children.Clear();
+      _spheres.Clear();
 
       _helper.InitCamera(_cameraPoint);
       //_helper.InitLights(myModel3DGroup);
@@ -83,15 +88,41 @@ namespace MML_ParticleVisualizer3D
 
       Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
 
+      // adding the balls
+      for (int i = 0; i < _balls.Count; i++)
+      {
+        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
 
-      //for (int i = 0; i < _curves.Count; i++)
+        Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
+        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
+        GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+
+        TranslateTransform3D Off = new TranslateTransform3D();
+        Off.OffsetX = _balls[i].Pos(0).X;
+        Off.OffsetY = _balls[i].Pos(0).Y;
+        Off.OffsetZ = _balls[i].Pos(0).Z;
+        
+        sphereModel.Transform = Off;
+        
+        _myModel3DGroup.Children.Add(sphereModel);
+        
+        Sphere newSphere = new Sphere();
+        newSphere.RefGeomModel = sphereModel;
+        _spheres.Add(newSphere);
+      }
+
+      // adding the lines
+      //for (int i = 0; i < _balls.Count; i++)
       //{
-      //  MeshGeometry3D line = Geometries.CreatePolyLine(_curves[i]._curveTrace, _lineWidth, 10);
-      //  DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
-      //  GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
-
-      //  _myModel3DGroup.Children.Add(lineModel);
+      //  for (int j = 0; j < _numSteps - 1; j++)
+      //  {
+      //    MeshGeometry3D line = Geometries.CreateSimpleLine(_balls[i].Pos(j), _balls[i].Pos(j + 1), _lineWidth, _lineWidth * 2);
+      //    var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+      //    GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
+      //    _myModel3DGroup.Children.Add(lineModel);
+      //  }
       //}
+
     }
 
     public bool LoadData(string fileName)
@@ -232,23 +263,22 @@ namespace MML_ParticleVisualizer3D
         //  _myModel3DGroup.Children.Add(lineModel);
         //}
 
-        //for (int i = 0; i < _curves.Count; i++)
-        //{
-        //  this.Dispatcher.Invoke((Action)(() =>
-        //  {
-        //    TranslateTransform3D Off = new TranslateTransform3D();
-        //    Off.OffsetX = _curves[i]._curveTrace[t].X;
-        //    Off.OffsetY = _curves[i]._curveTrace[t].Y;
-        //    Off.OffsetZ = _curves[i]._curveTrace[t].Z;
+        for (int i = 0; i < _balls.Count; i++)
+        {
+          this.Dispatcher.Invoke((Action)(() =>
+          {
+            TranslateTransform3D Off = new TranslateTransform3D();
+            Off.OffsetX = _balls[i].Pos(t).X;
+            Off.OffsetY = _balls[i].Pos(t).Y;
+            Off.OffsetZ = _balls[i].Pos(t).Z;
 
-        //    _spheres[i].RefGeomModel.Transform = Off;
-        //  }));
-        //}
+            _spheres[i].RefGeomModel.Transform = Off;
+          }));
+        }
 
-        Thread.Sleep(10);
+        Thread.Sleep(100);
       }
     }
-
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
