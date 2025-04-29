@@ -72,7 +72,8 @@ namespace MML_ParametricCurve3D_Visualizer
         maxZ = _curveTrace.Max(v => v.Z);
       return maxZ;
     }
-   }
+  }
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>

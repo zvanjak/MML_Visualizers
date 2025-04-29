@@ -27,6 +27,11 @@ namespace MML_ParticleVisualizer3D
     double _axisLen = 500;
     double _lineWidth = 0.25;
 
+    int _numSteps = 0;
+    int _stepDelayMiliSec = 100;
+
+    List<ParticleData3D> _balls = new List<ParticleData3D>();
+
     Model3DGroup _myModel3DGroup = new Model3DGroup();
 
     public ParticleVisualizer3D_MainWindow()
@@ -93,13 +98,13 @@ namespace MML_ParticleVisualizer3D
       int numBalls = 0;
       string[] lines = System.IO.File.ReadAllLines(fileName);
 
-      if (lines[0] == "PARTICLE_SIMULATION_DATA_2D")
+      if (lines[0] == "PARTICLE_SIMULATION_DATA_3D")
       {
         // read the number of balls
         string[] parts = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (parts.Length != 2)
-          throw new Exception("Invalid number of balls in SimData.txt");
+          throw new Exception("Invalid number of balls in " + fileName);
 
         numBalls = int.Parse(parts[1]);
 
@@ -116,7 +121,7 @@ namespace MML_ParticleVisualizer3D
           string name = parts[0];
           string color = parts[1];
           double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
-          Ball ball = new Ball(name, color, radius);
+          ParticleData3D ball = new ParticleData3D(name, color, radius);
 
           _balls.Add(ball);
         }
@@ -147,14 +152,15 @@ namespace MML_ParticleVisualizer3D
           for (int j = 0; j < numBalls; j++)
           {
             parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 3)
+            if (parts.Length != 4)
               throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
 
             int index = int.Parse(parts[0]);
             double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
             double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+            double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
 
-            Vector2Cartesian pos = new Vector2Cartesian(x, y);
+            Vector3Cartesian pos = new Vector3Cartesian(x, y, z);
 
             _balls[j].AddPos(pos);
           }
@@ -162,9 +168,95 @@ namespace MML_ParticleVisualizer3D
       }
       else
       {
+        MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_3D' at the beginning.");
+        return false;
       }
 
       return true;
+    }
+
+
+    private void cmdAnimate_Click(object sender, RoutedEventArgs e)
+    {
+      _myModel3DGroup.Children.Clear();
+
+      InitScene();
+
+      //for (int i = 0; i < _curves.Count; i++)
+      //{
+      //  MeshGeometry3D sphereGeometry;
+      //  if (i == 0)
+      //    sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 5);
+      //  else
+      //    sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
+
+      //  TranslateTransform3D Off = new TranslateTransform3D();
+      //  Off.OffsetX = _spheres[i].X;
+      //  Off.OffsetY = _spheres[i].Y;
+      //  Off.OffsetZ = _spheres[i].Z;
+
+      //  var sphereMaterial = new DiffuseMaterial(_brushes[i]);
+      //  GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+
+      //  sphereModel.Transform = Off;
+
+      //  _spheres[i].RefGeomModel = sphereModel;
+
+      //  _myModel3DGroup.Children.Add(sphereModel);
+      //}
+
+
+      int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
+      double dt = 1; // Convert.ToDouble(txtDT.Text);
+
+      // run animations in a separate thread
+      Task.Run(() =>
+      {
+        Animate(dt, _numSteps, refreshEvery);
+      });
+    }
+
+    private void Animate(double dt, int numSteps, int refreshEvery)
+    {
+      for (int t = 0; t < numSteps; t += 1)
+      {
+        //if (t > 0)
+        //{
+        //  MeshGeometry3D line = Geometries.CreateSimpleLine(_curveTrace[t - 1], _curveTrace[t], 10, 5);
+
+        //  var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+        //  GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
+
+        //  _myModel3DGroup.Children.Add(lineModel);
+        //}
+
+        //for (int i = 0; i < _curves.Count; i++)
+        //{
+        //  this.Dispatcher.Invoke((Action)(() =>
+        //  {
+        //    TranslateTransform3D Off = new TranslateTransform3D();
+        //    Off.OffsetX = _curves[i]._curveTrace[t].X;
+        //    Off.OffsetY = _curves[i]._curveTrace[t].Y;
+        //    Off.OffsetZ = _curves[i]._curveTrace[t].Z;
+
+        //    _spheres[i].RefGeomModel.Transform = Off;
+        //  }));
+        //}
+
+        Thread.Sleep(10);
+      }
+    }
+
+    private void btnIncWidth_Click(object sender, RoutedEventArgs e)
+    {
+      _lineWidth *= 1.1;
+      InitScene();
+    }
+
+    private void btnDecWidth_Click(object sender, RoutedEventArgs e)
+    {
+      _lineWidth *= 0.9;
+      InitScene();
     }
   }
 }

@@ -150,6 +150,8 @@ namespace MML_ParticleVisualizer2D
       }
       else
       {
+        MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_2D' at the beginning.");
+        return false;
       }
 
       return true;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MML_ParticleVisualizer3D
 {
-  class Ball3D
+  class ParticleData3D
   {
     private List<Vector3Cartesian> _vecPos = new List<Vector3Cartesian>();
 
@@ -30,7 +30,7 @@ namespace MML_ParticleVisualizer3D
       _vecPos.Add(pos);
     }
 
-    public Ball3D(string name, string color, double radius)
+    public ParticleData3D(string name, string color, double radius)
     {
       _name = name;
       _color = color;
