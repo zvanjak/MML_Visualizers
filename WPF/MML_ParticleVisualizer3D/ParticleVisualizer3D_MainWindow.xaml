@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer3D"
         mc:Ignorable="d"
-        Title="Particle visualizer 3D" Height="800" Width="1200">
+        Title="Particle visualizer 3D" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
   <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="40"/>

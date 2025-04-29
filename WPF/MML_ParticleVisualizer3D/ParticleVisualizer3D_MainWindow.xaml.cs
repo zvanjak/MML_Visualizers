@@ -52,6 +52,8 @@ namespace MML_ParticleVisualizer3D
         MessageBox.Show("Error loading data from file.");
         return;
       }
+
+      InitScene();
     }
 
 
@@ -79,7 +81,7 @@ namespace MML_ParticleVisualizer3D
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      //Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+      Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
 
 
       //for (int i = 0; i < _curves.Count; i++)
@@ -245,6 +247,44 @@ namespace MML_ParticleVisualizer3D
 
         Thread.Sleep(10);
       }
+    }
+
+
+    private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
+
+      _cameraPoint = _helper._cameraPos;
+    }
+    private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      _helper.Window_MouseLeftButtonUp();
+
+      _cameraPoint = _helper._cameraPos;
+    }
+    private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      _helper.Window_MouseRightButtonDown(e.GetPosition(this));
+
+      _cameraPoint = _helper._cameraPos;
+    }
+    private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      _helper.Window_MouseRightButtonUp();
+
+      _cameraPoint = _helper._cameraPos;
+    }
+    private void Window_MouseMove(object sender, MouseEventArgs e)
+    {
+      _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
+
+      _cameraPoint = _helper._cameraPos;
+    }
+    public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+      _helper.Window_MouseWheel(myViewport3D, sender, e);
+
+      _cameraPoint = _helper._cameraPos;
     }
 
     private void btnIncWidth_Click(object sender, RoutedEventArgs e)
