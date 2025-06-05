@@ -198,7 +198,7 @@ namespace MML_RealFunctionVisualizer
           double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
           string[] partsNumPoints = lines[5].Split(' ');
-          int numPoints = int.Parse(partsX2[1], CultureInfo.InvariantCulture);
+          int numPoints = int.Parse(partsNumPoints[1], CultureInfo.InvariantCulture);
 
           _title = mlf._title;
 
