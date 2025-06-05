@@ -16,7 +16,7 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Gravity simulation of five bodies" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+    <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Gravity simulation of five bodies" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="25" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="0"/>
     <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
 
     <Viewbox Grid.Row="1" Grid.Column="0">
