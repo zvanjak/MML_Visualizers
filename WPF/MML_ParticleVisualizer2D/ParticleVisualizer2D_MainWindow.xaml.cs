@@ -34,7 +34,7 @@ namespace MML_ParticleVisualizer2D
       }
       var fileName = args[1];
 
-      if( !LoadData(fileName) )
+      if (!LoadData(fileName))
       {
         MessageBox.Show("Error loading data from file.");
         return;
@@ -85,10 +85,10 @@ namespace MML_ParticleVisualizer2D
       {
         // read the number of balls
         string[] parts = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        
+
         if (parts.Length != 2)
           throw new Exception("Invalid number of balls in SimData.txt");
-        
+
         numBalls = int.Parse(parts[1]);
 
         int lineNumber = 2;
@@ -97,10 +97,10 @@ namespace MML_ParticleVisualizer2D
         for (int i = 0; i < numBalls; i++)
         {
           parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          
+
           if (parts.Length != 3)
             throw new Exception("Invalid ball attributes in SimData.txt");
-          
+
           string name = parts[0];
           string color = parts[1];
           double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
@@ -141,9 +141,9 @@ namespace MML_ParticleVisualizer2D
             int index = int.Parse(parts[0]);
             double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
             double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
-            
+
             Vector2Cartesian pos = new Vector2Cartesian(x, y);
-            
+
             _balls[j].AddPos(pos);
           }
         }
@@ -175,14 +175,14 @@ namespace MML_ParticleVisualizer2D
 
         if (t % refreshEvery == 0)
         {
-          for (int i = 0; i < _balls.Count; i++)
+          this.Dispatcher.Invoke((Action)(() =>
           {
-            this.Dispatcher.Invoke((Action)(() =>
+            for (int i = 0; i < _balls.Count; i++)
             {
               Canvas.SetLeft(_shapes[i], _balls[i].Pos(t).X1 - _balls[i].Radius);
               Canvas.SetTop(_shapes[i], _balls[i].Pos(t).X2 - _balls[i].Radius);
-            }));
-          }
+            }
+          }));
         }
       }
     }
