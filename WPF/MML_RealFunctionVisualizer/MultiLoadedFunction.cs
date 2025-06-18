@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -17,6 +18,18 @@ namespace MML_RealFunctionVisualizer
 
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
+
+    public int GetDimension()
+    {
+      return _multiFuncY.Rows;
+    }
+
+    public string GetFunctionTitle(int i)
+    {
+      if (i < 0 || i >= _multiFuncY.Rows)
+        throw new ArgumentOutOfRangeException("Index out of range for function title retrieval.");
+      return $"{_title} - Function {i + 1}";
+    }
 
     public override int GetNumPoints()
     {

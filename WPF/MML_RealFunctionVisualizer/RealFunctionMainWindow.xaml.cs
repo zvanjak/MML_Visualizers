@@ -43,7 +43,7 @@ namespace MML_RealFunctionVisualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>(); 
+    List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>();
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
     private string _title = "";
 
@@ -57,7 +57,7 @@ namespace MML_RealFunctionVisualizer
       {
         MessageBox.Show("No file name specified.");
         return;
-      } 
+      }
 
       int numInputs = args.Length - 1;
       for (int i = 0; i < numInputs; i++)
@@ -68,6 +68,8 @@ namespace MML_RealFunctionVisualizer
       }
 
       InitializeCoordSysParams();
+
+      UpdateLegend();
 
       txtXMin.Text = _coordSystemParams._xMin.ToString();
       txtXMax.Text = _coordSystemParams._xMax.ToString();
@@ -93,7 +95,7 @@ namespace MML_RealFunctionVisualizer
         _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedFunctions[i].GetMaxX());
         _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedFunctions[i].GetMinY());
         _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedFunctions[i].GetMaxY());
-      } 
+      }
 
       _coordSystemParams._windowWidth = mainCanvas.Width;
       _coordSystemParams._windowHeight = mainCanvas.Height;
@@ -130,7 +132,7 @@ namespace MML_RealFunctionVisualizer
       {
         MessageBox.Show("File does not exist: " + inFileName);
         return false;
-      } 
+      }
 
       string[] lines = File.ReadAllLines(inFileName);
       string type = lines[0];
@@ -142,7 +144,7 @@ namespace MML_RealFunctionVisualizer
         slf._loadedType = LoadedType.REAL_FUNCTION;
 
         slf._title = lines[1];
-        
+
         _title = slf._title;
 
         string[] partsX1 = lines[2].Split(' ');
@@ -222,9 +224,10 @@ namespace MML_RealFunctionVisualizer
 
           return true;
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
           MessageBox.Show("Error loading file " + inFileName + "\nMessage: " + e.Message);
-          return false; 
+          return false;
         }
       }
       else
@@ -244,6 +247,93 @@ namespace MML_RealFunctionVisualizer
       // redraw
       Redraw();
 
+    }
+
+    private readonly Brush[] LegendColors = new Brush[]
+{
+    Brushes.Red,
+    Brushes.Blue,
+    Brushes.Green,
+    Brushes.Orange,
+    Brushes.Purple
+};
+
+    private void UpdateLegend()
+    {
+      // Hide all legend entries by default
+      LegendTitle1.Visibility = Visibility.Collapsed;
+      LegendTitle2.Visibility = Visibility.Collapsed;
+      LegendTitle3.Visibility = Visibility.Collapsed;
+      LegendTitle4.Visibility = Visibility.Collapsed;
+      LegendTitle5.Visibility = Visibility.Collapsed;
+      LegendColor1.Visibility = Visibility.Collapsed;
+      LegendColor2.Visibility = Visibility.Collapsed;
+      LegendColor3.Visibility = Visibility.Collapsed;
+      LegendColor4.Visibility = Visibility.Collapsed;
+      LegendColor5.Visibility = Visibility.Collapsed;
+
+      int legendIndex = 0;
+
+      foreach (var func in _loadedFunctions)
+      {
+        if (func is SingleLoadedFunction slf)
+        {
+          if (legendIndex < 5)
+          {
+            SetLegendEntry(legendIndex, slf._title, LegendColors[legendIndex]);
+            legendIndex++;
+          }
+        }
+        else if (func is MultiLoadedFunction mlf)
+        {
+          // Assume mlf has a property for number of functions (dimensions)
+          int dim = mlf.GetDimension(); // You may need to implement or expose this
+          for (int i = 0; i < dim && legendIndex < 5; i++)
+          {
+            // If you have per-function titles, use them; otherwise, generate
+            string title = mlf.GetFunctionTitle(i) ?? $"Function {i + 1}";
+            SetLegendEntry(legendIndex, title, LegendColors[legendIndex]);
+            legendIndex++;
+          }
+        }
+      }
+    }
+
+    private void SetLegendEntry(int index, string title, Brush color)
+    {
+      switch (index)
+      {
+        case 0:
+          LegendTitle1.Content = title;
+          LegendTitle1.Visibility = Visibility.Visible;
+          LegendColor1.Fill = color;
+          LegendColor1.Visibility = Visibility.Visible;
+          break;
+        case 1:
+          LegendTitle2.Content = title;
+          LegendTitle2.Visibility = Visibility.Visible;
+          LegendColor2.Fill = color;
+          LegendColor2.Visibility = Visibility.Visible;
+          break;
+        case 2:
+          LegendTitle3.Content = title;
+          LegendTitle3.Visibility = Visibility.Visible;
+          LegendColor3.Fill = color;
+          LegendColor3.Visibility = Visibility.Visible;
+          break;
+        case 3:
+          LegendTitle4.Content = title;
+          LegendTitle4.Visibility = Visibility.Visible;
+          LegendColor4.Fill = color;
+          LegendColor4.Visibility = Visibility.Visible;
+          break;
+        case 4:
+          LegendTitle5.Content = title;
+          LegendTitle5.Visibility = Visibility.Visible;
+          LegendColor5.Fill = color;
+          LegendColor5.Visibility = Visibility.Visible;
+          break;
+      }
     }
   }
 }
