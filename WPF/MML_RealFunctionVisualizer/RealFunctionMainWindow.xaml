@@ -29,5 +29,30 @@
     <Label x:Name="txtTitle" Content="Title" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top" Width="769" Height="32" FontSize="16" FontWeight="Bold" HorizontalContentAlignment="Center"/>
     <Label Content="Num points:" HorizontalAlignment="Left" Margin="757,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.948,-0.191"/>
     <TextBox x:Name="txtNumPoints" HorizontalAlignment="Left" Margin="843,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77"/>
+    <Label Grid.Row="1" Grid.Column="1" Content="Legend" HorizontalAlignment="Left" Margin="36,17,0,0" VerticalAlignment="Top"/>
+
+    <!-- Legend visualization area -->
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="20,50,20,20" VerticalAlignment="Top" x:Name="LegendPanel">
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor1" Width="24" Height="4" Fill="Black" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle1" Content="Legend 1" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor2" Width="24" Height="4" Fill="Blue" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle2" Content="Legend 2" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor3" Width="24" Height="4" Fill="Red" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle3" Content="Legend 3" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor4" Width="24" Height="4" Fill="Green" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle4" Content="Legend 4" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor5" Width="24" Height="4" Fill="Orange" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle5" Content="Legend 5" VerticalAlignment="Center"/>
+      </StackPanel>
+    </StackPanel>
   </Grid>
 </Window>
