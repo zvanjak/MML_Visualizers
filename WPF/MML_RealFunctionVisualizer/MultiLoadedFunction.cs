@@ -15,6 +15,7 @@ namespace MML_RealFunctionVisualizer
   class MultiLoadedFunction : LoadedFunction
   {
     public string _title;
+    public string[] _legend;
 
     public MML.Vector _multiFuncX;
     public MML.Matrix _multiFuncY;
@@ -28,7 +29,7 @@ namespace MML_RealFunctionVisualizer
     {
       if (i < 0 || i >= _multiFuncY.Rows)
         throw new ArgumentOutOfRangeException("Index out of range for function title retrieval.");
-      return $"{_title} - Function {i + 1}";
+      return _legend[i];
     }
 
     public override int GetNumPoints()
@@ -76,6 +77,8 @@ namespace MML_RealFunctionVisualizer
       colors.Add(Colors.Red);
       colors.Add(Colors.Green);
       colors.Add(Colors.Orange);
+      colors.Add(Colors.Purple);
+      colors.Add(Colors.GreenYellow);
 
       List<Brush> brushes= new List<Brush>();
       brushes.Add(Brushes.Black);
@@ -83,6 +86,8 @@ namespace MML_RealFunctionVisualizer
       brushes.Add(Brushes.Red);
       brushes.Add(Brushes.Green);
       brushes.Add(Brushes.Orange);
+      brushes.Add(Brushes.Purple);
+      brushes.Add(Brushes.GreenYellow);
 
       for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)
       {
@@ -90,7 +95,10 @@ namespace MML_RealFunctionVisualizer
         for (int j = 0; j < _multiFuncY.Rows; j++)
         {
           Line xAxis = new Line();
-          xAxis.Stroke = brushes[j];
+          if( j < brushes.Count)
+            xAxis.Stroke = brushes[j];
+          else
+            xAxis.Stroke = Brushes.Black; // default color if j exceeds available colors
 
           double x1 = coordSysParams._centerX + _multiFuncX.Elements[i] * coordSysParams._scaleX;
           double y1 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i) * coordSysParams._scaleY;

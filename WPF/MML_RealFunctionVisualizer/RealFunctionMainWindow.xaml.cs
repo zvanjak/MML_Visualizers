@@ -193,13 +193,20 @@ namespace MML_RealFunctionVisualizer
           mlf._title = lines[1];
           int dim = int.Parse(lines[2]);
 
-          string[] partsX1 = lines[3].Split(' ');
+          string[] legend = new string[dim];
+          for (int i = 0; i < dim; i++)
+          {
+            legend[i] = lines[3 + i];
+          }
+          mlf._legend = legend;
+
+          string[] partsX1 = lines[3+dim].Split(' ');
           double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
-          string[] partsX2 = lines[4].Split(' ');
+          string[] partsX2 = lines[4+dim].Split(' ');
           double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
-          string[] partsNumPoints = lines[5].Split(' ');
+          string[] partsNumPoints = lines[5+dim].Split(' ');
           int numPoints = int.Parse(partsNumPoints[1], CultureInfo.InvariantCulture);
 
           _title = mlf._title;
@@ -207,16 +214,17 @@ namespace MML_RealFunctionVisualizer
           mlf._multiFuncX = new MML.Vector(numPoints);
           mlf._multiFuncY = new MML.Matrix(dim, numPoints);
 
-          for (int i = 6; i < lines.Length; i++)
+          int cnt = 0;
+          for (int i = 6+dim; i < lines.Length; i++, cnt++)
           {
             string[] parts = lines[i].Split(' ');
 
             double x = double.Parse(parts[0], CultureInfo.InvariantCulture);
-            mlf._multiFuncX.Elements[i - 6] = x;
+            mlf._multiFuncX.Elements[cnt] = x;
             for (int j = 0; j < dim; j++)
             {
               double y = double.Parse(parts[j + 1], CultureInfo.InvariantCulture);
-              mlf._multiFuncY.SetElemAt(j, i - 6, y);
+              mlf._multiFuncY.SetElemAt(j, cnt, y);
             }
           }
 
@@ -250,13 +258,14 @@ namespace MML_RealFunctionVisualizer
     }
 
     private readonly Brush[] LegendColors = new Brush[]
-{
-    Brushes.Red,
+    {
+    Brushes.Black,
     Brushes.Blue,
+    Brushes.Red,
     Brushes.Green,
     Brushes.Orange,
     Brushes.Purple
-};
+    };
 
     private void UpdateLegend()
     {
@@ -291,7 +300,7 @@ namespace MML_RealFunctionVisualizer
           for (int i = 0; i < dim && legendIndex < 5; i++)
           {
             // If you have per-function titles, use them; otherwise, generate
-            string title = mlf.GetFunctionTitle(i) ?? $"Function {i + 1}";
+            string title = mlf._legend[i];
             SetLegendEntry(legendIndex, title, LegendColors[legendIndex]);
             legendIndex++;
           }

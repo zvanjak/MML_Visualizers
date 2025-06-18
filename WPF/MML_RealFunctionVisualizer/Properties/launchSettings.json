@@ -2,7 +2,7 @@
   "profiles": {
     "MML_RealFunctionVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "projectile_multi.txt"
+      "commandLineArgs": "projectile_vacuum_multi.txt"
     }
   }
 }
