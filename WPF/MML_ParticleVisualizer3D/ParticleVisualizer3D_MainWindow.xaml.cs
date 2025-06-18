@@ -31,7 +31,7 @@ namespace MML_ParticleVisualizer3D
     int _stepDelayMiliSec = 10;
 
     List<ParticleData3D> _balls = new List<ParticleData3D>();
-    
+
     List<Sphere> _spheres = new List<Sphere>();
 
     Model3DGroup _myModel3DGroup = new Model3DGroup();
@@ -101,11 +101,11 @@ namespace MML_ParticleVisualizer3D
         Off.OffsetX = _balls[i].Pos(0).X;
         Off.OffsetY = _balls[i].Pos(0).Y;
         Off.OffsetZ = _balls[i].Pos(0).Z;
-        
+
         sphereModel.Transform = Off;
-        
+
         _myModel3DGroup.Children.Add(sphereModel);
-        
+
         Sphere newSphere = new Sphere();
         newSphere.RefGeomModel = sphereModel;
         _spheres.Add(newSphere);
@@ -212,7 +212,7 @@ namespace MML_ParticleVisualizer3D
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
       _myModel3DGroup.Children.Clear();
-      
+
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
       InitScene();
@@ -265,9 +265,9 @@ namespace MML_ParticleVisualizer3D
         //  _myModel3DGroup.Children.Add(lineModel);
         //}
 
-        for (int i = 0; i < _balls.Count; i++)
+        this.Dispatcher.Invoke((Action)(() =>
         {
-          this.Dispatcher.Invoke((Action)(() =>
+          for (int i = 0; i < _balls.Count; i++)
           {
             TranslateTransform3D Off = new TranslateTransform3D();
             Off.OffsetX = _balls[i].Pos(t).X;
@@ -275,8 +275,8 @@ namespace MML_ParticleVisualizer3D
             Off.OffsetZ = _balls[i].Pos(t).Z;
 
             _spheres[i].RefGeomModel.Transform = Off;
-          }));
-        }
+          }
+        }));
 
         Thread.Sleep(_stepDelayMiliSec);
       }
