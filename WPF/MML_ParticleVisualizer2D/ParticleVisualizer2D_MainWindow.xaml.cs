@@ -54,6 +54,12 @@ namespace MML_ParticleVisualizer2D
       txtDT.Text = _stepDelayMiliSec.ToString();
 
       // let's visualize those balls
+
+      // First, the border rectangle
+      // we have to determine scaling factor for the balls in x and y direction
+      // depending on the size of the container
+
+
       var border = new Rectangle();
       border.Stroke = Brushes.Black;
       border.Fill = Brushes.AntiqueWhite;

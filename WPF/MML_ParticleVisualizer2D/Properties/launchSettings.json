@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParticleVisualizer2D": {
       "commandName": "Project",
-      "commandLineArgs": "collision_sim_2d_1000_x_800.txt"
+      "commandLineArgs": "collision_sim_2d_1000_x_1000.txt"
     }
   }
 }

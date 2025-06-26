@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer2D"
         mc:Ignorable="d"
-        Title="Particle visualizer 2D" Height="1050" Width="1300">
+        Title="Particle visualizer 2D" Height="1055" Width="1300">
   <Grid Margin="0,0,0,0" >
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
+    <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Width="1000" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top"  />
 
     <Button x:Name="btnStartSim" Content="Start" Grid.Column="1" HorizontalAlignment="Left" Margin="16,16,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="50"/>
     <Button x:Name="btnPauseSim" Content="Pause" Grid.Column="1" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
