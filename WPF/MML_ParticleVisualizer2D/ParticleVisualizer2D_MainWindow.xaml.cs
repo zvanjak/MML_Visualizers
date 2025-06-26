@@ -68,7 +68,7 @@ namespace MML_ParticleVisualizer2D
       double drawRectWidth = 0;
       double drawRectHeight = 0;
 
-      if (_width > _height)
+      if (_width >= _height)
       {
         drawRectWidth = _fixedCanvasWidth;
         _scaleX = _fixedCanvasWidth / _width;
@@ -104,8 +104,8 @@ namespace MML_ParticleVisualizer2D
         Color color = (Color)ColorConverter.ConvertFromString(colorName);
         _shapes[i].Fill = new SolidColorBrush(color);
 
-        _shapes[i].Width = _balls[i].Radius * 2;
-        _shapes[i].Height = _balls[i].Radius * 2;
+        _shapes[i].Width = (_balls[i].Radius * 2) * _scaleX;
+        _shapes[i].Height = (_balls[i].Radius * 2) * _scaleY;
 
         MyCanvas.Children.Add(_shapes[i]);
       }
@@ -119,8 +119,8 @@ namespace MML_ParticleVisualizer2D
     {
       for (int i = 0; i < _balls.Count; i++)
       {
-        Canvas.SetLeft(_shapes[i], _balls[i].Pos(timeStep).X1 - _balls[i].Radius);
-        Canvas.SetTop(_shapes[i], _balls[i].Pos(timeStep).X2 - _balls[i].Radius);
+        Canvas.SetLeft(_shapes[i], (_balls[i].Pos(timeStep).X1 - _balls[i].Radius) * _scaleX);
+        Canvas.SetTop(_shapes[i], (_balls[i].Pos(timeStep).X2 - _balls[i].Radius) * _scaleY);
       }
     }
 
@@ -263,6 +263,14 @@ namespace MML_ParticleVisualizer2D
           }));
         }
       }
+
+      // enable buttons at the end of simulation
+      this.Dispatcher.Invoke((Action)(() =>
+      {
+        btnStartSim.IsEnabled = false;
+        btnPauseSim.IsEnabled = false;
+        btnRestartSim.IsEnabled = true;
+      }));
     }
 
     private void btnPauseSim_Click(object sender, RoutedEventArgs e)
