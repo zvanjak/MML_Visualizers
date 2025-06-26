@@ -93,15 +93,28 @@ namespace MML_ParticleVisualizer2D
 
       if (lines[0] == "PARTICLE_SIMULATION_DATA_2D")
       {
+        // read width and height
+        string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts1.Length != 2)
+          throw new Exception("Invalid width!");
+
+        int width = int.Parse(parts1[1]);
+
+        string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts2.Length != 2)
+          throw new Exception("Invalid height!");
+
+        int height = int.Parse(parts2[1]);
+
         // read the number of balls
-        string[] parts = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] parts = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (parts.Length != 2)
           throw new Exception("Invalid number of balls in SimData.txt");
 
         numBalls = int.Parse(parts[1]);
 
-        int lineNumber = 2;
+        int lineNumber = 4;
 
         // read the balls attributes - name, radius, type
         for (int i = 0; i < numBalls; i++)
@@ -137,8 +150,10 @@ namespace MML_ParticleVisualizer2D
 
           if (parts[0] != "Step")
             throw new Exception("Invalid step in SimData.txt");
-          if (parts[1] != i.ToString())
-            throw new Exception("Invalid step number in SimData.txt");
+
+          //if (parts[1] != i.ToString())
+          //  throw new Exception("Invalid step number in SimData.txt");
+          
           double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
           // read the positions of the balls
@@ -187,6 +202,8 @@ namespace MML_ParticleVisualizer2D
         {
           this.Dispatcher.Invoke((Action)(() =>
           {
+            txtCurrStep.Text = t.ToString();
+
             for (int i = 0; i < _balls.Count; i++)
             {
               Canvas.SetLeft(_shapes[i], _balls[i].Pos(t).X1 - _balls[i].Radius);
