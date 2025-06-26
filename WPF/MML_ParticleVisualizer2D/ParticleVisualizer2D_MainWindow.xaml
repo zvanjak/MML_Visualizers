@@ -5,22 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer2D"
         mc:Ignorable="d"
-        Title="Particle visualizer 2D" Height="885" Width="1245">
+        Title="Particle visualizer 2D" Height="1000" Width="1300">
   <Grid Margin="0,0,0,0" >
-    <Grid.RowDefinitions>
-      <RowDefinition Height="30"/>
-      <RowDefinition />
-    </Grid.RowDefinitions>
-    <Canvas Name="MyCanvas" Grid.Row="1" HorizontalAlignment="Left" Height="750" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
-    <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" HorizontalAlignment="Left" Margin="1027,4,0,6" Width="75" Click="btnStartSim_Click"/>
-    <TextBox x:Name="txtNumSteps" Grid.Row="0" HorizontalAlignment="Left" Margin="631,5,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="59"/>
-    <Label Content="Num. of steps:" Grid.Row="0" HorizontalAlignment="Left" Margin="540,1,0,0" VerticalAlignment="Top"/>
-    <Label Content="Refresh every " Grid.Row="0" HorizontalAlignment="Left" Margin="741,1,0,0" VerticalAlignment="Top"/>
-    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" HorizontalAlignment="Left" Margin="831,5,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
-    <Label Content="steps" Grid.Row="0" HorizontalAlignment="Left" Margin="867,0,0,0" VerticalAlignment="Top"/>
-    <Label Content="Step delay" HorizontalAlignment="Left" Margin="350,0,0,0" VerticalAlignment="Center"/>
-    <TextBox x:Name="txtDT" Grid.Row="0" HorizontalAlignment="Left" Margin="420,5,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="54"/>
-    <Label Content="ms" HorizontalAlignment="Left" Margin="475,0,0,0" VerticalAlignment="Top"/>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="200" />
+    </Grid.ColumnDefinitions>
+
+    <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="980" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
+
+    <Button x:Name="btnStartSim" Content="Start" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Margin="0,12,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="98"/>
+
+    <TextBox x:Name="txtNumSteps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,99,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="60"/>
+    <Label Content="Num. of steps:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="14,95,0,0" VerticalAlignment="Top"/>
+    <Label Content="Refresh every " Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="16,142,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,146,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
+    <Label Content="steps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="867,0,0,0" VerticalAlignment="Top"/>
+    <Label Content="Step delay" Grid.Column="1" HorizontalAlignment="Left" Margin="16,192,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtDT" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,200,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="33"/>
+    <Label Content="ms"  Grid.Column="1" HorizontalAlignment="Left" Margin="154,196,0,0" VerticalAlignment="Top"/>
 
   </Grid>
 </Window>

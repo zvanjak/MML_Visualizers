@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,7 +54,7 @@ namespace MML_ParticleVisualizer2D
       border.HorizontalAlignment = HorizontalAlignment.Left;
       border.VerticalAlignment = VerticalAlignment.Center;
       border.Width = 1000;
-      border.Height = 800;
+      border.Height = 900;
 
       MyCanvas.Children.Add(border);
 
@@ -77,6 +81,12 @@ namespace MML_ParticleVisualizer2D
 
     public bool LoadData(string fileName)
     {
+      if (File.Exists(fileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + fileName);
+        return false;
+      }
+
       // get number of balls
       int numBalls = 0;
       string[] lines = System.IO.File.ReadAllLines(fileName);

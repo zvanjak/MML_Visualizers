@@ -1,5 +1,7 @@
-﻿using MML;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using MML;
 using WPF3DHelperLib;
 
 namespace MML_ParticleVisualizer3D
@@ -127,6 +131,12 @@ namespace MML_ParticleVisualizer3D
 
     public bool LoadData(string fileName)
     {
+      if (File.Exists(fileName) == false)
+      {
+        MessageBox.Show("File does not exist: " + fileName);
+        return false;
+      }
+
       // get number of balls
       int numBalls = 0;
       string[] lines = System.IO.File.ReadAllLines(fileName);
