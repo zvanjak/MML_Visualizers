@@ -14,8 +14,9 @@
 
     <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
 
-    <Button x:Name="btnStartSim" Content="Start" Grid.Column="1" HorizontalAlignment="Left" Margin="45,16,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="50"/>
-    <Button x:Name="btnPauseSim" Content="Pause" Grid.Column="1" HorizontalAlignment="Left" Margin="116,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
+    <Button x:Name="btnStartSim" Content="Start" Grid.Column="1" HorizontalAlignment="Left" Margin="16,16,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="50"/>
+    <Button x:Name="btnPauseSim" Content="Pause" Grid.Column="1" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
+    <Button x:Name="btnRestartSim" Content="Restart" Grid.Column="1" HorizontalAlignment="Left" Margin="132,16,0,0" VerticalAlignment="Top" Width="50" Click="btnRestartSim_Click"/>
 
     <Label Content="Num. of steps:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="14,131,0,0" VerticalAlignment="Top"/>
     <TextBox x:Name="txtNumSteps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,135,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="60"/>

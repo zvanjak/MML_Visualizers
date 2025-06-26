@@ -83,6 +83,9 @@ namespace MML_ParticleVisualizer2D
 
         MyCanvas.Children.Add(_shapes[i]);
       }
+
+      btnPauseSim.IsEnabled = false;
+      btnRestartSim.IsEnabled = false;
     }
 
     public bool LoadData(string fileName)
@@ -190,6 +193,10 @@ namespace MML_ParticleVisualizer2D
 
     private void btnStartSim_Click(object sender, RoutedEventArgs e)
     {
+      btnRestartSim.IsEnabled = false;
+      btnStartSim.IsEnabled = false;
+      btnPauseSim.IsEnabled = true;
+
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
       Task.Run(() =>
@@ -229,6 +236,25 @@ namespace MML_ParticleVisualizer2D
     private void btnPauseSim_Click(object sender, RoutedEventArgs e)
     {
       _isPausedClicked = true;
+      btnRestartSim.IsEnabled = true;
+      btnPauseSim.IsEnabled = false;
+      btnStartSim.IsEnabled = true;
+    }
+
+    private void btnRestartSim_Click(object sender, RoutedEventArgs e)
+    {
+      btnRestartSim.IsEnabled = false;
+      btnPauseSim.IsEnabled = false;
+      btnStartSim.IsEnabled = true;
+
+      _currStep = 0;
+
+      // set all shapes to initial positions
+      for (int i = 0; i < _balls.Count; i++)
+      {
+        Canvas.SetLeft(_shapes[i], _balls[i].Pos(0).X1 - _balls[i].Radius);
+        Canvas.SetTop(_shapes[i], _balls[i].Pos(0).X2 - _balls[i].Radius);
+      }
     }
   }
 }
