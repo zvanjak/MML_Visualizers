@@ -14,18 +14,21 @@
 
     <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top" Width="1000" />
 
-    <Button x:Name="btnStartSim" Content="Start/Pause" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Margin="0,12,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="98"/>
+    <Button x:Name="btnStartSim" Content="Start" Grid.Column="1" HorizontalAlignment="Left" Margin="45,16,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="50"/>
+    <Button x:Name="btnPauseSim" Content="Pause" Grid.Column="1" HorizontalAlignment="Left" Margin="116,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
 
-    <TextBox x:Name="txtNumSteps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,85,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="60"/>
-    <Label Content="Num. of steps:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="14,81,0,0" VerticalAlignment="Top"/>
-    <Label Content="Refresh every " Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="16,142,0,0" VerticalAlignment="Top"/>
-    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,146,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
-    <Label Content="steps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="149,142,0,0" VerticalAlignment="Top"/>
+    <Label Content="Num. of steps:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="14,131,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtNumSteps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,135,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="60"/>
+
+    <Label Content="Refresh every " Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="16,203,0,0" VerticalAlignment="Top"/>
+    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,211,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
+    <Label Content="steps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="153,207,0,0" VerticalAlignment="Top"/>
+
     <Label Content="Step delay" Grid.Column="1" HorizontalAlignment="Left" Margin="16,264,0,0" VerticalAlignment="Top"/>
     <TextBox x:Name="txtDT" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,268,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="33"/>
     <Label Content="ms"  Grid.Column="1" HorizontalAlignment="Left" Margin="154,264,0,0" VerticalAlignment="Top"/>
-    <Label Grid.Column="1" Content="Curr.step" HorizontalAlignment="Left" Margin="16,52,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.158,-0.191"/>
-    <TextBox x:Name="txtCurrStep" Grid.Column="1" HorizontalAlignment="Left" Margin="116,54,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60" Height="18"/>
 
+    <Label Grid.Column="1" Content="Curr.step" HorizontalAlignment="Left" Margin="16,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.158,-0.191"/>
+    <TextBox x:Name="txtCurrStep" Grid.Column="1" HorizontalAlignment="Left" Margin="116,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60" Height="18"/>
   </Grid>
 </Window>

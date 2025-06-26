@@ -20,10 +20,16 @@ namespace MML_ParticleVisualizer2D
 {
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
+    double _width = 1000;
+    double _height = 900;
+
     List<Ball> _balls = new List<Ball>();
     int _numSteps = 0;
     int _stepDelayMiliSec = 100;
     Ellipse[] _shapes;
+
+    int _currStep = 0;
+    bool _isPausedClicked = false;
 
     public ParticleVisualizer2D_MainWindow()
     {
@@ -40,7 +46,7 @@ namespace MML_ParticleVisualizer2D
 
       if (!LoadData(fileName))
       {
-        MessageBox.Show("Error loading data from file.");
+        MessageBox.Show("Error loading data from file " + fileName);
         return;
       }
 
@@ -98,13 +104,13 @@ namespace MML_ParticleVisualizer2D
         if (parts1.Length != 2)
           throw new Exception("Invalid width!");
 
-        int width = int.Parse(parts1[1]);
+        _width = int.Parse(parts1[1]);
 
         string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (parts2.Length != 2)
           throw new Exception("Invalid height!");
 
-        int height = int.Parse(parts2[1]);
+        _height = int.Parse(parts2[1]);
 
         // read the number of balls
         string[] parts = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -194,9 +200,15 @@ namespace MML_ParticleVisualizer2D
 
     private void Animate(int numSteps, int refreshEvery)
     {
-      for (int t = 0; t < numSteps; t += 1)
+      for (int t = _currStep; t < numSteps; t += 1, ++_currStep)
       {
         Thread.Sleep(_stepDelayMiliSec); // Simulate time delay
+
+        if (_isPausedClicked)
+        {
+          _isPausedClicked = false;
+          return;
+        }
 
         if (t % refreshEvery == 0)
         {
@@ -212,6 +224,11 @@ namespace MML_ParticleVisualizer2D
           }));
         }
       }
+    }
+
+    private void btnPauseSim_Click(object sender, RoutedEventArgs e)
+    {
+      _isPausedClicked = true;
     }
   }
 }

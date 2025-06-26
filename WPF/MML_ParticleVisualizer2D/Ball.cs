@@ -23,7 +23,7 @@ namespace MML_ParticleVisualizer2D
     public Vector2Cartesian Pos(int i)
     {
       if (i < 0 || i >= _vecPos.Count)
-        throw new IndexOutOfRangeException("Index out of range in Ball.Pos");
+        throw new IndexOutOfRangeException("Index out of range in Ball.Pos(" + i.ToString() + ")");
       return _vecPos[i];
     }
     public void AddPos(Vector2Cartesian pos)
