@@ -78,14 +78,21 @@ namespace MML_ParticleVisualizer2D
         _shapes[i].Width = _balls[i].Radius * 2;
         _shapes[i].Height = _balls[i].Radius * 2;
 
-        Canvas.SetLeft(_shapes[i], _balls[i].Pos(0).X1 - _balls[i].Radius);
-        Canvas.SetTop(_shapes[i], _balls[i].Pos(0).X2 - _balls[i].Radius);
-
         MyCanvas.Children.Add(_shapes[i]);
       }
 
+      SetBallsPosToTimestep(0);
+
       btnPauseSim.IsEnabled = false;
       btnRestartSim.IsEnabled = false;
+    }
+    private void SetBallsPosToTimestep(int timeStep)
+    {
+      for (int i = 0; i < _balls.Count; i++)
+      {
+        Canvas.SetLeft(_shapes[i], _balls[i].Pos(timeStep).X1 - _balls[i].Radius);
+        Canvas.SetTop(_shapes[i], _balls[i].Pos(timeStep).X2 - _balls[i].Radius);
+      }
     }
 
     public bool LoadData(string fileName)
@@ -207,7 +214,7 @@ namespace MML_ParticleVisualizer2D
 
     private void Animate(int numSteps, int refreshEvery)
     {
-      for (int t = _currStep; t < numSteps; t += 1, ++_currStep)
+      for (int t = _currStep; t < numSteps; t++, _currStep++)
       {
         Thread.Sleep(_stepDelayMiliSec); // Simulate time delay
 
@@ -223,11 +230,7 @@ namespace MML_ParticleVisualizer2D
           {
             txtCurrStep.Text = t.ToString();
 
-            for (int i = 0; i < _balls.Count; i++)
-            {
-              Canvas.SetLeft(_shapes[i], _balls[i].Pos(t).X1 - _balls[i].Radius);
-              Canvas.SetTop(_shapes[i], _balls[i].Pos(t).X2 - _balls[i].Radius);
-            }
+            SetBallsPosToTimestep(t);
           }));
         }
       }
@@ -248,13 +251,10 @@ namespace MML_ParticleVisualizer2D
       btnStartSim.IsEnabled = true;
 
       _currStep = 0;
+      txtCurrStep.Text = "0";
 
       // set all shapes to initial positions
-      for (int i = 0; i < _balls.Count; i++)
-      {
-        Canvas.SetLeft(_shapes[i], _balls[i].Pos(0).X1 - _balls[i].Radius);
-        Canvas.SetTop(_shapes[i], _balls[i].Pos(0).X2 - _balls[i].Radius);
-      }
+      SetBallsPosToTimestep(0);
     }
   }
 }
