@@ -21,7 +21,13 @@ namespace MML_ParticleVisualizer2D
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
     double _width = 1000;
-    double _height = 900;
+    double _height = 800;
+
+    double _fixedCanvasWidth = 1000;
+    double _fixedCanvasHeight =1000;
+
+    double _scaleX = 1.0;
+    double _scaleY = 1.0;
 
     List<Ball> _balls = new List<Ball>();
     int _numSteps = 0;
@@ -58,15 +64,32 @@ namespace MML_ParticleVisualizer2D
       // First, the border rectangle
       // we have to determine scaling factor for the balls in x and y direction
       // depending on the size of the container
+      // we want to preserve aspect ratio of the container
+      double drawRectWidth = 0;
+      double drawRectHeight = 0;
 
+      if (_width > _height)
+      {
+        drawRectWidth = _fixedCanvasWidth;
+        _scaleX = _fixedCanvasWidth / _width;
+        _scaleY = _fixedCanvasWidth / _width; // preserve aspect ratio
+        drawRectHeight = _height * _scaleY;
+      }
+      else
+      {
+        drawRectHeight = _fixedCanvasHeight;
+        _scaleY = _fixedCanvasHeight / _height;
+        _scaleX = _fixedCanvasHeight / _height; // preserve aspect ratio
+        drawRectWidth = _width * _scaleX;
+      }
 
       var border = new Rectangle();
       border.Stroke = Brushes.Black;
       border.Fill = Brushes.AntiqueWhite;
       border.HorizontalAlignment = HorizontalAlignment.Left;
       border.VerticalAlignment = VerticalAlignment.Center;
-      border.Width = 1000;
-      border.Height = 900;
+      border.Width = drawRectWidth;
+      border.Height = drawRectHeight; 
 
       MyCanvas.Children.Add(border);
 
