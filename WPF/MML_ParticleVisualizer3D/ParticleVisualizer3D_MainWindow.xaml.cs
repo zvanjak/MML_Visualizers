@@ -26,9 +26,10 @@ namespace MML_ParticleVisualizer3D
   {
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
-    Point3D _cameraPoint = new Point3D(350, 100, 350);
+    Point3D _cameraPoint = new Point3D(1350, 1100, 1350);
     double _axisWidth = 0.5;
     double _axisLen = 500;
+    double _boxLen = 500;
     double _lineWidth = 0.25;
 
     int _numSteps = 0;
@@ -73,9 +74,9 @@ namespace MML_ParticleVisualizer3D
       _helper.InitCamera(_cameraPoint);
       //_helper.InitLights(myModel3DGroup);
 
-      AmbientLight ambLight = new AmbientLight();
-      ambLight.Color = Colors.White;
-      _myModel3DGroup.Children.Add(ambLight);
+      //AmbientLight ambLight = new AmbientLight();
+      //ambLight.Color = Colors.White;
+      //_myModel3DGroup.Children.Add(ambLight);
 
       DirectionalLight myDirectionalLight1 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(-0.31, 0.2, -0.61));
       _myModel3DGroup.Children.Add(myDirectionalLight1);
@@ -114,6 +115,22 @@ namespace MML_ParticleVisualizer3D
         newSphere.RefGeomModel = sphereModel;
         _spheres.Add(newSphere);
       }
+
+      MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen, _boxLen, 0), 2 * _boxLen, 2 * _boxLen, 0.02);
+      var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
+      GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, xyPlaneMaterial);
+
+      MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen, 0, _boxLen), 2 * _boxLen, 0.02, 2 * _boxLen);
+      var xzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
+      GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, xzPlaneMaterial);
+
+      MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen, _boxLen), 0.02, 2*_boxLen, 2 * _boxLen);
+      var yzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
+      GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, yzPlaneMaterial);
+
+      _myModel3DGroup.Children.Add(xyPlaneModel);
+      _myModel3DGroup.Children.Add(xzPlaneModel);
+      _myModel3DGroup.Children.Add(yzPlaneModel);
 
       // adding the lines
       //for (int i = 0; i < _balls.Count; i++)

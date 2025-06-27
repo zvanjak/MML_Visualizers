@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParticleVisualizer3D": {
       "commandName": "Project",
-      "commandLineArgs": "SimDataGravity.txt"
+      "commandLineArgs": "collision_sim_3d_example2.txt"
     }
   }
 }
