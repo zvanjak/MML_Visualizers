@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-
+using System.Linq.Expressions;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +24,7 @@ namespace MML_ParticleVisualizer2D
     double _height = 800;
 
     double _fixedCanvasWidth = 1000;
-    double _fixedCanvasHeight =1000;
+    double _fixedCanvasHeight = 1000;
 
     double _scaleX = 1.0;
     double _scaleY = 1.0;
@@ -89,7 +89,7 @@ namespace MML_ParticleVisualizer2D
       border.HorizontalAlignment = HorizontalAlignment.Left;
       border.VerticalAlignment = VerticalAlignment.Center;
       border.Width = drawRectWidth;
-      border.Height = drawRectHeight; 
+      border.Height = drawRectHeight;
 
       MyCanvas.Children.Add(border);
 
@@ -132,95 +132,103 @@ namespace MML_ParticleVisualizer2D
         return false;
       }
 
-      // get number of balls
-      int numBalls = 0;
-      string[] lines = System.IO.File.ReadAllLines(fileName);
-
-      if (lines[0] == "PARTICLE_SIMULATION_DATA_2D")
+      try
       {
-        // read width and height
-        string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (parts1.Length != 2)
-          throw new Exception("Invalid width!");
+        // get number of balls
+        int numBalls = 0;
+        string[] lines = System.IO.File.ReadAllLines(fileName);
 
-        _width = int.Parse(parts1[1]);
-
-        string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (parts2.Length != 2)
-          throw new Exception("Invalid height!");
-
-        _height = int.Parse(parts2[1]);
-
-        // read the number of balls
-        string[] parts = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-        if (parts.Length != 2)
-          throw new Exception("Invalid number of balls in SimData.txt");
-
-        numBalls = int.Parse(parts[1]);
-
-        int lineNumber = 4;
-
-        // read the balls attributes - name, radius, type
-        for (int i = 0; i < numBalls; i++)
+        if (lines[0] == "PARTICLE_SIMULATION_DATA_2D")
         {
-          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          // read width and height
+          string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          if (parts1.Length != 2)
+            throw new Exception("Invalid width!");
 
-          if (parts.Length != 3)
-            throw new Exception("Invalid ball attributes in SimData.txt");
+          _width = int.Parse(parts1[1]);
 
-          string name = parts[0];
-          string color = parts[1];
-          double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
-          Ball ball = new Ball(name, color, radius);
+          string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          if (parts2.Length != 2)
+            throw new Exception("Invalid height!");
 
-          _balls.Add(ball);
-        }
+          _height = int.Parse(parts2[1]);
 
-        // read number of steps
-        parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length != 2)
-          throw new Exception("Invalid number of steps in SimData.txt");
-        int numSteps = int.Parse(parts[1]);
+          // read the number of balls
+          string[] parts = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        _numSteps = numSteps;
+          if (parts.Length != 2)
+            throw new Exception("Invalid number of balls in SimData.txt");
 
-        // read the steps
-        for (int i = 0; i < numSteps; i++)
-        {
-          // we expect "Step 0" together with timing (ie, additional double to specify T)
-          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts.Length != 3)
-            throw new Exception("Invalid number of steps in SimData.txt");
+          numBalls = int.Parse(parts[1]);
 
-          if (parts[0] != "Step")
-            throw new Exception("Invalid step in SimData.txt");
+          int lineNumber = 4;
 
-          //if (parts[1] != i.ToString())
-          //  throw new Exception("Invalid step number in SimData.txt");
-          
-          double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
-
-          // read the positions of the balls
-          for (int j = 0; j < numBalls; j++)
+          // read the balls attributes - name, radius, type
+          for (int i = 0; i < numBalls; i++)
           {
             parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
             if (parts.Length != 3)
-              throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
+              throw new Exception("Invalid ball attributes in SimData.txt");
 
-            int index = int.Parse(parts[0]);
-            double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
-            double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+            string name = parts[0];
+            string color = parts[1];
+            double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
+            Ball ball = new Ball(name, color, radius);
 
-            Vector2Cartesian pos = new Vector2Cartesian(x, y);
+            _balls.Add(ball);
+          }
 
-            _balls[j].AddPos(pos);
+          // read number of steps
+          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          if (parts.Length != 2)
+            throw new Exception("Invalid number of steps in SimData.txt");
+          int numSteps = int.Parse(parts[1]);
+
+          _numSteps = numSteps;
+
+          // read the steps
+          for (int i = 0; i < numSteps; i++)
+          {
+            // we expect "Step 0" together with timing (ie, additional double to specify T)
+            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 3)
+              throw new Exception("Invalid number of steps in SimData.txt");
+
+            if (parts[0] != "Step")
+              throw new Exception("Invalid step in SimData.txt");
+
+            //if (parts[1] != i.ToString())
+            //  throw new Exception("Invalid step number in SimData.txt");
+
+            double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+            // read the positions of the balls
+            for (int j = 0; j < numBalls; j++)
+            {
+              parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+              if (parts.Length != 3)
+                throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
+
+              int index = int.Parse(parts[0]);
+              double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+              double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+              Vector2Cartesian pos = new Vector2Cartesian(x, y);
+
+              _balls[j].AddPos(pos);
+            }
           }
         }
+        else
+        {
+          MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_2D' at the beginning.");
+          return false;
+        }
       }
-      else
+      catch (Exception ex)
       {
-        MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_2D' at the beginning.");
+        MessageBox.Show("Error - " + ex.Message);
         return false;
       }
 
