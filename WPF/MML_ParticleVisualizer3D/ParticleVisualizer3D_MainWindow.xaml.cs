@@ -29,8 +29,14 @@ namespace MML_ParticleVisualizer3D
     Point3D _cameraPoint = new Point3D(1350, 1100, 1350);
     double _axisWidth = 0.5;
     double _axisLen = 500;
-    double _boxLen = 500;
+    double _boxLen = 1000;
     double _lineWidth = 0.25;
+
+    double _width = 1000;
+    double _height = 1000;
+    double _depth = 1000;
+
+    bool _bShowBox = true;
 
     int _numSteps = 0;
     int _stepDelayMiliSec = 10;
@@ -91,7 +97,8 @@ namespace MML_ParticleVisualizer3D
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+      if( _bShowBox == false )
+        Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
 
       // adding the balls
       for (int i = 0; i < _balls.Count; i++)
@@ -116,22 +123,25 @@ namespace MML_ParticleVisualizer3D
         _spheres.Add(newSphere);
       }
 
-      MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen, _boxLen, 0), 2 * _boxLen, 2 * _boxLen, 0.02);
-      //var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
-      var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-      GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, xyPlaneMaterial);
+      if (_bShowBox == true)
+      {
+        MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, 0.02);
+        //var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
+        var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, xyPlaneMaterial);
 
-      MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen, 0, _boxLen), 2 * _boxLen, 0.02, 2 * _boxLen);
-      var xzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-      GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, xzPlaneMaterial);
+        MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, 0, _boxLen / 2), _boxLen, 0.02, _boxLen);
+        var xzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, xzPlaneMaterial);
 
-      MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen, _boxLen), 0.02, 2*_boxLen, 2 * _boxLen);
-      var yzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-      GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, yzPlaneMaterial);
+        MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen / 2, _boxLen / 2), 0.02, _boxLen, _boxLen);
+        var yzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, yzPlaneMaterial);
 
-      _myModel3DGroup.Children.Add(xyPlaneModel);
-      _myModel3DGroup.Children.Add(xzPlaneModel);
-      _myModel3DGroup.Children.Add(yzPlaneModel);
+        _myModel3DGroup.Children.Add(xyPlaneModel);
+        _myModel3DGroup.Children.Add(xzPlaneModel);
+        _myModel3DGroup.Children.Add(yzPlaneModel);
+      }
 
       // adding the lines
       //for (int i = 0; i < _balls.Count; i++)
@@ -161,15 +171,34 @@ namespace MML_ParticleVisualizer3D
 
       if (lines[0] == "PARTICLE_SIMULATION_DATA_3D")
       {
+        // read width and height
+        string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts1.Length != 2)
+          throw new Exception("Invalid width!");
+
+        _width = int.Parse(parts1[1]);
+
+        string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts2.Length != 2)
+          throw new Exception("Invalid height!");
+
+        _height = int.Parse(parts2[1]);
+
+        string[] parts3 = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts3.Length != 2)
+          throw new Exception("Invalid depth!");
+        
+        _depth = int.Parse(parts3[1]);
+
         // read the number of balls
-        string[] parts = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] parts = lines[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (parts.Length != 2)
           throw new Exception("Invalid number of balls in " + fileName);
 
         numBalls = int.Parse(parts[1]);
 
-        int lineNumber = 2;
+        int lineNumber = 5;
 
         // read the balls attributes - name, radius, type
         for (int i = 0; i < numBalls; i++)
@@ -357,6 +386,12 @@ namespace MML_ParticleVisualizer3D
     {
       _lineWidth *= 0.9;
       InitScene();
+    }
+
+    private void btnLookAtCenter_Click(object sender, RoutedEventArgs e)
+    {
+      // adjust LookAt position so we are looking at the center of the scene
+      _helper._lookToPos = new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2);
     }
   }
 }

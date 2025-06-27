@@ -30,5 +30,7 @@
     <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
     <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>
     <Label Grid.Column="1" Content="Step delay" HorizontalAlignment="Left" Margin="20,146,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.121,0.017"/>
+
+    <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,210,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
   </Grid>
 </Window>
