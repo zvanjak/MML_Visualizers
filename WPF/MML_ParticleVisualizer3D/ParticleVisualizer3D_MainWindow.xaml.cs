@@ -70,7 +70,6 @@ namespace MML_ParticleVisualizer3D
       txtDT.Text = _stepDelayMiliSec.ToString();
 
       InitScene();
-      //ShowProgressAndInitScene();
     }
 
     private void InitScene()
@@ -145,9 +144,6 @@ namespace MML_ParticleVisualizer3D
         _myModel3DGroup.Children.Add(yzPlaneModel);
       }
 
-      int a, b, c;
-      a = 5;
-      b = a * 3;
       // adding the lines
       //for (int i = 0; i < _balls.Count; i++)
       //{
@@ -396,11 +392,11 @@ namespace MML_ParticleVisualizer3D
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
-      _myModel3DGroup.Children.Clear();
+      //_myModel3DGroup.Children.Clear();
 
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
-      InitScene();
+      //InitScene();
       //ShowProgressAndInitScene();
 
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
