@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace MML_ParticleVisualizer3D
 {
@@ -14,6 +15,8 @@ namespace MML_ParticleVisualizer3D
     private string _name;
     private string _color;
     private double _radius;
+
+    public GeometryModel3D _geomModel = null;
 
     public string Name { get => _name; set => _name = value; }
     public string Color { get => _color; set => _color = value; }

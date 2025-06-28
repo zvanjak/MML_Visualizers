@@ -43,7 +43,7 @@ namespace MML_ParticleVisualizer3D
 
     List<ParticleData3D> _balls = new List<ParticleData3D>();
 
-    List<Sphere> _spheres = new List<Sphere>();
+    //List<Sphere> _spheres = new List<Sphere>();
 
     Model3DGroup _myModel3DGroup = new Model3DGroup();
 
@@ -76,7 +76,7 @@ namespace MML_ParticleVisualizer3D
     private void InitScene()
     {
       _myModel3DGroup.Children.Clear();
-      _spheres.Clear();
+      //_spheres.Clear();
 
       _helper.InitCamera(_cameraPoint);
       //_helper.InitLights(myModel3DGroup);
@@ -93,34 +93,35 @@ namespace MML_ParticleVisualizer3D
 
       myViewport3D.Camera = _helper._myCamera;
 
-      if( _bShowBox == false )
+      if (_bShowBox == false)
         Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
 
       // adding the balls
       for (int i = 0; i < _balls.Count; i++)
       {
-        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
+        //MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
 
-        Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
-        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
-        GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+        //Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
+        //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
+        //GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
 
-        TranslateTransform3D Off = new TranslateTransform3D();
-        Off.OffsetX = _balls[i].Pos(0).X;
-        Off.OffsetY = _balls[i].Pos(0).Y;
-        Off.OffsetZ = _balls[i].Pos(0).Z;
+        //TranslateTransform3D Off = new TranslateTransform3D();
+        //Off.OffsetX = _balls[i].Pos(0).X;
+        //Off.OffsetY = _balls[i].Pos(0).Y;
+        //Off.OffsetZ = _balls[i].Pos(0).Z;
 
-        sphereModel.Transform = Off;
+        //sphereModel.Transform = Off;
 
-        _myModel3DGroup.Children.Add(sphereModel);
+        //_myModel3DGroup.Children.Add(sphereModel);
 
-        Sphere newSphere = new Sphere();
-        newSphere.RefGeomModel = sphereModel;
-        _spheres.Add(newSphere);
+        _myModel3DGroup.Children.Add(_balls[i]._geomModel);
+
+        //Sphere newSphere = new Sphere();
+        //newSphere.RefGeomModel = _balls[i]._geomModel;
+        //_spheres.Add(newSphere);
       }
 
-      ModelVisual3D myModelVisual3D = new ModelVisual3D();
-      myModelVisual3D.Content = _myModel3DGroup;
+      ModelVisual3D myModelVisual3D = new ModelVisual3D{ Content = _myModel3DGroup };
 
       myViewport3D.Children.Add(myModelVisual3D);
 
@@ -163,7 +164,7 @@ namespace MML_ParticleVisualizer3D
     private void InitSceneWithProgress(IProgress<double> progress)
     {
       _myModel3DGroup.Children.Clear();
-      _spheres.Clear();
+      //_spheres.Clear();
 
       _helper.InitCamera(_cameraPoint);
 
@@ -178,24 +179,24 @@ namespace MML_ParticleVisualizer3D
       int ballCount = _balls.Count;
       for (int i = 0; i < ballCount; i++)
       {
-        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
+        //MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
 
-        Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
-        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
-        GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+        //Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
+        //var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
+        //GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
 
-        TranslateTransform3D Off = new TranslateTransform3D();
-        Off.OffsetX = _balls[i].Pos(0).X;
-        Off.OffsetY = _balls[i].Pos(0).Y;
-        Off.OffsetZ = _balls[i].Pos(0).Z;
+        //TranslateTransform3D Off = new TranslateTransform3D();
+        //Off.OffsetX = _balls[i].Pos(0).X;
+        //Off.OffsetY = _balls[i].Pos(0).Y;
+        //Off.OffsetZ = _balls[i].Pos(0).Z;
 
-        sphereModel.Transform = Off;
+        //sphereModel.Transform = Off;
 
-        _myModel3DGroup.Children.Add(sphereModel);
+        _myModel3DGroup.Children.Add(_balls[i]._geomModel);
 
-        Sphere newSphere = new Sphere();
-        newSphere.RefGeomModel = sphereModel;
-        _spheres.Add(newSphere);
+        //Sphere newSphere = new Sphere();
+        //newSphere.RefGeomModel = _balls[i]._geomModel;
+        //_spheres.Add(newSphere);
 
         // Report progress
         progress?.Report((i + 1) * 100.0 / ballCount);
@@ -305,7 +306,24 @@ namespace MML_ParticleVisualizer3D
             string name = parts[0];
             string color = parts[1];
             double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+            // now, let's create particle data and mesh geometry for the ball
             ParticleData3D ball = new ParticleData3D(name, color, radius);
+
+            MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), radius);
+            Color ballColor = (Color)ColorConverter.ConvertFromString(color);
+            var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(ballColor));
+
+            GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+
+            //TranslateTransform3D Off = new TranslateTransform3D();
+            //Off.OffsetX = 0; // _balls[i].Pos(0).X;
+            //Off.OffsetY = 0; //_balls[i].Pos(0).Y;
+            //Off.OffsetZ = 0; //_balls[i].Pos(0).Z;
+
+            //sphereModel.Transform = Off;
+            
+            ball._geomModel = sphereModel;
 
             _balls.Add(ball);
           }
@@ -349,6 +367,16 @@ namespace MML_ParticleVisualizer3D
               _balls[j].AddPos(pos);
             }
           }
+
+          // now initialize balls position n the scene to the first step
+          for (int i = 0; i < _balls.Count; i++)
+          {
+            TranslateTransform3D Off = new TranslateTransform3D();
+            Off.OffsetX = _balls[i].Pos(0).X;
+            Off.OffsetY = _balls[i].Pos(0).Y;
+            Off.OffsetZ = _balls[i].Pos(0).Z;
+            _balls[i]._geomModel.Transform = Off;
+          }
         }
         catch (Exception ex)
         {
@@ -372,32 +400,8 @@ namespace MML_ParticleVisualizer3D
 
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
-      //InitScene();
-      ShowProgressAndInitScene();
-
-      //for (int i = 0; i < _curves.Count; i++)
-      //{
-      //  MeshGeometry3D sphereGeometry;
-      //  if (i == 0)
-      //    sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 5);
-      //  else
-      //    sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), 2);
-
-      //  TranslateTransform3D Off = new TranslateTransform3D();
-      //  Off.OffsetX = _spheres[i].X;
-      //  Off.OffsetY = _spheres[i].Y;
-      //  Off.OffsetZ = _spheres[i].Z;
-
-      //  var sphereMaterial = new DiffuseMaterial(_brushes[i]);
-      //  GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
-
-      //  sphereModel.Transform = Off;
-
-      //  _spheres[i].RefGeomModel = sphereModel;
-
-      //  _myModel3DGroup.Children.Add(sphereModel);
-      //}
-
+      InitScene();
+      //ShowProgressAndInitScene();
 
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
@@ -432,7 +436,7 @@ namespace MML_ParticleVisualizer3D
             Off.OffsetY = _balls[i].Pos(t).Y;
             Off.OffsetZ = _balls[i].Pos(t).Z;
 
-            _spheres[i].RefGeomModel.Transform = Off;
+            _balls[i]._geomModel.Transform = Off;
           }
         }));
 
