@@ -70,6 +70,7 @@ namespace MML_ParticleVisualizer3D
       txtDT.Text = _stepDelayMiliSec.ToString();
 
       InitScene();
+      //ShowProgressAndInitScene();
     }
 
     private void InitScene()
@@ -91,11 +92,6 @@ namespace MML_ParticleVisualizer3D
       _myModel3DGroup.Children.Add(myDirectionalLight2);
 
       myViewport3D.Camera = _helper._myCamera;
-
-      ModelVisual3D myModelVisual3D = new ModelVisual3D();
-      myModelVisual3D.Content = _myModel3DGroup;
-
-      myViewport3D.Children.Add(myModelVisual3D);
 
       if( _bShowBox == false )
         Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
@@ -123,6 +119,11 @@ namespace MML_ParticleVisualizer3D
         _spheres.Add(newSphere);
       }
 
+      ModelVisual3D myModelVisual3D = new ModelVisual3D();
+      myModelVisual3D.Content = _myModel3DGroup;
+
+      myViewport3D.Children.Add(myModelVisual3D);
+
       if (_bShowBox == true)
       {
         MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, 0.02);
@@ -143,6 +144,9 @@ namespace MML_ParticleVisualizer3D
         _myModel3DGroup.Children.Add(yzPlaneModel);
       }
 
+      int a, b, c;
+      a = 5;
+      b = a * 3;
       // adding the lines
       //for (int i = 0; i < _balls.Count; i++)
       //{
@@ -154,8 +158,96 @@ namespace MML_ParticleVisualizer3D
       //    _myModel3DGroup.Children.Add(lineModel);
       //  }
       //}
-
     }
+
+    private void InitSceneWithProgress(IProgress<double> progress)
+    {
+      _myModel3DGroup.Children.Clear();
+      _spheres.Clear();
+
+      _helper.InitCamera(_cameraPoint);
+
+      _myModel3DGroup.Children.Add(new DirectionalLight(Colors.White, new Vector3D(-0.31, 0.2, -0.61)));
+      _myModel3DGroup.Children.Add(new DirectionalLight(Colors.White, new Vector3D(0.31, 0.2, -0.61)));
+
+      myViewport3D.Camera = _helper._myCamera;
+
+      if (_bShowBox == false)
+        Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+
+      int ballCount = _balls.Count;
+      for (int i = 0; i < ballCount; i++)
+      {
+        MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), _balls[i].Radius);
+
+        Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
+        var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(color));
+        GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
+
+        TranslateTransform3D Off = new TranslateTransform3D();
+        Off.OffsetX = _balls[i].Pos(0).X;
+        Off.OffsetY = _balls[i].Pos(0).Y;
+        Off.OffsetZ = _balls[i].Pos(0).Z;
+
+        sphereModel.Transform = Off;
+
+        _myModel3DGroup.Children.Add(sphereModel);
+
+        Sphere newSphere = new Sphere();
+        newSphere.RefGeomModel = sphereModel;
+        _spheres.Add(newSphere);
+
+        // Report progress
+        progress?.Report((i + 1) * 100.0 / ballCount);
+      }
+
+      ModelVisual3D myModelVisual3D = new ModelVisual3D();
+      myModelVisual3D.Content = _myModel3DGroup;
+      myViewport3D.Children.Add(myModelVisual3D);
+
+      if (_bShowBox == true)
+      {
+        MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, 0.02);
+        var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, xyPlaneMaterial);
+
+        MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, 0, _boxLen / 2), _boxLen, 0.02, _boxLen);
+        var xzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, xzPlaneMaterial);
+
+        MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen / 2, _boxLen / 2), 0.02, _boxLen, _boxLen);
+        var yzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+        GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, yzPlaneMaterial);
+
+        _myModel3DGroup.Children.Add(xyPlaneModel);
+        _myModel3DGroup.Children.Add(xzPlaneModel);
+        _myModel3DGroup.Children.Add(yzPlaneModel);
+      }
+    }
+
+    private async void ShowProgressAndInitScene()
+    {
+      var progressWindow = new ProgressWindow
+      {
+        Owner = this
+      };
+      progressWindow.ProgressBar.Value = 0;
+      progressWindow.Show();
+
+      var progress = new Progress<double>(percent =>
+      {
+        progressWindow.SetProgress(percent);
+      });
+
+      await Task.Run(() =>
+      {
+        // If you need to update UI from InitScene, use Dispatcher.Invoke
+        this.Dispatcher.Invoke(() => InitSceneWithProgress(progress));
+      });
+
+      progressWindow.Close();
+    }
+
 
     public bool LoadData(string fileName)
     {
@@ -280,7 +372,8 @@ namespace MML_ParticleVisualizer3D
 
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
-      InitScene();
+      //InitScene();
+      ShowProgressAndInitScene();
 
       //for (int i = 0; i < _curves.Count; i++)
       //{
