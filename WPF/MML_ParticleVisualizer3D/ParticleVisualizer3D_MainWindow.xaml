@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer3D"
         mc:Ignorable="d"
-        Title="Particle visualizer 3D" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
+        Title="Particle visualizer 3D" Height="1000" Width="1300" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
   <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="40"/>
@@ -17,20 +17,24 @@
     </Grid.ColumnDefinitions>
 
     <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="800" Canvas.Left="0" Canvas.Top="0" >
+      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="950" Canvas.Left="0" Canvas.Top="0" >
       </Viewport3D>
     </Viewbox>
 
     <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Particle visualization 3D" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-    <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
+    
+    <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Left" Margin="16,16,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
+    <Button x:Name="btnPauseSim" Content="Pause" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
+    <Button x:Name="btnRestartSim" Content="Restart" Grid.Row="1"  Grid.Column="1" HorizontalAlignment="Left" Margin="132,16,0,0" VerticalAlignment="Top" Width="50" Click="btnRestartSim_Click"/>
 
+
+    <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,291,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+    <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,294,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
+    <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,294,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
+    
+    <Label Grid.Column="1" Content="Step delay" HorizontalAlignment="Left" Margin="20,146,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.121,0.017"/>
     <TextBox x:Name="txtDT" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="102,150,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="54"/>
 
-    <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
-    <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
-    <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-    <Label Grid.Column="1" Content="Step delay" HorizontalAlignment="Left" Margin="20,146,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.121,0.017"/>
-
-    <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,210,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
+    <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,410,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
   </Grid>
 </Window>
