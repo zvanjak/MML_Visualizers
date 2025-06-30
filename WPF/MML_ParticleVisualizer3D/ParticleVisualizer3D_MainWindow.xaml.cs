@@ -64,7 +64,7 @@ namespace MML_ParticleVisualizer3D
         return;
       }
 
-      //txtNumSteps.Text = _numSteps.ToString();
+      txtNumSteps.Text = _numSteps.ToString();
       txtDT.Text = _stepDelayMiliSec.ToString();
 
       AddObjectsToScene();
@@ -278,12 +278,7 @@ namespace MML_ParticleVisualizer3D
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
     {
-      //_myModel3DGroup.Children.Clear();
-
       _stepDelayMiliSec = int.Parse(txtDT.Text);
-
-      //InitScene();
-      //ShowProgressAndInitScene();
 
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
       double dt = 1; // Convert.ToDouble(txtDT.Text);
@@ -291,11 +286,21 @@ namespace MML_ParticleVisualizer3D
       // run animations in a separate thread
       Task.Run(() =>
       {
-        Animate(dt, _numSteps, refreshEvery);
+        Animate(_numSteps, refreshEvery);
       });
     }
 
-    private void Animate(double dt, int numSteps, int refreshEvery)
+    private void btnPauseSim_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void btnRestartSim_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void Animate(int numSteps, int refreshEvery)
     {
       for (int t = 0; t < numSteps; t += 1)
       {
@@ -381,14 +386,5 @@ namespace MML_ParticleVisualizer3D
       _helper._lookToPos = new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2);
     }
 
-    private void btnPauseSim_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void btnRestartSim_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
   }
 }
