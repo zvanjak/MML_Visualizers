@@ -16,7 +16,7 @@ namespace MML_ParticleVisualizer3D
     private string _color;
     private double _radius;
 
-    public GeometryModel3D? _geomModel = null;
+    public GeometryModel3D _geomModel;
 
     public string Name { get => _name; set => _name = value; }
     public string Color { get => _color; set => _color = value; }

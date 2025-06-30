@@ -107,38 +107,11 @@ namespace MML_ParticleVisualizer3D
       {
         try
         {
-          _width = LoadRealParamFromLine (lines[1], "width");
-          _height = LoadRealParamFromLine(lines[2], "height");
-          _depth = LoadRealParamFromLine(lines[3], "depth");
-
-          // read width and height
-          //string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          //if (parts1.Length != 2)
-          //  throw new Exception("Invalid width!");
-
-          //_width = int.Parse(parts1[1]);
-
-          //string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          //if (parts2.Length != 2)
-          //  throw new Exception("Invalid height!");
-
-          //_height = int.Parse(parts2[1]);
-
-          //string[] parts3 = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          //if (parts3.Length != 2)
-          //  throw new Exception("Invalid depth!");
-
-          //_depth = int.Parse(parts3[1]);
-
-          // read the number of balls
+          _width   = LoadRealParamFromLine (lines[1], "width");
+          _height  = LoadRealParamFromLine(lines[2], "height");
+          _depth   = LoadRealParamFromLine(lines[3], "depth");
+          
           numBalls = LoadIntParamFromLine(lines[4], "number of balls");
-
-          //string[] parts = lines[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-          //if (parts.Length != 2)
-          //  throw new Exception("Invalid number of balls in " + fileName);
-
-          //numBalls = int.Parse(parts[1]);
 
           int lineNumber = 5;
 
@@ -167,24 +140,19 @@ namespace MML_ParticleVisualizer3D
           }
 
           // read number of steps
-          string[] parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts.Length != 2)
-            throw new Exception("Invalid number of steps in SimData.txt");
-          int numSteps = int.Parse(parts[1]);
-
-          _numSteps = numSteps;
+          _numSteps = LoadIntParamFromLine(lines[lineNumber++], "Number of steps");
 
           // read the steps
-          for (int i = 0; i < numSteps; i++)
+          for (int i = 0; i < _numSteps; i++)
           {
             // we expect "Step 0" together with timing (ie, additional double to specify T)
-            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parts[0] != "Step")
-              throw new Exception("Invalid step in SimData.txt");
+              throw new Exception("Was expecting \"Step\"!!!");
 
             if (parts[1] != i.ToString())
-              throw new Exception("Invalid step number in SimData.txt");
+              throw new Exception("Invalid step number, line number - " + lineNumber.ToString());
 
             double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
@@ -193,7 +161,7 @@ namespace MML_ParticleVisualizer3D
             {
               parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
               if (parts.Length != 4)
-                throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
+                throw new Exception("Invalid ball position coords, line number - " + lineNumber.ToString());
 
               int index = int.Parse(parts[0]);
               double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
