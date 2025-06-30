@@ -108,47 +108,51 @@ namespace MML_ParticleVisualizer3D
         try
         {
           _width = LoadRealParamFromLine (lines[1], "width");
+          _height = LoadRealParamFromLine(lines[2], "height");
+          _depth = LoadRealParamFromLine(lines[3], "depth");
 
           // read width and height
-          string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts1.Length != 2)
-            throw new Exception("Invalid width!");
+          //string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          //if (parts1.Length != 2)
+          //  throw new Exception("Invalid width!");
 
-          _width = int.Parse(parts1[1]);
+          //_width = int.Parse(parts1[1]);
 
-          string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts2.Length != 2)
-            throw new Exception("Invalid height!");
+          //string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          //if (parts2.Length != 2)
+          //  throw new Exception("Invalid height!");
 
-          _height = int.Parse(parts2[1]);
+          //_height = int.Parse(parts2[1]);
 
-          string[] parts3 = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts3.Length != 2)
-            throw new Exception("Invalid depth!");
+          //string[] parts3 = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          //if (parts3.Length != 2)
+          //  throw new Exception("Invalid depth!");
 
-          _depth = int.Parse(parts3[1]);
+          //_depth = int.Parse(parts3[1]);
 
           // read the number of balls
-          string[] parts = lines[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          numBalls = LoadIntParamFromLine(lines[4], "number of balls");
 
-          if (parts.Length != 2)
-            throw new Exception("Invalid number of balls in " + fileName);
+          //string[] parts = lines[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-          numBalls = int.Parse(parts[1]);
+          //if (parts.Length != 2)
+          //  throw new Exception("Invalid number of balls in " + fileName);
+
+          //numBalls = int.Parse(parts[1]);
 
           int lineNumber = 5;
 
           // read the balls attributes - name, radius, type
           for (int i = 0; i < numBalls; i++)
           {
-            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts1 = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (parts.Length != 3)
+            if (parts1.Length != 3)
               throw new Exception("Invalid ball attributes in SimData.txt");
 
-            string name = parts[0];
-            string color = parts[1];
-            double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
+            string name = parts1[0];
+            string color = parts1[1];
+            double radius = double.Parse(parts1[2], CultureInfo.InvariantCulture);
 
             MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), radius);
             Color ballColor = (Color)ColorConverter.ConvertFromString(color);
@@ -159,13 +163,11 @@ namespace MML_ParticleVisualizer3D
             // now, let's create particle data and mesh geometry for the ball
             ParticleData3D ball = new ParticleData3D(name, color, radius, sphereModel);
 
-            //ball._geomModel = sphereModel;
-
             _balls.Add(ball);
           }
 
           // read number of steps
-          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+          string[] parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
           if (parts.Length != 2)
             throw new Exception("Invalid number of steps in SimData.txt");
           int numSteps = int.Parse(parts[1]);
