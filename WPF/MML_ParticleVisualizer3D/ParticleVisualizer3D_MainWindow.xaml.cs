@@ -175,14 +175,7 @@ namespace MML_ParticleVisualizer3D
           }
 
           // now initialize balls position n the scene to the first step
-          for (int i = 0; i < _balls.Count; i++)
-          {
-            TranslateTransform3D Off = new TranslateTransform3D();
-            Off.OffsetX = _balls[i].Pos(0).X;
-            Off.OffsetY = _balls[i].Pos(0).Y;
-            Off.OffsetZ = _balls[i].Pos(0).Z;
-            _balls[i]._geomModel.Transform = Off;
-          }
+          SetBallsPosToTimestep(0);
         }
         catch (Exception ex)
         {
@@ -204,6 +197,7 @@ namespace MML_ParticleVisualizer3D
       _myModel3DGroup.Children.Clear();
 
       _helper.InitCamera(_cameraPoint);
+      myViewport3D.Camera = _helper._myCamera;
 
       //AmbientLight ambLight = new AmbientLight();
       //ambLight.Color = Colors.White;
@@ -214,9 +208,6 @@ namespace MML_ParticleVisualizer3D
 
       DirectionalLight myDirectionalLight2 = new DirectionalLight(diffuseColor: Colors.White, direction: new Vector3D(0.31, 0.2, -0.61));
       _myModel3DGroup.Children.Add(myDirectionalLight2);
-
-      myViewport3D.Camera = _helper._myCamera;
-
 
       for (int i = 0; i < _balls.Count; i++)
       {
@@ -229,18 +220,16 @@ namespace MML_ParticleVisualizer3D
 
       if (_bShowBox == true)
       {
+        var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+
         MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, 0.02);
-        //var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue));
-        var xyPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-        GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, xyPlaneMaterial);
+        GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, planeMaterial);
 
         MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, 0, _boxLen / 2), _boxLen, 0.02, _boxLen);
-        var xzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-        GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, xzPlaneMaterial);
+        GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, planeMaterial);
 
         MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen / 2, _boxLen / 2), 0.02, _boxLen, _boxLen);
-        var yzPlaneMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
-        GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, yzPlaneMaterial);
+        GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, planeMaterial);
 
         _myModel3DGroup.Children.Add(xyPlaneModel);
         _myModel3DGroup.Children.Add(xzPlaneModel);
@@ -270,7 +259,7 @@ namespace MML_ParticleVisualizer3D
 
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
-      int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
+      int refreshEvery = Convert.ToInt16(txtRefreshEvery.Text);
 
       // run animations in a separate thread
       Task.Run(() =>
@@ -281,7 +270,7 @@ namespace MML_ParticleVisualizer3D
 
     private void SetBallsPosToTimestep(int timeStep)
     {
-      if (timeStep > 0 && timeStep < _balls.Count)
+      if (timeStep >= 0 && timeStep < _balls.Count)
       {
         for (int i = 0; i < _balls.Count; i++)
         {
@@ -306,16 +295,6 @@ namespace MML_ParticleVisualizer3D
           _isPausedClicked = false;
           return;
         }
-
-        //if (t > 0)
-        //{
-        //  MeshGeometry3D line = Geometries.CreateSimpleLine(_curveTrace[t - 1], _curveTrace[t], 10, 5);
-
-        //  var lineMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
-        //  GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
-
-        //  _myModel3DGroup.Children.Add(lineModel);
-        //}
 
         if (t % refreshEvery == 0)
         {
