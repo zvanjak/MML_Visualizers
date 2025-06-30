@@ -41,6 +41,9 @@ namespace MML_ParticleVisualizer3D
     int _numSteps = 0;
     int _stepDelayMiliSec = 10;
 
+    int _currStep = 0;
+    bool _isPausedClicked = false;
+
     List<ParticleData3D> _balls = new List<ParticleData3D>();
 
     Model3DGroup _myModel3DGroup = new Model3DGroup();
@@ -276,12 +279,15 @@ namespace MML_ParticleVisualizer3D
       //}
     }
 
-    private void cmdAnimate_Click(object sender, RoutedEventArgs e)
+    private void btnStartSim_Click(object sender, RoutedEventArgs e)
     {
+      btnRestartSim.IsEnabled = false;
+      btnStartSim.IsEnabled = false;
+      btnPauseSim.IsEnabled = true;
+
       _stepDelayMiliSec = int.Parse(txtDT.Text);
 
       int refreshEvery = 1; //  Convert.ToInt16(txtRefreshEvery.Text);
-      double dt = 1; // Convert.ToDouble(txtDT.Text);
 
       // run animations in a separate thread
       Task.Run(() =>
@@ -290,20 +296,34 @@ namespace MML_ParticleVisualizer3D
       });
     }
 
-    private void btnPauseSim_Click(object sender, RoutedEventArgs e)
+    private void SetBallsPosToTimestep(int timeStep)
     {
+      if (timeStep > 0 && timeStep < _balls.Count)
+      {
+        for (int i = 0; i < _balls.Count; i++)
+        {
+          TranslateTransform3D Off = new TranslateTransform3D();
+          Off.OffsetX = _balls[i].Pos(timeStep).X;
+          Off.OffsetY = _balls[i].Pos(timeStep).Y;
+          Off.OffsetZ = _balls[i].Pos(timeStep).Z;
 
-    }
-
-    private void btnRestartSim_Click(object sender, RoutedEventArgs e)
-    {
-
+          _balls[i]._geomModel.Transform = Off;
+        }
+      }
     }
 
     private void Animate(int numSteps, int refreshEvery)
     {
-      for (int t = 0; t < numSteps; t += 1)
+      for (int t = _currStep; t < numSteps; t++, _currStep++)
       {
+        Thread.Sleep(_stepDelayMiliSec);
+
+        if (_isPausedClicked)
+        {
+          _isPausedClicked = false;
+          return;
+        }
+
         //if (t > 0)
         //{
         //  MeshGeometry3D line = Geometries.CreateSimpleLine(_curveTrace[t - 1], _curveTrace[t], 10, 5);
@@ -316,19 +336,19 @@ namespace MML_ParticleVisualizer3D
 
         this.Dispatcher.Invoke((Action)(() =>
         {
-          for (int i = 0; i < _balls.Count; i++)
-          {
-            TranslateTransform3D Off = new TranslateTransform3D();
-            Off.OffsetX = _balls[i].Pos(t).X;
-            Off.OffsetY = _balls[i].Pos(t).Y;
-            Off.OffsetZ = _balls[i].Pos(t).Z;
-
-            _balls[i]._geomModel.Transform = Off;
-          }
+          SetBallsPosToTimestep(t);
         }));
-
-        Thread.Sleep(_stepDelayMiliSec);
       }
+    }
+
+    private void btnPauseSim_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void btnRestartSim_Click(object sender, RoutedEventArgs e)
+    {
+
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

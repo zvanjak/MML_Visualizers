@@ -30,9 +30,10 @@ namespace MML_ParticleVisualizer2D
     double _scaleY = 1.0;
 
     List<Ball> _balls = new List<Ball>();
+    Ellipse[] _shapes;
+
     int _numSteps = 0;
     int _stepDelayMiliSec = 100;
-    Ellipse[] _shapes;
 
     int _currStep = 0;
     bool _isPausedClicked = false;

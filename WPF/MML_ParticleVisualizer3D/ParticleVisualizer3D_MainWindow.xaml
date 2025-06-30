@@ -23,7 +23,7 @@
 
     <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Particle visualization 3D" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
 
-    <Button x:Name="cmdAnimate"    Content="Start"   Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="16,16,0,0" VerticalAlignment="Top" Width="50" Click="cmdAnimate_Click"/>
+    <Button x:Name="btnStartSim"    Content="Start"   Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="16,16,0,0" VerticalAlignment="Top" Width="50" Click="btnStartSim_Click"/>
     <Button x:Name="btnPauseSim"   Content="Pause"   Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
     <Button x:Name="btnRestartSim" Content="Restart" Grid.Row="1"  Grid.Column="1" HorizontalAlignment="Left" Margin="132,16,0,0" VerticalAlignment="Top" Width="50" Click="btnRestartSim_Click"/>
 
