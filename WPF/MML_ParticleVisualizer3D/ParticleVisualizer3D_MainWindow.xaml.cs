@@ -73,6 +73,15 @@ namespace MML_ParticleVisualizer3D
       AddObjectsToScene();
     }
 
+    private int LoadIntParamFromLine(string line, string name)
+    {
+      string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+      if (parts.Length != 2)
+        throw new Exception("Invalid " + name + " in line: " + line);
+
+      return int.Parse(parts[1]);
+    }
+
     public bool LoadData(string fileName)
     {
       if (File.Exists(fileName) == false)
@@ -89,6 +98,8 @@ namespace MML_ParticleVisualizer3D
       {
         try
         {
+          _width = LoadIntParamFromLine (lines[1], "width");
+
           // read width and height
           string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
           if (parts1.Length != 2)
@@ -130,23 +141,16 @@ namespace MML_ParticleVisualizer3D
             string color = parts[1];
             double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
 
-            // now, let's create particle data and mesh geometry for the ball
-            ParticleData3D ball = new ParticleData3D(name, color, radius);
-
             MeshGeometry3D sphereGeometry = Geometries.CreateSphere(new Point3D(0, 0, 0), radius);
             Color ballColor = (Color)ColorConverter.ConvertFromString(color);
             var sphereMaterial = new DiffuseMaterial(new SolidColorBrush(ballColor));
 
             GeometryModel3D sphereModel = new GeometryModel3D(sphereGeometry, sphereMaterial);
 
-            //TranslateTransform3D Off = new TranslateTransform3D();
-            //Off.OffsetX = 0; // _balls[i].Pos(0).X;
-            //Off.OffsetY = 0; //_balls[i].Pos(0).Y;
-            //Off.OffsetZ = 0; //_balls[i].Pos(0).Z;
+            // now, let's create particle data and mesh geometry for the ball
+            ParticleData3D ball = new ParticleData3D(name, color, radius, sphereModel);
 
-            //sphereModel.Transform = Off;
-
-            ball._geomModel = sphereModel;
+            //ball._geomModel = sphereModel;
 
             _balls.Add(ball);
           }
@@ -240,7 +244,7 @@ namespace MML_ParticleVisualizer3D
         _myModel3DGroup.Children.Add(_balls[i]._geomModel);
       }
 
-      ModelVisual3D myModelVisual3D = new ModelVisual3D{ Content = _myModel3DGroup };
+      ModelVisual3D myModelVisual3D = new ModelVisual3D { Content = _myModel3DGroup };
 
       myViewport3D.Children.Add(myModelVisual3D);
 
@@ -334,10 +338,13 @@ namespace MML_ParticleVisualizer3D
         //  _myModel3DGroup.Children.Add(lineModel);
         //}
 
-        this.Dispatcher.Invoke((Action)(() =>
+        if (t % refreshEvery == 0)
         {
-          SetBallsPosToTimestep(t);
-        }));
+          this.Dispatcher.Invoke((Action)(() =>
+          {
+            SetBallsPosToTimestep(t);
+          }));
+        }
       }
     }
 
