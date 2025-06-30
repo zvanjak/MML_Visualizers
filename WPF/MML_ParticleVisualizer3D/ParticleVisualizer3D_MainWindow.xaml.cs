@@ -82,6 +82,15 @@ namespace MML_ParticleVisualizer3D
       return int.Parse(parts[1]);
     }
 
+    private double LoadRealParamFromLine(string line, string name)
+    {
+      string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+      if (parts.Length != 2)
+        throw new Exception("Invalid " + name + " in line: " + line);
+
+      return double.Parse(parts[1]);
+    }
+
     public bool LoadData(string fileName)
     {
       if (File.Exists(fileName) == false)
@@ -98,7 +107,7 @@ namespace MML_ParticleVisualizer3D
       {
         try
         {
-          _width = LoadIntParamFromLine (lines[1], "width");
+          _width = LoadRealParamFromLine (lines[1], "width");
 
           // read width and height
           string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -346,16 +355,35 @@ namespace MML_ParticleVisualizer3D
           }));
         }
       }
+
+      // enable buttons at the end of simulation
+      this.Dispatcher.Invoke((Action)(() =>
+      {
+        btnStartSim.IsEnabled = false;
+        btnPauseSim.IsEnabled = false;
+        btnRestartSim.IsEnabled = true;
+      }));
     }
 
     private void btnPauseSim_Click(object sender, RoutedEventArgs e)
     {
-
+      _isPausedClicked = true;
+      btnRestartSim.IsEnabled = true;
+      btnPauseSim.IsEnabled = false;
+      btnStartSim.IsEnabled = true;
     }
 
     private void btnRestartSim_Click(object sender, RoutedEventArgs e)
     {
+      btnRestartSim.IsEnabled = false;
+      btnPauseSim.IsEnabled = false;
+      btnStartSim.IsEnabled = true;
 
+      _currStep = 0;
+      txtCurrStep.Text = "0";
+
+      // set all shapes to initial positions
+      SetBallsPosToTimestep(0);
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -409,8 +437,7 @@ namespace MML_ParticleVisualizer3D
 
     private void btnLookAtCenter_Click(object sender, RoutedEventArgs e)
     {
-      // adjust LookAt position so we are looking at the center of the scene
-      _helper._lookToPos = new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2);
+      _helper.InitLookAtPoint(new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2));
     }
 
   }
