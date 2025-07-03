@@ -291,6 +291,11 @@ namespace MML_RealFunctionVisualizer
       LegendColor3.Visibility = Visibility.Collapsed;
       LegendColor4.Visibility = Visibility.Collapsed;
       LegendColor5.Visibility = Visibility.Collapsed;
+      LegendColor6.Visibility = Visibility.Collapsed;
+      LegendColor7.Visibility = Visibility.Collapsed;
+      LegendColor8.Visibility = Visibility.Collapsed;
+      LegendColor9.Visibility = Visibility.Collapsed;
+      LegendColor10.Visibility = Visibility.Collapsed;
 
       int legendIndex = 0;
 
@@ -298,7 +303,7 @@ namespace MML_RealFunctionVisualizer
       {
         if (func is SingleLoadedFunction slf)
         {
-          if (legendIndex < 5)
+          if (legendIndex < 10)
           {
             SetLegendEntry(legendIndex, slf._title, LegendColors[legendIndex]);
             legendIndex++;
@@ -308,7 +313,7 @@ namespace MML_RealFunctionVisualizer
         {
           // Assume mlf has a property for number of functions (dimensions)
           int dim = mlf.GetDimension(); // You may need to implement or expose this
-          for (int i = 0; i < dim && legendIndex < 5; i++)
+          for (int i = 0; i < dim && legendIndex < 10; i++)
           {
             // If you have per-function titles, use them; otherwise, generate
             string title = mlf._legend[i];
