@@ -200,13 +200,13 @@ namespace MML_RealFunctionVisualizer
           }
           mlf._legend = legend;
 
-          string[] partsX1 = lines[3+dim].Split(' ');
+          string[] partsX1 = lines[3 + dim].Split(' ');
           double xMin = double.Parse(partsX1[1], CultureInfo.InvariantCulture);
 
-          string[] partsX2 = lines[4+dim].Split(' ');
+          string[] partsX2 = lines[4 + dim].Split(' ');
           double xMax = double.Parse(partsX2[1], CultureInfo.InvariantCulture);
 
-          string[] partsNumPoints = lines[5+dim].Split(' ');
+          string[] partsNumPoints = lines[5 + dim].Split(' ');
           int numPoints = int.Parse(partsNumPoints[1], CultureInfo.InvariantCulture);
 
           _title = mlf._title;
@@ -215,7 +215,7 @@ namespace MML_RealFunctionVisualizer
           mlf._multiFuncY = new MML.Matrix(dim, numPoints);
 
           int cnt = 0;
-          for (int i = 6+dim; i < lines.Length; i++, cnt++)
+          for (int i = 6 + dim; i < lines.Length; i++, cnt++)
           {
             string[] parts = lines[i].Split(' ');
 
@@ -358,6 +358,37 @@ namespace MML_RealFunctionVisualizer
           LegendColor5.Fill = color;
           LegendColor5.Visibility = Visibility.Visible;
           break;
+        case 5:
+          LegendTitle6.Content = title;
+          LegendTitle6.Visibility = Visibility.Visible;
+          LegendColor6.Fill = color;
+          LegendColor6.Visibility = Visibility.Visible;
+          break;
+        case 6:
+          LegendTitle7.Content = title;
+          LegendTitle7.Visibility = Visibility.Visible;
+          LegendColor7.Fill = color;
+          LegendColor7.Visibility = Visibility.Visible;
+          break;
+        case 7:
+          LegendTitle8.Content = title;
+          LegendTitle8.Visibility = Visibility.Visible;
+          LegendColor8.Fill = color;
+          LegendColor8.Visibility = Visibility.Visible;
+          break;
+        case 8:
+          LegendTitle9.Content = title;
+          LegendTitle9.Visibility = Visibility.Visible;
+          LegendColor9.Fill = color;
+          LegendColor9.Visibility = Visibility.Visible;
+          break;
+        case 9:
+          LegendTitle10.Content = title;
+          LegendTitle10.Visibility = Visibility.Visible;
+          LegendColor10.Fill = color;
+          LegendColor10.Visibility = Visibility.Visible;
+          break;
+
       }
     }
   }
