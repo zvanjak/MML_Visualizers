@@ -87,7 +87,10 @@ namespace MML_RealFunctionVisualizer
       brushes.Add(Brushes.Green);
       brushes.Add(Brushes.Orange);
       brushes.Add(Brushes.Purple);
-      brushes.Add(Brushes.GreenYellow);
+      brushes.Add(Brushes.Brown);
+      brushes.Add(Brushes.Cyan);
+      brushes.Add(Brushes.Magenta);
+      brushes.Add(Brushes.Gray);
 
       for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)
       {
