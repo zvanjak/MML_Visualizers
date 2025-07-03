@@ -71,35 +71,14 @@ namespace MML_RealFunctionVisualizer
     {
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
 
-      List<Color> colors = new List<Color>();
-      colors.Add(Colors.Black);
-      colors.Add(Colors.Blue);
-      colors.Add(Colors.Red);
-      colors.Add(Colors.Green);
-      colors.Add(Colors.Orange);
-      colors.Add(Colors.Purple);
-      colors.Add(Colors.GreenYellow);
-
-      List<Brush> brushes= new List<Brush>();
-      brushes.Add(Brushes.Black);
-      brushes.Add(Brushes.Blue);
-      brushes.Add(Brushes.Red);
-      brushes.Add(Brushes.Green);
-      brushes.Add(Brushes.Orange);
-      brushes.Add(Brushes.Purple);
-      brushes.Add(Brushes.Brown);
-      brushes.Add(Brushes.Cyan);
-      brushes.Add(Brushes.Magenta);
-      brushes.Add(Brushes.Gray);
-
       for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)
       {
         // idemo po pojedinacnim funkcijama, odnosno njihovim redovim u matrici
         for (int j = 0; j < _multiFuncY.Rows; j++)
         {
           Line xAxis = new Line();
-          if( j < brushes.Count)
-            xAxis.Stroke = brushes[j];
+          if( j < LineBrushes.brushes.Length)
+            xAxis.Stroke = LineBrushes.brushes[j];
           else
             xAxis.Stroke = Brushes.Black; // default color if j exceeds available colors
 

@@ -56,18 +56,6 @@ namespace MML_RealFunctionVisualizer
       //colors.Add(Colors.Green);
       //colors.Add(Colors.Orange);
 
-      List<Brush> brushes = new List<Brush>();
-      brushes.Add(Brushes.Black);
-      brushes.Add(Brushes.Blue);
-      brushes.Add(Brushes.Red);
-      brushes.Add(Brushes.Green);
-      brushes.Add(Brushes.Orange);
-      brushes.Add(Brushes.Purple);
-      brushes.Add(Brushes.Brown);
-      brushes.Add(Brushes.Cyan);
-      brushes.Add(Brushes.Magenta);
-      brushes.Add(Brushes.Gray);
-
       Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
 
       for (int i = 0; i < _xVals.Count; i++)
@@ -86,8 +74,8 @@ namespace MML_RealFunctionVisualizer
       for (int i = 0; i < _xVals.Count - 1; i++)
       {
         Line xAxis = new Line();
-        if (_index < brushes.Count)
-          xAxis.Stroke = brushes[_index];
+        if (_index < LineBrushes.brushes.Length )
+          xAxis.Stroke = LineBrushes.brushes[_index];
         else
           xAxis.Stroke = Brushes.Black;
 

@@ -7,6 +7,24 @@ using System.Windows.Media;
 
 namespace MML_RealFunctionVisualizer
 {
+  // containes Color instances for drawing lines
+  internal static class LineColors
+    {
+    public static readonly Color[] colors = new Color[]
+    {
+      Colors.Black,
+      Colors.Blue,
+      Colors.Red,
+      Colors.Green,
+      Colors.Orange,
+      Colors.Purple,
+      Colors.Brown,
+      Colors.Cyan,
+      Colors.Magenta,
+      Colors.Gray
+    };
+  }
+
   // containes Brush instances for drawing lines
   internal static class LineBrushes
   {

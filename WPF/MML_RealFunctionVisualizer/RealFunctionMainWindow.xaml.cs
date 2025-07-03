@@ -254,22 +254,7 @@ namespace MML_RealFunctionVisualizer
 
       // redraw
       Redraw();
-
     }
-
-    //private readonly Brush[] LegendColors = new Brush[]
-    //{
-    //Brushes.Black,
-    //Brushes.Blue,
-    //Brushes.Red,
-    //Brushes.Green,
-    //Brushes.Orange,
-    //Brushes.Purple,
-    //Brushes.Brown,
-    //Brushes.Cyan,
-    //Brushes.Magenta,
-    //Brushes.Gray
-    //};
 
     private void UpdateLegend()
     {
