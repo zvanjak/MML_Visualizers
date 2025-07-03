@@ -257,19 +257,19 @@ namespace MML_RealFunctionVisualizer
 
     }
 
-    private readonly Brush[] LegendColors = new Brush[]
-    {
-    Brushes.Black,
-    Brushes.Blue,
-    Brushes.Red,
-    Brushes.Green,
-    Brushes.Orange,
-    Brushes.Purple,
-    Brushes.Brown,
-    Brushes.Cyan,
-    Brushes.Magenta,
-    Brushes.Gray
-    };
+    //private readonly Brush[] LegendColors = new Brush[]
+    //{
+    //Brushes.Black,
+    //Brushes.Blue,
+    //Brushes.Red,
+    //Brushes.Green,
+    //Brushes.Orange,
+    //Brushes.Purple,
+    //Brushes.Brown,
+    //Brushes.Cyan,
+    //Brushes.Magenta,
+    //Brushes.Gray
+    //};
 
     private void UpdateLegend()
     {
@@ -305,7 +305,7 @@ namespace MML_RealFunctionVisualizer
         {
           if (legendIndex < 10)
           {
-            SetLegendEntry(legendIndex, slf._title, LegendColors[legendIndex]);
+            SetLegendEntry(legendIndex, slf._title, LineBrushes.brushes[legendIndex]);
             legendIndex++;
           }
         }
@@ -317,7 +317,7 @@ namespace MML_RealFunctionVisualizer
           {
             // If you have per-function titles, use them; otherwise, generate
             string title = mlf._legend[i];
-            SetLegendEntry(legendIndex, title, LegendColors[legendIndex]);
+            SetLegendEntry(legendIndex, title, LineBrushes.brushes[legendIndex]);
             legendIndex++;
           }
         }
