@@ -388,7 +388,6 @@ namespace MML_RealFunctionVisualizer
           LegendColor10.Fill = color;
           LegendColor10.Visibility = Visibility.Visible;
           break;
-
       }
     }
   }
