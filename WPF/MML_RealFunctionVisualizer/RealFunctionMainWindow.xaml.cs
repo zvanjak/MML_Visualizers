@@ -264,7 +264,11 @@ namespace MML_RealFunctionVisualizer
     Brushes.Red,
     Brushes.Green,
     Brushes.Orange,
-    Brushes.Purple
+    Brushes.Purple,
+    Brushes.Brown,
+    Brushes.Cyan,
+    Brushes.Magenta,
+    Brushes.Gray
     };
 
     private void UpdateLegend()
@@ -275,6 +279,13 @@ namespace MML_RealFunctionVisualizer
       LegendTitle3.Visibility = Visibility.Collapsed;
       LegendTitle4.Visibility = Visibility.Collapsed;
       LegendTitle5.Visibility = Visibility.Collapsed;
+      LegendTitle6.Visibility = Visibility.Collapsed;
+      LegendTitle7.Visibility = Visibility.Collapsed;
+      LegendTitle8.Visibility = Visibility.Collapsed;
+      LegendTitle9.Visibility = Visibility.Collapsed;
+      LegendTitle10.Visibility = Visibility.Collapsed;
+
+
       LegendColor1.Visibility = Visibility.Collapsed;
       LegendColor2.Visibility = Visibility.Collapsed;
       LegendColor3.Visibility = Visibility.Collapsed;
