@@ -270,7 +270,7 @@ namespace MML_ParticleVisualizer3D
 
     private void SetBallsPosToTimestep(int timeStep)
     {
-      if (timeStep >= 0 && timeStep < _balls.Count)
+      if (timeStep >= 0 && timeStep < _numSteps)
       {
         for (int i = 0; i < _balls.Count; i++)
         {

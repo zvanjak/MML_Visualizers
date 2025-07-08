@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParticleVisualizer3D": {
       "commandName": "Project",
-      "commandLineArgs": "air_as_ideal_gas.txt"
+      "commandLineArgs": "solar_system_particles"
     }
   }
 }
