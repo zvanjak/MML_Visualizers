@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "example3_wpf_lorentz_system.txt\r\n"
+      "commandLineArgs": "solar_system_4.txt"
     }
   }
 }

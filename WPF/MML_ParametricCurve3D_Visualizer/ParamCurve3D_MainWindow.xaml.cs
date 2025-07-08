@@ -84,7 +84,12 @@ namespace MML_ParametricCurve3D_Visualizer
         new SolidColorBrush(Colors.Blue),
         new SolidColorBrush(Colors.Red),
         new SolidColorBrush(Colors.Green),
-        new SolidColorBrush(Colors.Orange)
+        new SolidColorBrush(Colors.Orange),
+        new SolidColorBrush(Colors.Purple),
+        new SolidColorBrush(Colors.Brown),
+        new SolidColorBrush(Colors.Cyan),
+        new SolidColorBrush(Colors.Magenta),
+        new SolidColorBrush(Colors.Gray)
       };
 
     Point3D _cameraPoint = new Point3D(350, 100, 350);
@@ -170,7 +175,12 @@ namespace MML_ParametricCurve3D_Visualizer
       for (int i = 0; i < _curves.Count; i++)
       {
         MeshGeometry3D line = Geometries.CreatePolyLine(_curves[i]._curveTrace, _lineWidth, 10);
-        DiffuseMaterial lineMaterial = new DiffuseMaterial(_brushes[i]);
+        DiffuseMaterial lineMaterial;
+        if ( i >= _brushes.Count )
+          lineMaterial = new DiffuseMaterial(_brushes[0]);
+        else
+          lineMaterial = new DiffuseMaterial(_brushes[i]);
+
         GeometryModel3D lineModel = new GeometryModel3D(line, lineMaterial);
 
         _myModel3DGroup.Children.Add(lineModel);
