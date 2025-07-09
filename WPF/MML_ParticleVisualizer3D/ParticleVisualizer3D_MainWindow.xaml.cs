@@ -382,9 +382,9 @@ namespace MML_ParticleVisualizer3D
       var look = _helper._lookToPos;
 
       // Calculate forward and right vectors
-      Vector3D forward = look - pos;
+      Vector3D forward = cam.LookDirection;
       forward.Normalize();
-      Vector3D right = Vector3D.CrossProduct(forward, new Vector3D(0, 1, 0));
+      Vector3D right = Vector3D.CrossProduct(forward, new Vector3D(0, 0, 1));
       right.Normalize();
 
       // Move camera based on key
