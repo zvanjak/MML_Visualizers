@@ -48,10 +48,6 @@
     <Label Content="Curr.step"    Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="16,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.158,-0.191"/>
     <TextBox x:Name="txtCurrStep" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="116,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60" Height="18"/>
 
-    <Label Content="Line width"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="20,350,0,0" VerticalAlignment="Top"/>
-    <Button x:Name="btnIncWidth" Content="  +  " Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="99,350,0,0" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
-    <Button x:Name="btnDecWidth" Content="  -  " Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="145,350,0,0" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
-
     <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,410,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
   </Grid>
 </Window>

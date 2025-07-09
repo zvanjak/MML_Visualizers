@@ -335,6 +335,12 @@ namespace MML_ParticleVisualizer3D
       SetBallsPosToTimestep(0);
     }
 
+    private void btnLookAtCenter_Click(object sender, RoutedEventArgs e)
+    {
+      _helper.InitLookAtPoint(new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2));
+    }
+
+
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
@@ -363,24 +369,5 @@ namespace MML_ParticleVisualizer3D
     {
       _helper.Window_KeyDown(myViewport3D, e);
     }
-
-
-    private void btnIncWidth_Click(object sender, RoutedEventArgs e)
-    {
-      _lineWidth *= 1.1;
-      AddObjectsToScene();
-    }
-
-    private void btnDecWidth_Click(object sender, RoutedEventArgs e)
-    {
-      _lineWidth *= 0.9;
-      AddObjectsToScene();
-    }
-
-    private void btnLookAtCenter_Click(object sender, RoutedEventArgs e)
-    {
-      _helper.InitLookAtPoint(new Point3D(_boxLen / 2, _boxLen / 2, _boxLen / 2));
-    }
-
   }
 }
