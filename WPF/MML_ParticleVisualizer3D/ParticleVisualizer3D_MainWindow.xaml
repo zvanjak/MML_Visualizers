@@ -18,10 +18,13 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="950" Canvas.Left="0" Canvas.Top="0" >
-      </Viewport3D>
-    </Viewbox>
+    <Viewport3D Name="myViewport3D"
+                Grid.Row="1"
+                Grid.Column="0"
+                ClipToBounds="True"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+    </Viewport3D>
 
 
     <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Particle visualization 3D" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
