@@ -26,7 +26,7 @@ namespace MML_ParticleVisualizer3D
   {
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
-    Point3D _cameraPoint = new Point3D(1350, 1100, 1350);
+    //Point3D _cameraPoint = new Point3D(1350, 1100, 1350);
     double _axisWidth = 0.5;
     double _axisLen = 500;
     double _boxLen = 1000;
@@ -196,7 +196,7 @@ namespace MML_ParticleVisualizer3D
     {
       _myModel3DGroup.Children.Clear();
 
-      _helper.InitCamera(_cameraPoint);
+      _helper.InitCamera(new Point3D(1350, 1100, 1350));
       myViewport3D.Camera = _helper._myCamera;
 
       //AmbientLight ambLight = new AmbientLight();
@@ -338,44 +338,30 @@ namespace MML_ParticleVisualizer3D
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
-
-      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonUp();
-
-      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonDown(e.GetPosition(this));
-
-      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonUp();
-
-      _cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseMove(object sender, MouseEventArgs e)
     {
       _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
-
-      _cameraPoint = _helper._cameraPos;
     }
     public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
-
-      _cameraPoint = _helper._cameraPos;
     }
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {
       _helper.Window_KeyDown(myViewport3D, e);
-
-      _cameraPoint = _helper._cameraPos;
     }
 
 
