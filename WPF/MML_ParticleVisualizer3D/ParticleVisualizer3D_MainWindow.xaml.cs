@@ -300,6 +300,8 @@ namespace MML_ParticleVisualizer3D
         {
           this.Dispatcher.Invoke((Action)(() =>
           {
+            txtCurrStep.Text = t.ToString();
+
             SetBallsPosToTimestep(t);
           }));
         }
