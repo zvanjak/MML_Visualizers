@@ -373,47 +373,9 @@ namespace MML_ParticleVisualizer3D
     }
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {
-      // Camera movement step size
-      double step = 20.0;
+      _helper.Window_KeyDown(myViewport3D, e);
 
-      // Get current camera position and look-at point
-      var cam = _helper._myCamera;
-      var pos = cam.Position;
-      var look = _helper._lookToPos;
-
-      // Calculate forward and right vectors
-      Vector3D forward = cam.LookDirection;
-      forward.Normalize();
-      Vector3D right = Vector3D.CrossProduct(forward, new Vector3D(0, 0, 1));
-      right.Normalize();
-
-      // Move camera based on key
-      switch (e.Key)
-      {
-        case Key.W: // Forward
-          pos += forward * step;
-          look += forward * step;
-          break;
-        case Key.S: // Backward
-          pos -= forward * step;
-          look -= forward * step;
-          break;
-        case Key.A: // Left
-          pos -= right * step;
-          look -= right * step;
-          break;
-        case Key.D: // Right
-          pos += right * step;
-          look += right * step;
-          break;
-        default:
-          return;
-      }
-
-      // Update camera position and look-at
-      _helper._myCamera.Position = pos;
-      _helper._lookToPos = look;
-      _helper._myCamera.LookDirection = look - pos;
+      _cameraPoint = _helper._cameraPos;
     }
 
 
