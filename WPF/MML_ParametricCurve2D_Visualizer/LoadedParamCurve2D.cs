@@ -75,6 +75,7 @@ namespace MML_ParametricCurve2D_Visualizer
       {
         Line xAxis = new Line();
         xAxis.Stroke = drawBrush;
+        xAxis.StrokeThickness = 2;
 
         double x1 = coordSysParams._centerX + _xVals[i] * coordSysParams._scaleX;
         double y1 = coordSysParams._centerY - _yVals[i] * coordSysParams._scaleY;
