@@ -169,7 +169,7 @@ namespace MML_ParametricCurve3D_Visualizer
 
       myViewport3D.Children.Add(myModelVisual3D);
 
-      Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+      Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 1, _axisLen);
 
 
       for (int i = 0; i < _curves.Count; i++)
