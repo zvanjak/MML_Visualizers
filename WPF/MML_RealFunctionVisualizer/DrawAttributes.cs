@@ -39,7 +39,8 @@ namespace MML_RealFunctionVisualizer
     Brushes.Brown,
     Brushes.Cyan,
     Brushes.Magenta,
-    Brushes.Gray
+    Brushes.Gray,
+    Brushes.Yellow
     };
 
   }
