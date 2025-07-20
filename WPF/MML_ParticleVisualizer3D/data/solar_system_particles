@@ -3,15 +3,15 @@ Width: -1
 Height: -1
 Depth: -1
 NumBalls: 9
-Ball_1 Yellow 30
-Ball_2 Black 3
-Ball_3 Orange 15
-Ball_4 Blue 20
-Ball_5 Red 20
-Ball_6 Brown 50
-Ball_7 Brown 40
-Ball_8 LightBlue 30
-Ball_9 Green 30
+Sun Yellow 30
+Mercury Black 3
+Venus Orange 15
+Earth Blue 20
+Mars Red 20
+Jupiter Brown 50
+Saturn Brown 40
+Uranus LightBlue 30
+Neptun Green 30
 NumSteps: 501
 Step 0 0
 0 0 0 0

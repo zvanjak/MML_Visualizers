@@ -68,9 +68,12 @@ namespace MML_ParticleVisualizer3D
       }
 
       LegendWidgetControl.LegendItems.Clear();
-      LegendWidgetControl.LegendItems.Add(new LegendItem { Title = "Legend 1", Color = Brushes.Black });
-      LegendWidgetControl.LegendItems.Add(new LegendItem { Title = "Legend 2", Color = Brushes.Blue });
-      // ... up to 10
+
+      for(int i=0; i<_balls.Count && i<10; i++ )
+      {
+        LegendWidgetControl.LegendItems.Add(new LegendItem { Title = _balls[i].Name, 
+                                                          Color = (SolidColorBrush)new BrushConverter().ConvertFromString(_balls[i].Color) });
+      }
 
       txtNumSteps.Text = _numSteps.ToString();
       txtDT.Text = _stepDelayMiliSec.ToString();

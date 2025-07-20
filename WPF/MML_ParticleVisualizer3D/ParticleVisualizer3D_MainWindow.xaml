@@ -51,7 +51,7 @@
 
     <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,316,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
 
-    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,50,20,20" />
+    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,350,20,20" />
     
 
   </Grid>
