@@ -73,6 +73,17 @@ namespace MML_ParametricCurve3D_Visualizer
 
       InitScene();
 
+      LegendWidgetControl.LegendItems.Clear();
+
+      for (int i = 0; i < _curves.Count && i < 10; i++)
+      {
+        LegendWidgetControl.LegendItems.Add(new LegendItem
+        {
+          Title = _curves[i]._title,
+          Color = _brushes[i % _brushes.Count]
+        });
+      }
+
       //foreach (var vec in _curveTrace)
       //{
       //    MeshGeometry3D sphere = Geometries.CreateSphere(new Point3D(vec.X, vec.Y, vec.Z), 0.2);
@@ -142,7 +153,7 @@ namespace MML_ParametricCurve3D_Visualizer
 
       if (type == "PARAMETRIC_CURVE_CARTESIAN_3D")
       {
-        _title = lines[1];
+        ret._title = lines[1];
 
         string[] partsT1 = lines[2].Split(' ');
         double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
@@ -174,38 +185,26 @@ namespace MML_ParametricCurve3D_Visualizer
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
-
-      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonUp();
-
-      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonDown(e.GetPosition(this));
-
-      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonUp();
-
-      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseMove(object sender, MouseEventArgs e)
     {
       _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
-
-      //_cameraPoint = _helper._cameraPos;
     }
     public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
-    
-      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {

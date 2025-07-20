@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MML_ParametricCurve3D_Visualizer"
         xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         mc:Ignorable="d"
-        Title="Parametric curve visualizer" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
+        Title="Parametric curve visualizer" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown">
   <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="40"/>
