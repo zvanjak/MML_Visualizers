@@ -31,20 +31,8 @@ namespace MML_ParametricCurve3D_Visualizer
   public partial class MainWindow : Window
   {
     readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
-    //readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
-    //    new SolidColorBrush(Colors.Black),
-    //    new SolidColorBrush(Colors.Blue),
-    //    new SolidColorBrush(Colors.Red),
-    //    new SolidColorBrush(Colors.Green),
-    //    new SolidColorBrush(Colors.Orange),
-    //    new SolidColorBrush(Colors.Purple),
-    //    new SolidColorBrush(Colors.Brown),
-    //    new SolidColorBrush(Colors.Cyan),
-    //    new SolidColorBrush(Colors.Magenta),
-    //    new SolidColorBrush(Colors.Gray)
-    //  };
 
-    Point3D _cameraPoint = new Point3D(350, 100, 350);
+    //Point3D _cameraPoint = new Point3D(350, 100, 350);
     double _axisWidth = 0.5;
     double _axisLen = 500;
     double _lineWidth = 0.25;
@@ -101,7 +89,7 @@ namespace MML_ParametricCurve3D_Visualizer
     {
       _myModel3DGroup.Children.Clear();
 
-      _helper.InitCamera(_cameraPoint);
+      _helper.InitCamera(new Point3D(350, 100, 350));
       //_helper.InitLights(myModel3DGroup);
 
       AmbientLight ambLight = new AmbientLight();
