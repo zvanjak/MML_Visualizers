@@ -21,6 +21,7 @@ using System.Windows.Shapes;
 using MML;
 using MML_VectorField3D_Visualizer;
 using WPF3DHelperLib;
+using MML_VisualizersBase;
 
 namespace MML_ParametricCurve3D_Visualizer
 {
@@ -29,18 +30,19 @@ namespace MML_ParametricCurve3D_Visualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
-        new SolidColorBrush(Colors.Black),
-        new SolidColorBrush(Colors.Blue),
-        new SolidColorBrush(Colors.Red),
-        new SolidColorBrush(Colors.Green),
-        new SolidColorBrush(Colors.Orange),
-        new SolidColorBrush(Colors.Purple),
-        new SolidColorBrush(Colors.Brown),
-        new SolidColorBrush(Colors.Cyan),
-        new SolidColorBrush(Colors.Magenta),
-        new SolidColorBrush(Colors.Gray)
-      };
+    readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
+    //readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
+    //    new SolidColorBrush(Colors.Black),
+    //    new SolidColorBrush(Colors.Blue),
+    //    new SolidColorBrush(Colors.Red),
+    //    new SolidColorBrush(Colors.Green),
+    //    new SolidColorBrush(Colors.Orange),
+    //    new SolidColorBrush(Colors.Purple),
+    //    new SolidColorBrush(Colors.Brown),
+    //    new SolidColorBrush(Colors.Cyan),
+    //    new SolidColorBrush(Colors.Magenta),
+    //    new SolidColorBrush(Colors.Gray)
+    //  };
 
     Point3D _cameraPoint = new Point3D(350, 100, 350);
     double _axisWidth = 0.5;

@@ -3,9 +3,9 @@ using System.Windows.Media;
 
 namespace MML_VisualizersBase
 {
-  public class Defaults
+  public static class Defaults
   {
-    readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
+    static readonly List<SolidColorBrush> _brushes = new List<SolidColorBrush>() {
         new SolidColorBrush(Colors.Black),
         new SolidColorBrush(Colors.Blue),
         new SolidColorBrush(Colors.Red),
@@ -19,12 +19,12 @@ namespace MML_VisualizersBase
         new SolidColorBrush(Colors.Yellow)
       };
 
-    public List<SolidColorBrush>  GetBrushList()
+    static public List<SolidColorBrush>  GetBrushList()
     {       
       return _brushes;
     }
 
-    readonly List<Color> _colors = new List<Color>()
+    static readonly List<Color> _colors = new List<Color>()
     {
       Colors.Black,
       Colors.Blue,
@@ -39,7 +39,7 @@ namespace MML_VisualizersBase
       Colors.Yellow
     };
 
-    public List<Color> GetColorList()
+    static public List<Color> GetColorList()
     {
       return _colors;
     }
