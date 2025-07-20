@@ -53,6 +53,5 @@
 
     <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,350,20,20" />
     
-
   </Grid>
 </Window>

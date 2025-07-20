@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MML;
+using MML_VisualizersBase;
 
 namespace MML_ParticleVisualizer2D
 {
@@ -55,6 +56,20 @@ namespace MML_ParticleVisualizer2D
       {
         MessageBox.Show("Error loading data from file " + fileName);
         return;
+      }
+
+      // set the title of the window
+      this.Title = "Visualizing particle simulation 2D - " + fileName;
+
+      // fill the legend widget with balls info
+      LegendWidgetControl.LegendItems.Clear();
+      for (int i = 0; i < _balls.Count && i < 10; i++)
+      {
+        LegendWidgetControl.LegendItems.Add(new LegendItem
+        {
+          Title = _balls[i].Name,
+          Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_balls[i].Color))
+        });
       }
 
       txtNumSteps.Text = _numSteps.ToString();
