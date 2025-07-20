@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ParticleVisualizer3D"
+        xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         mc:Ignorable="d"
         
         Title="Particle visualizer 3D" Height="1000" Width="1300" 
@@ -48,6 +49,10 @@
     <Label Content="Curr.step"    Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="16,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.158,-0.191"/>
     <TextBox x:Name="txtCurrStep" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="116,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60" Height="18"/>
 
-    <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,410,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
+    <Button x:Name="btnLookAtCenter" Grid.Column="1" Content="Look at center" HorizontalAlignment="Center" Margin="0,316,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnLookAtCenter_Click"/>
+
+    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,50,20,20" />
+    
+
   </Grid>
 </Window>

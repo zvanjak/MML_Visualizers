@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MML;
+using MML_VisualizersBase;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -13,8 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using MML;
 using WPF3DHelperLib;
 
 namespace MML_ParticleVisualizer3D
@@ -66,6 +66,11 @@ namespace MML_ParticleVisualizer3D
         MessageBox.Show("Error loading data from file.");
         return;
       }
+
+      LegendWidgetControl.LegendItems.Clear();
+      LegendWidgetControl.LegendItems.Add(new LegendItem { Title = "Legend 1", Color = Brushes.Black });
+      LegendWidgetControl.LegendItems.Add(new LegendItem { Title = "Legend 2", Color = Brushes.Blue });
+      // ... up to 10
 
       txtNumSteps.Text = _numSteps.ToString();
       txtDT.Text = _stepDelayMiliSec.ToString();

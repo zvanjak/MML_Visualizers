@@ -26,6 +26,51 @@
     <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
     <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
     <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+
+    <!-- Legend visualization area -->
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="20,150,20,20" VerticalAlignment="Top" x:Name="LegendPanel">
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor1" Width="24" Height="4" Fill="Black" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle1" Content="Legend 1" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor2" Width="24" Height="4" Fill="Blue" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle2" Content="Legend 2" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor3" Width="24" Height="4" Fill="Red" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle3" Content="Legend 3" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor4" Width="24" Height="4" Fill="Green" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle4" Content="Legend 4" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor5" Width="24" Height="4" Fill="Orange" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle5" Content="Legend 5" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor6" Width="24" Height="4" Fill="Purple" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle6" Content="Legend 6" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor7" Width="24" Height="4" Fill="Brown" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle7" Content="Legend 7" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor8" Width="24" Height="4" Fill="Cyan" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle8" Content="Legend 8" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor9" Width="24" Height="4" Fill="Magenta" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle9" Content="Legend 9" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+        <Rectangle x:Name="LegendColor10" Width="24" Height="4" Fill="Gray" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <Label x:Name="LegendTitle10" Content="Legend 10" VerticalAlignment="Center"/>
+      </StackPanel>
+    </StackPanel>
+
   </Grid>
 
 </Window>
