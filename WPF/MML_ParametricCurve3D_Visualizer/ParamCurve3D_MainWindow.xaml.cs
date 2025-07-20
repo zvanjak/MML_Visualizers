@@ -235,37 +235,41 @@ namespace MML_ParametricCurve3D_Visualizer
     {
       _helper.Window_MouseLeftButtonDown(e.GetPosition(this));
 
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseLeftButtonUp();
 
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonDown(e.GetPosition(this));
 
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       _helper.Window_MouseRightButtonUp();
 
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
     }
     private void Window_MouseMove(object sender, MouseEventArgs e)
     {
       _helper.Window_MouseMove(myViewport3D, e.GetPosition(this), sender, e);
 
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
     }
     public void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
     
-      _cameraPoint = _helper._cameraPos;
+      //_cameraPoint = _helper._cameraPos;
+    }
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+      _helper.Window_KeyDown(myViewport3D, e);
     }
 
     private void cmdAnimate_Click(object sender, RoutedEventArgs e)
