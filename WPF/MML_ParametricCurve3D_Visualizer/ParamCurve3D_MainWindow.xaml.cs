@@ -32,8 +32,6 @@ namespace MML_ParametricCurve3D_Visualizer
   {
     readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
-    //Point3D _cameraPoint = new Point3D(350, 100, 350);
-    double _axisWidth = 0.5;
     double _axisLen = 500;
     double _lineWidth = 0.25;
 
@@ -45,7 +43,7 @@ namespace MML_ParametricCurve3D_Visualizer
 
     List<Sphere> _spheres = new List<Sphere>();
 
-    string _title = "Visualizing param curve";
+    string _title = "Default title";
 
     public MainWindow()
     {
@@ -178,6 +176,11 @@ namespace MML_ParametricCurve3D_Visualizer
           ret._curveTrace.Add(pos);
         }
       }
+      else
+      {
+        MessageBox.Show("Unknown file type: " + type);
+        return ret;
+      }
 
       return ret;
     }
@@ -279,7 +282,7 @@ namespace MML_ParametricCurve3D_Visualizer
           }));
         }
 
-        Thread.Sleep(10);
+        Thread.Sleep(100);
       }
     }
 
