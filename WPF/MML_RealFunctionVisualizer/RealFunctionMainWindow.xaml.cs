@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MML;
+using MML_VisualizersBase;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,8 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using MML;
 using WPF3DHelperLib;
 
 namespace MML_RealFunctionVisualizer
@@ -46,6 +46,8 @@ namespace MML_RealFunctionVisualizer
     List<LoadedFunction> _loadedFunctions = new List<LoadedFunction>();
     CoordSystemParams _coordSystemParams = new CoordSystemParams();
     private string _title = "";
+
+    readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
     public MainWindow()
     {
@@ -258,52 +260,34 @@ namespace MML_RealFunctionVisualizer
 
     private void UpdateLegend()
     {
-      // Hide all legend entries by default
-      LegendTitle1.Visibility = Visibility.Collapsed;
-      LegendTitle2.Visibility = Visibility.Collapsed;
-      LegendTitle3.Visibility = Visibility.Collapsed;
-      LegendTitle4.Visibility = Visibility.Collapsed;
-      LegendTitle5.Visibility = Visibility.Collapsed;
-      LegendTitle6.Visibility = Visibility.Collapsed;
-      LegendTitle7.Visibility = Visibility.Collapsed;
-      LegendTitle8.Visibility = Visibility.Collapsed;
-      LegendTitle9.Visibility = Visibility.Collapsed;
-      LegendTitle10.Visibility = Visibility.Collapsed;
-
-
-      LegendColor1.Visibility = Visibility.Collapsed;
-      LegendColor2.Visibility = Visibility.Collapsed;
-      LegendColor3.Visibility = Visibility.Collapsed;
-      LegendColor4.Visibility = Visibility.Collapsed;
-      LegendColor5.Visibility = Visibility.Collapsed;
-      LegendColor6.Visibility = Visibility.Collapsed;
-      LegendColor7.Visibility = Visibility.Collapsed;
-      LegendColor8.Visibility = Visibility.Collapsed;
-      LegendColor9.Visibility = Visibility.Collapsed;
-      LegendColor10.Visibility = Visibility.Collapsed;
-
-      int legendIndex = 0;
+      LegendWidgetControl.LegendItems.Clear();
+      int ind = 0;
 
       foreach (var func in _loadedFunctions)
       {
-        if (func is SingleLoadedFunction slf)
+        if (func is SingleLoadedFunction)
         {
-          if (legendIndex < 10)
+          LegendWidgetControl.LegendItems.Add(new LegendItem
           {
-            SetLegendEntry(legendIndex, slf._title, LineBrushes.brushes[legendIndex]);
-            legendIndex++;
-          }
+            Title = (func as SingleLoadedFunction)._title,
+            Color = _brushes[ind % _brushes.Count]
+          });
+          ind++;
         }
         else if (func is MultiLoadedFunction mlf)
         {
           // Assume mlf has a property for number of functions (dimensions)
           int dim = mlf.GetDimension(); // You may need to implement or expose this
-          for (int i = 0; i < dim && legendIndex < 10; i++)
+          for (int i = 0; i < dim && i < 10; i++)
           {
             // If you have per-function titles, use them; otherwise, generate
             string title = mlf._legend[i];
-            SetLegendEntry(legendIndex, title, LineBrushes.brushes[legendIndex]);
-            legendIndex++;
+            LegendWidgetControl.LegendItems.Add(new LegendItem
+            {
+              Title = title,
+              Color = _brushes[ind % _brushes.Count]
+            });
+            ind++;
           }
         }
       }
@@ -311,69 +295,6 @@ namespace MML_RealFunctionVisualizer
 
     private void SetLegendEntry(int index, string title, Brush color)
     {
-      switch (index)
-      {
-        case 0:
-          LegendTitle1.Content = title;
-          LegendTitle1.Visibility = Visibility.Visible;
-          LegendColor1.Fill = color;
-          LegendColor1.Visibility = Visibility.Visible;
-          break;
-        case 1:
-          LegendTitle2.Content = title;
-          LegendTitle2.Visibility = Visibility.Visible;
-          LegendColor2.Fill = color;
-          LegendColor2.Visibility = Visibility.Visible;
-          break;
-        case 2:
-          LegendTitle3.Content = title;
-          LegendTitle3.Visibility = Visibility.Visible;
-          LegendColor3.Fill = color;
-          LegendColor3.Visibility = Visibility.Visible;
-          break;
-        case 3:
-          LegendTitle4.Content = title;
-          LegendTitle4.Visibility = Visibility.Visible;
-          LegendColor4.Fill = color;
-          LegendColor4.Visibility = Visibility.Visible;
-          break;
-        case 4:
-          LegendTitle5.Content = title;
-          LegendTitle5.Visibility = Visibility.Visible;
-          LegendColor5.Fill = color;
-          LegendColor5.Visibility = Visibility.Visible;
-          break;
-        case 5:
-          LegendTitle6.Content = title;
-          LegendTitle6.Visibility = Visibility.Visible;
-          LegendColor6.Fill = color;
-          LegendColor6.Visibility = Visibility.Visible;
-          break;
-        case 6:
-          LegendTitle7.Content = title;
-          LegendTitle7.Visibility = Visibility.Visible;
-          LegendColor7.Fill = color;
-          LegendColor7.Visibility = Visibility.Visible;
-          break;
-        case 7:
-          LegendTitle8.Content = title;
-          LegendTitle8.Visibility = Visibility.Visible;
-          LegendColor8.Fill = color;
-          LegendColor8.Visibility = Visibility.Visible;
-          break;
-        case 8:
-          LegendTitle9.Content = title;
-          LegendTitle9.Visibility = Visibility.Visible;
-          LegendColor9.Fill = color;
-          LegendColor9.Visibility = Visibility.Visible;
-          break;
-        case 9:
-          LegendTitle10.Content = title;
-          LegendTitle10.Visibility = Visibility.Visible;
-          LegendColor10.Fill = color;
-          LegendColor10.Visibility = Visibility.Visible;
-          break;
-      }
     }
   }
 }

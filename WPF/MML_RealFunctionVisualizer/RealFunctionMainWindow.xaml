@@ -33,7 +33,7 @@
     <Label Grid.Row="1" Grid.Column="1" Content="Legend" HorizontalAlignment="Left" Margin="36,17,0,0" VerticalAlignment="Top"/>
 
 
-    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,350,20,20" />
+    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,50,20,20" />
     
   </Grid>
 </Window>
