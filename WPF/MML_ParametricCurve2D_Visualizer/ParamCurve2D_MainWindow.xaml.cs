@@ -54,7 +54,7 @@ namespace MML_ParametricCurve2D_Visualizer
       txtYMin.Text = _coordSystemParams._yMin.ToString();
       txtYMax.Text = _coordSystemParams._yMax.ToString();
       txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
-      txtTitle.Content = _title;
+      txtTitle.Text = _title;
 
       _brushes.Add(Brushes.Black);
       _brushes.Add(Brushes.Orange);
