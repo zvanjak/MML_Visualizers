@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using MML_VisualizersBase;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -67,6 +68,17 @@ namespace MML_ParametricCurve2D_Visualizer
       _brushes.Add(Brushes.Yellow);
 
       Redraw();
+
+      LegendWidgetControl.LegendItems.Clear();
+
+      for (int i = 0; i < _loadedCurves.Count && i < 10; i++)
+      {
+        LegendWidgetControl.LegendItems.Add(new LegendItem
+        {
+          Title = _loadedCurves[i]._title,
+          Color = _brushes[i % _brushes.Count]
+        });
+      }
     }
     private void Redraw()
     {
