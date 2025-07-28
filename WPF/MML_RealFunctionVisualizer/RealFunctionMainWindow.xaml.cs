@@ -53,6 +53,8 @@ namespace MML_RealFunctionVisualizer
     {
       InitializeComponent();
 
+      Loaded += MainWindow_Loaded;
+
       var args = Environment.GetCommandLineArgs();
 
       if (args.Length < 2)
@@ -69,17 +71,31 @@ namespace MML_RealFunctionVisualizer
         LoadData(fileName, i);
       }
 
+      //InitializeCoordSysParams();
+
+      //UpdateLegend();
+
+      //txtXMin.Text = _coordSystemParams._xMin.ToString();
+      //txtXMax.Text = _coordSystemParams._xMax.ToString();
+      //txtYMin.Text = _coordSystemParams._yMin.ToString();
+      //txtYMax.Text = _coordSystemParams._yMax.ToString();
+      //txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+      //txtTitle.Text = _title;
+
+      //Redraw();
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+      // Now mainCanvas.ActualWidth and ActualHeight are valid
       InitializeCoordSysParams();
-
       UpdateLegend();
-
       txtXMin.Text = _coordSystemParams._xMin.ToString();
       txtXMax.Text = _coordSystemParams._xMax.ToString();
       txtYMin.Text = _coordSystemParams._yMin.ToString();
       txtYMax.Text = _coordSystemParams._yMax.ToString();
       txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
-      txtTitle.Content = _title;
-
+      txtTitle.Text = _title;
       Redraw();
     }
 
@@ -99,8 +115,8 @@ namespace MML_RealFunctionVisualizer
         _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedFunctions[i].GetMaxY());
       }
 
-      _coordSystemParams._windowWidth = mainCanvas.Width;
-      _coordSystemParams._windowHeight = mainCanvas.Height;
+      _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
+      _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
 
       // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
       // prilagođavanje skaliranja i centra
@@ -122,6 +138,8 @@ namespace MML_RealFunctionVisualizer
 
     private void Redraw()
     {
+      InitializeCoordSysParams();
+
       for (int i = 0; i < _loadedFunctions.Count; i++)
       {
         _loadedFunctions[i].Draw(mainCanvas, _coordSystemParams);
@@ -293,8 +311,5 @@ namespace MML_RealFunctionVisualizer
       }
     }
 
-    private void SetLegendEntry(int index, string title, Brush color)
-    {
-    }
   }
 }

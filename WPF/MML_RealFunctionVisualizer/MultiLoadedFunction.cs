@@ -82,6 +82,9 @@ namespace MML_RealFunctionVisualizer
           else
             xAxis.Stroke = Brushes.Black; // default color if j exceeds available colors
 
+          // if we want dashed line
+          xAxis.StrokeDashArray = new DoubleCollection() { 4, 2, 1, 2 };
+
           double x1 = coordSysParams._centerX + _multiFuncX.Elements[i] * coordSysParams._scaleX;
           double y1 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i) * coordSysParams._scaleY;
           double x2 = coordSysParams._centerX + _multiFuncX.Elements[i + 1] * coordSysParams._scaleX;
