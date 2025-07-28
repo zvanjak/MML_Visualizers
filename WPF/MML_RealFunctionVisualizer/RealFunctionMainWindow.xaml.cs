@@ -130,6 +130,10 @@ namespace MML_RealFunctionVisualizer
     {
       InitializeCoordSysParams();
 
+      // TODO - add DrawCoordinateSystem here!!!!
+      mainCanvas.Children.Clear();
+      Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, _coordSystemParams._xMin, _coordSystemParams._xMax, _coordSystemParams._yMin, _coordSystemParams._yMax);
+
       for (int i = 0; i < _loadedFunctions.Count; i++)
       {
         _loadedFunctions[i].Draw(mainCanvas, _coordSystemParams);

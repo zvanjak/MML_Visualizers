@@ -69,7 +69,7 @@ namespace MML_RealFunctionVisualizer
     }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      Utils.DrawCoordSystem(mainCanvas, coordSysParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
+      //Utils.DrawCoordSystem(mainCanvas, coordSysParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
 
       for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)
       {
