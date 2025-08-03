@@ -38,18 +38,17 @@ namespace MML_WorldVisualizer
       {
         MessageBox.Show("No file name specified.");
         //return;
-        //var fileName = args[1];
       }
 
-
+      //var fileName = args[1];
       //if (LoadData(fileName))
       //{
       //}
 
-            // Declare scene objects.
+      // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
 
-      _helper.InitCamera(new Point3D(180, 80, 150));
+      _helper.InitCamera(new Point3D(500, 200, 350));
       _helper.InitLights(myModel3DGroup);
       myViewport3D.Camera = _helper._myCamera;
 
@@ -60,6 +59,8 @@ namespace MML_WorldVisualizer
 
       // ajmo dodati sve objekte koje imamo
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
+
+      AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
     }
 
     private bool LoadData(string inFileName)
@@ -89,6 +90,16 @@ namespace MML_WorldVisualizer
       }
 
       return true;
+    }
+
+    void AddCube(Point3D inPnt, double inSize, Color inColor)
+    {
+      MeshGeometry3D cubeMesh = Geometries.CreateCube(inPnt, inSize);
+      DiffuseMaterial cubeMaterial = new DiffuseMaterial(new SolidColorBrush(inColor));
+      GeometryModel3D cubeModel = new GeometryModel3D(cubeMesh, cubeMaterial);
+      ModelVisual3D cubeVisual = new ModelVisual3D();
+      cubeVisual.Content = cubeModel;
+      myViewport3D.Children.Add(cubeVisual);
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
