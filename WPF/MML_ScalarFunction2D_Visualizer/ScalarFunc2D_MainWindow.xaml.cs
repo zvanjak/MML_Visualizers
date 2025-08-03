@@ -28,7 +28,8 @@ namespace MML_ScalarFunction2Visualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    private Matrix _vals;
+    // Change the declaration of _vals to be nullable to resolve CS8618
+    private Matrix? _vals;
 
     private double _xMin;
     private double _xMax;
@@ -74,7 +75,6 @@ namespace MML_ScalarFunction2Visualizer
 
     private void InitializeScene()
     {
-
       // Declare scene objects.
       Model3DGroup myModel3DGroup = new Model3DGroup();
 
@@ -89,6 +89,9 @@ namespace MML_ScalarFunction2Visualizer
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
       txtTitle.Text = _title;
+
+      if (_vals == null)
+        return;
 
       for (int i = 0; i < _vals.Rows; i++)
         for (int j = 0; j < _vals.Cols; j++)

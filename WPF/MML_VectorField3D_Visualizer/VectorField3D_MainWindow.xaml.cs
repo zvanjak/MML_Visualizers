@@ -29,7 +29,7 @@ namespace MML_VectorField3D_Visualizer
   {
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
-    string _title;
+    string _title = "";
 
     public MainWindow()
     {

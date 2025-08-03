@@ -68,8 +68,6 @@ namespace MML_ScalarFunction3Visualizer
         MessageBox.Show("Unsupported format: " + type);
         return false;
       }
-
-      return true;
     }
 
 

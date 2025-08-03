@@ -14,19 +14,25 @@ namespace MML_RealFunctionVisualizer
 {
   class MultiLoadedFunction : LoadedFunction
   {
-    public string _title;
-    public string[] _legend;
+    public string? _title;
+    public string[]? _legend;
 
-    public MML.Vector _multiFuncX;
-    public MML.Matrix _multiFuncY;
+    public MML.Vector? _multiFuncX;
+    public MML.Matrix? _multiFuncY;
 
     public int GetDimension()
     {
+      if (_multiFuncY == null)
+        throw new InvalidOperationException("_multiFuncY is null.");
       return _multiFuncY.Rows;
     }
 
     public string GetFunctionTitle(int i)
     {
+      if (_multiFuncY == null)
+        throw new InvalidOperationException("_multiFuncY is null.");
+      if (_legend == null)
+        throw new InvalidOperationException("_legend is null.");
       if (i < 0 || i >= _multiFuncY.Rows)
         throw new ArgumentOutOfRangeException("Index out of range for function title retrieval.");
       return _legend[i];
@@ -34,21 +40,29 @@ namespace MML_RealFunctionVisualizer
 
     public override int GetNumPoints()
     {
+      if (_multiFuncX?.Elements == null)
+        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
       return _multiFuncX.Elements.Length;
     }
 
     public override double GetMinX()
     {
+      if (_multiFuncX?.Elements == null)
+        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
       return _multiFuncX.Elements.Min();
     }
 
     public override double GetMaxX()
     {
+      if (_multiFuncX?.Elements == null)
+        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
       return _multiFuncX.Elements.Max();
     }
 
     public override double GetMinY()
     {
+      if (_multiFuncY == null)
+        throw new InvalidOperationException("_multiFuncY is null.");
       double min = _multiFuncY.ElemAt(0, 0);
       for (int j = 0; j < _multiFuncY.Rows; j++)
         for (int i = 0; i < _multiFuncY.Cols; i++)
@@ -59,36 +73,39 @@ namespace MML_RealFunctionVisualizer
     }
     public override double GetMaxY()
     {
+      if (_multiFuncY == null)
+        throw new InvalidOperationException("_multiFuncY is null.");
       double max = _multiFuncY.ElemAt(0, 0);
       for (int j = 0; j < _multiFuncY.Rows; j++)
-      for (int i = 0; i < _multiFuncY.Cols; i++)
-        if (_multiFuncY.ElemAt(j, i) > max)
-          max = _multiFuncY.ElemAt(j, i);
+        for (int i = 0; i < _multiFuncY.Cols; i++)
+          if (_multiFuncY.ElemAt(j, i) > max)
+            max = _multiFuncY.ElemAt(j, i);
 
       return max;
     }
     public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
     {
-      //Utils.DrawCoordSystem(mainCanvas, coordSysParams, GetMinX(), GetMaxX(), GetMinY(), GetMaxY());
+      if (_multiFuncX?.Elements == null)
+        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
+      if (_multiFuncY == null)
+        throw new InvalidOperationException("_multiFuncY is null.");
 
-      for (int i = 0; i < _multiFuncX.Elements.Length-1; i++)
+      for (int i = 0; i < _multiFuncX.Elements.Length - 1; i++)
       {
-        // idemo po pojedinacnim funkcijama, odnosno njihovim redovim u matrici
         for (int j = 0; j < _multiFuncY.Rows; j++)
         {
           Line xAxis = new Line();
-          if( j < LineBrushes.brushes.Length)
+          if (j < LineBrushes.brushes.Length)
             xAxis.Stroke = LineBrushes.brushes[j];
           else
-            xAxis.Stroke = Brushes.Black; // default color if j exceeds available colors
+            xAxis.Stroke = Brushes.Black;
 
-          // if we want dashed line
           xAxis.StrokeDashArray = new DoubleCollection() { 4, 2, 1, 2 };
 
           double x1 = coordSysParams._centerX + _multiFuncX.Elements[i] * coordSysParams._scaleX;
           double y1 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i) * coordSysParams._scaleY;
           double x2 = coordSysParams._centerX + _multiFuncX.Elements[i + 1] * coordSysParams._scaleX;
-          double y2 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i+1) * coordSysParams._scaleY;
+          double y2 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i + 1) * coordSysParams._scaleY;
 
           xAxis.X1 = x1;
           xAxis.Y1 = y1;

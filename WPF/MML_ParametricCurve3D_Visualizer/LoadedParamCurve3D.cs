@@ -9,7 +9,7 @@ namespace MML_ParametricCurve3D_Visualizer
 {
   class LoadedCurve
   {
-    public string _title;
+    public string? _title;
 
     public List<Vector3Cartesian> _curveTrace = new List<Vector3Cartesian>();
 

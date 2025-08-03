@@ -277,11 +277,11 @@ namespace MML_RealFunctionVisualizer
 
       foreach (var func in _loadedFunctions)
       {
-        if (func is SingleLoadedFunction)
+        if (func is SingleLoadedFunction slf)
         {
           LegendWidgetControl.LegendItems.Add(new LegendItem
           {
-            Title = (func as SingleLoadedFunction)._title,
+            Title = slf._title,
             Color = _brushes[ind % _brushes.Count]
           });
           ind++;
@@ -293,7 +293,7 @@ namespace MML_RealFunctionVisualizer
           for (int i = 0; i < dim && i < 10; i++)
           {
             // If you have per-function titles, use them; otherwise, generate
-            string title = mlf._legend[i];
+            string title = (mlf._legend != null && i < mlf._legend.Length) ? mlf._legend[i] : $"Function {i + 1}";
             LegendWidgetControl.LegendItems.Add(new LegendItem
             {
               Title = title,

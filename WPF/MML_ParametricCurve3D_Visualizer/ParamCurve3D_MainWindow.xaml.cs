@@ -273,12 +273,15 @@ namespace MML_ParametricCurve3D_Visualizer
         {
           this.Dispatcher.Invoke((Action)(() =>
           {
-            TranslateTransform3D Off = new TranslateTransform3D();
-            Off.OffsetX = _curves[i]._curveTrace[t].X;
-            Off.OffsetY = _curves[i]._curveTrace[t].Y;
-            Off.OffsetZ = _curves[i]._curveTrace[t].Z;
+            if (_spheres[i] != null && _spheres[i].RefGeomModel != null)
+            {
+              TranslateTransform3D Off = new TranslateTransform3D();
+              Off.OffsetX = _curves[i]._curveTrace[t].X;
+              Off.OffsetY = _curves[i]._curveTrace[t].Y;
+              Off.OffsetZ = _curves[i]._curveTrace[t].Z;
 
-            _spheres[i].RefGeomModel.Transform = Off;
+              _spheres[i].RefGeomModel.Transform = Off;
+            }
           }));
         }
 

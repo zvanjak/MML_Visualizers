@@ -18,8 +18,8 @@ namespace MML_VisualizersBase
 {
   public class LegendItem
   {
-    public string Title { get; set; }
-    public Brush Color { get; set; }
+    public string? Title { get; set; }
+    public Brush? Color { get; set; }
   }
 
   public partial class LegendWidget : UserControl

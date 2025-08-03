@@ -27,7 +27,7 @@ namespace MML_ParticleVisualizer3D
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
     //Point3D _cameraPoint = new Point3D(1350, 1100, 1350);
-    double _axisWidth = 0.5;
+    //double _axisWidth = 0.5;
     double _axisLen = 500;
     double _boxLen = 1000;
     double _lineWidth = 0.25;
@@ -72,7 +72,7 @@ namespace MML_ParticleVisualizer3D
       for(int i=0; i<_balls.Count && i<10; i++ )
       {
         LegendWidgetControl.LegendItems.Add(new LegendItem { Title = _balls[i].Name, 
-                                                          Color = (SolidColorBrush)new BrushConverter().ConvertFromString(_balls[i].Color) });
+                                                          Color = new BrushConverter().ConvertFromString(_balls[i].Color) as SolidColorBrush });
       }
 
       txtNumSteps.Text = _numSteps.ToString();

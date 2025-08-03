@@ -28,6 +28,14 @@ namespace MML_WorldVisualizer
   {
     readonly WorldCameraMouseHelper _helper = new WorldCameraMouseHelper();
 
+    // contains data loaded from JSON files
+    private WorldModel _worldModel = new WorldModel();
+
+    // contains data loaded from MML visualizer files
+    // - parametric curves in 3D
+    // - parametric surfaces in 3D
+    // - scalar 2D function ( z = f(x,y) )
+
     public MainWindow()
     {
       InitializeComponent();
@@ -38,6 +46,35 @@ namespace MML_WorldVisualizer
       {
         //MessageBox.Show("No file name specified.");
         //return;
+      }
+
+      // we can have multiple files, so we can load them one by one
+      if (args.Length >= 2)
+      {
+        for (int i = 1; i < args.Length; i++)
+        {
+          string fileName = args[i];
+
+          // if it is a JSON file, we will load it as WorldModel
+          if (fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+          {
+            try
+            {
+              _worldModel = WorldModel.LoadFromJSON(fileName);
+              // TODO - handle loaded world model
+              // e.g. _worldModel.AddCube(cubeModel);
+            }
+            catch (Exception ex)
+            {
+              MessageBox.Show("Error loading JSON file: " + ex.Message);
+            }
+          }
+          if (LoadData(fileName))
+          {
+            // TODO - handle loaded data
+            // e.g. _worldModel.AddCube(cubeModel);
+          }
+        }
       }
 
       //var fileName = args[1];
@@ -60,15 +97,19 @@ namespace MML_WorldVisualizer
       // ajmo dodati sve objekte koje imamo
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
-      CubeModelDTO cubeModel = new CubeModelDTO();
-      cubeModel.CenterX = 0;
-      cubeModel.CenterY = 100;
-      cubeModel.CenterZ = 100;
-      cubeModel.SideLength = 10;
-      cubeModel.Color = System.Drawing.Color.FromArgb(Colors.Red.A, Colors.Red.R, Colors.Red.G, Colors.Red.B);
+      CubeModel cubeModel = new CubeModel(new Point3D(0, 0, 0), 10, Colors.Red);
 
       string json = JsonSerializer.Serialize(cubeModel, new JsonSerializerOptions { WriteIndented = true });
       File.WriteAllText("cube.json", json);
+
+      WorldModel worldModel = new WorldModel();
+      worldModel.OriginX = 0;
+      worldModel.OriginY = 0;
+      worldModel.OriginZ = 0;
+
+      worldModel.AddCube(cubeModel);
+
+      worldModel.SaveToJSON("world.json");
 
       AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
       AddParalelepiped(new Point3D(50, 50, 50), 20, 30, 40, Colors.Orange);
@@ -104,6 +145,17 @@ namespace MML_WorldVisualizer
       }
 
       return true;
+    }
+
+    void AddCube(CubeModel inCube)
+    {
+      MeshGeometry3D cubeMesh = Geometries.CreateCube(inCube.Center, inCube.SideLength);
+      DiffuseMaterial cubeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      //DiffuseMaterial cubeMaterial = new DiffuseMaterial(new SolidColorBrush(inCube.Color));
+      GeometryModel3D cubeModel = new GeometryModel3D(cubeMesh, cubeMaterial);
+      ModelVisual3D cubeVisual = new ModelVisual3D();
+      cubeVisual.Content = cubeModel;
+      myViewport3D.Children.Add(cubeVisual);
     }
 
     void AddCube(Point3D inPnt, double inSize, Color inColor)

@@ -14,7 +14,7 @@ namespace MML_ParametricCurve2D_Visualizer
 {
   class LoadedParamCurve2D
   {
-    public string _title;
+    public string? _title;
     public int _index = 0;
 
     public List<double> _tVals = new List<double>();
