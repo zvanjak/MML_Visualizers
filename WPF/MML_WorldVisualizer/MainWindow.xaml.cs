@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MML;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,8 +17,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using MML;
 using WPF3DHelperLib;
 
 namespace MML_WorldVisualizer
@@ -59,6 +59,16 @@ namespace MML_WorldVisualizer
 
       // ajmo dodati sve objekte koje imamo
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
+
+      CubeModelDTO cubeModel = new CubeModelDTO();
+      cubeModel.CenterX = 0;
+      cubeModel.CenterY = 100;
+      cubeModel.CenterZ = 100;
+      cubeModel.SideLength = 10;
+      cubeModel.Color = System.Drawing.Color.FromArgb(Colors.Red.A, Colors.Red.R, Colors.Red.G, Colors.Red.B);
+
+      string json = JsonSerializer.Serialize(cubeModel, new JsonSerializerOptions { WriteIndented = true });
+      File.WriteAllText("cube.json", json);
 
       AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
       AddParalelepiped(new Point3D(50, 50, 50), 20, 30, 40, Colors.Orange);

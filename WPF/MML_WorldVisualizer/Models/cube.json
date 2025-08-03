@@ -1,0 +1,17 @@
+{
+  "CenterX": 0,
+  "CenterY": 100,
+  "CenterZ": 100,
+  "SideLength": 10,
+  "Color": {
+    "R": 255,
+    "G": 0,
+    "B": 0,
+    "A": 255,
+    "IsKnownColor": false,
+    "IsEmpty": false,
+    "IsNamedColor": false,
+    "IsSystemColor": false,
+    "Name": "ffff0000"
+  }
+}
