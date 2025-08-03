@@ -20,10 +20,14 @@
     <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="25" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="0" BorderBrush="{x:Null}"/>
     <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
 
-    <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1200" Height="800" Canvas.Left="0" Canvas.Top="0" >
-      </Viewport3D>
-    </Viewbox>
+    <Viewport3D Name="myViewport3D"
+                Grid.Row="1"
+                Grid.Column="0"
+                ClipToBounds="True"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+    </Viewport3D>
+    
     <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
     <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
     <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>

@@ -16,10 +16,14 @@
         <ColumnDefinition Width="200" />
       </Grid.ColumnDefinitions>
 
-    <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0" >
-        </Viewport3D>
-      </Viewbox>
+    <Viewport3D Name="myViewport3D"
+                Grid.Row="1"
+                Grid.Column="0"
+                ClipToBounds="True"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+    </Viewport3D>
+    
     <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold"/>
   </Grid>
 </Window>
