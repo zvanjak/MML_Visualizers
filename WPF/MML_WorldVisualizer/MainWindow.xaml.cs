@@ -62,6 +62,8 @@ namespace MML_WorldVisualizer
 
       AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
       AddSphere(new Point3D(100, 100, 100), 10, Colors.Green);
+      //AddCylinder(10, 100, Colors.Blue);
+      AddVectorArrow(new Point3D(0, 0, 0), new Vector3D(100, 100, 100), 5, 50, Colors.Yellow);
     }
 
     private bool LoadData(string inFileName)
@@ -111,6 +113,27 @@ namespace MML_WorldVisualizer
       ModelVisual3D sphereVisual = new ModelVisual3D();
       sphereVisual.Content = sphereModel;
       myViewport3D.Children.Add(sphereVisual);
+    }
+
+    // TODO - add tranformation to point with given orientation
+    void AddCylinder(double inRadius, double inHeight, Color inColor)
+    {
+      MeshGeometry3D cylinderMesh = Geometries.CreateCylinder(inRadius, inHeight, 10, 10);
+      DiffuseMaterial cylinderMaterial = new DiffuseMaterial(new SolidColorBrush(inColor));
+      GeometryModel3D cylinderModel = new GeometryModel3D(cylinderMesh, cylinderMaterial);
+      ModelVisual3D cylinderVisual = new ModelVisual3D();
+      cylinderVisual.Content = cylinderModel;
+      myViewport3D.Children.Add(cylinderVisual);
+    }
+
+    void AddVectorArrow(Point3D inPnt, Vector3D inVector, double inRadius, double inHeight, Color inColor)
+    {
+      MeshGeometry3D arrowMesh = Geometries.CreateVectorArrow(inRadius, inHeight, 10, 10, inRadius * 0.8, inHeight * 0.4);
+      DiffuseMaterial arrowMaterial = new DiffuseMaterial(new SolidColorBrush(inColor));
+      GeometryModel3D arrowModel = new GeometryModel3D(arrowMesh, arrowMaterial);
+      ModelVisual3D arrowVisual = new ModelVisual3D();
+      arrowVisual.Content = arrowModel;
+      myViewport3D.Children.Add(arrowVisual);
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
