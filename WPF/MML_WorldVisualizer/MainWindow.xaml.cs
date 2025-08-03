@@ -58,6 +58,7 @@ namespace MML_WorldVisualizer
 
       myViewport3D.Children.Add(myModelVisual3D);
 
+      // ajmo dodati sve objekte koje imamo
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
     }
 

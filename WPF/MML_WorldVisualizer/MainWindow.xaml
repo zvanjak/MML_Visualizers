@@ -10,7 +10,7 @@
         MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" 
         MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown">  
   
-  <Grid Background="Gray">
+  <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="40"/>
       <RowDefinition Height="*"/>
@@ -20,9 +20,12 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0" >
-      </Viewport3D>
-    </Viewbox>
+    <Viewport3D Name="myViewport3D"
+                Grid.Row="1"
+                Grid.Column="0"
+                ClipToBounds="True"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+    </Viewport3D>
   </Grid>
 </Window>
