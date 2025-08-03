@@ -119,5 +119,10 @@ namespace MML_WorldVisualizer
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
     }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+      _helper.Window_KeyDown(myViewport3D, e);
+    }
   }
 }

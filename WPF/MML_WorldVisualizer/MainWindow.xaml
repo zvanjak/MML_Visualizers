@@ -6,7 +6,9 @@
         xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         xmlns:local="clr-namespace:MML_WorldVisualizer"
         mc:Ignorable="d"
-        Title="World visualizer" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
+        Title="World visualizer" Height="800" Width="1200" 
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" 
+        MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown">  
   
   <Grid Background="Gray">
     <Grid.RowDefinitions>
