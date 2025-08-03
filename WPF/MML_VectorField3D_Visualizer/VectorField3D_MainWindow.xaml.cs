@@ -129,10 +129,6 @@ namespace MML_VectorField3D_Visualizer
           ret.Add(new Vector3Repr(pos, vel));
         }
       }
-      else if (type == "VECTOR_FIELD_SPHERICAL")
-      {
-        MessageBox.Show("VECTOR_FIELD_SPHERICAL not yet supported");
-      }
       else
       {
         MessageBox.Show("Unsupported format: " + type);
@@ -169,6 +165,11 @@ namespace MML_VectorField3D_Visualizer
     private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       _helper.Window_MouseWheel(myViewport3D, sender, e);
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+      _helper.Window_KeyDown(myViewport3D, e);
     }
   }
 }
