@@ -36,7 +36,7 @@ namespace MML_WorldVisualizer
 
       if (args.Length < 2)
       {
-        MessageBox.Show("No file name specified.");
+        //MessageBox.Show("No file name specified.");
         //return;
       }
 
@@ -61,6 +61,7 @@ namespace MML_WorldVisualizer
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
       AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
+      AddSphere(new Point3D(100, 100, 100), 10, Colors.Green);
     }
 
     private bool LoadData(string inFileName)
@@ -100,6 +101,16 @@ namespace MML_WorldVisualizer
       ModelVisual3D cubeVisual = new ModelVisual3D();
       cubeVisual.Content = cubeModel;
       myViewport3D.Children.Add(cubeVisual);
+    }
+
+    void AddSphere(Point3D inPnt, double inRadius, Color inColor)
+    {
+      MeshGeometry3D sphereMesh = Geometries.CreateSphere(inPnt, inRadius);
+      DiffuseMaterial sphereMaterial = new DiffuseMaterial(new SolidColorBrush(inColor));
+      GeometryModel3D sphereModel = new GeometryModel3D(sphereMesh, sphereMaterial);
+      ModelVisual3D sphereVisual = new ModelVisual3D();
+      sphereVisual.Content = sphereModel;
+      myViewport3D.Children.Add(sphereVisual);
     }
 
     private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
