@@ -61,6 +61,7 @@ namespace MML_WorldVisualizer
       Utils.DrawCoordSystem(myModel3DGroup, 0.5, 500);
 
       AddCube(new Point3D(0, 100, 100), 10, Colors.Red);
+      AddParalelepiped(new Point3D(50, 50, 50), 20, 30, 40, Colors.Orange);
       AddSphere(new Point3D(100, 100, 100), 10, Colors.Green);
       //AddCylinder(10, 100, Colors.Blue);
       AddVectorArrow(new Point3D(0, 0, 0), new Vector3D(100, 100, 100), 5, 50, Colors.Yellow);
@@ -103,6 +104,16 @@ namespace MML_WorldVisualizer
       ModelVisual3D cubeVisual = new ModelVisual3D();
       cubeVisual.Content = cubeModel;
       myViewport3D.Children.Add(cubeVisual);
+    }
+
+    void AddParalelepiped(Point3D inPnt, double inWidth, double inHeight, double inDepth, Color inColor)
+    {
+      MeshGeometry3D parMesh = Geometries.CreateParallelepiped(inPnt, inWidth, inHeight, inDepth);
+      DiffuseMaterial parMaterial = new DiffuseMaterial(new SolidColorBrush(inColor));
+      GeometryModel3D parModel = new GeometryModel3D(parMesh, parMaterial);
+      ModelVisual3D parVisual = new ModelVisual3D();
+      parVisual.Content = parModel;
+      myViewport3D.Children.Add(parVisual);
     }
 
     void AddSphere(Point3D inPnt, double inRadius, Color inColor)
