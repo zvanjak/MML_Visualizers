@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "gravity_example_3d_body1.txt gravity_example_3d_body2.txt"
+      "commandLineArgs": "example15_curve3D.txt"
     }
   }
 }
