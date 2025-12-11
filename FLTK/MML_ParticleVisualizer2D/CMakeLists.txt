@@ -32,8 +32,9 @@ add_executable(MML_ParticleVisualizer2D ${SOURCES} ${HEADERS})
 # Link FLTK libraries
 target_link_libraries(MML_ParticleVisualizer2D ${FLTK_LIBRARIES})
 
-# On Windows, link against necessary system libraries
+# Platform-specific settings
 if(WIN32)
+    # Windows: link against necessary system libraries
     target_link_libraries(MML_ParticleVisualizer2D 
         comctl32 
         wsock32 
@@ -42,6 +43,24 @@ if(WIN32)
         uuid
         gdi32
         gdiplus
+    )
+elseif(APPLE)
+    # macOS: link required frameworks
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OPENGL_LIBRARY OpenGL)
+    target_link_libraries(MML_ParticleVisualizer2D 
+        ${COCOA_LIBRARY}
+        ${OPENGL_LIBRARY}
+    )
+    # Set macOS-specific properties for app bundle (optional)
+    set_target_properties(MML_ParticleVisualizer2D PROPERTIES
+        MACOSX_RPATH ON
+    )
+else()
+    # Linux: link pthread and math libraries
+    target_link_libraries(MML_ParticleVisualizer2D 
+        pthread
+        m
     )
 endif()
 

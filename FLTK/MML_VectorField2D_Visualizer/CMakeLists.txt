@@ -29,8 +29,9 @@ add_executable(MML_VectorField2D_Visualizer ${SOURCES} ${HEADERS})
 # Link FLTK libraries
 target_link_libraries(MML_VectorField2D_Visualizer ${FLTK_LIBRARIES})
 
-# On Windows, link against necessary system libraries
+# Platform-specific settings
 if(WIN32)
+    # Windows: link against necessary system libraries
     target_link_libraries(MML_VectorField2D_Visualizer 
         comctl32 
         wsock32 
@@ -39,6 +40,24 @@ if(WIN32)
         uuid
         gdi32
         gdiplus
+    )
+elseif(APPLE)
+    # macOS: link required frameworks
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OPENGL_LIBRARY OpenGL)
+    target_link_libraries(MML_VectorField2D_Visualizer 
+        ${COCOA_LIBRARY}
+        ${OPENGL_LIBRARY}
+    )
+    # Set macOS-specific properties for app bundle (optional)
+    set_target_properties(MML_VectorField2D_Visualizer PROPERTIES
+        MACOSX_RPATH ON
+    )
+else()
+    # Linux: link pthread and math libraries
+    target_link_libraries(MML_VectorField2D_Visualizer 
+        pthread
+        m
     )
 endif()
 
