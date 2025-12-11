@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GraphWidget.h"
 #include <algorithm>
 #include <sstream>

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "MMLFileParser.h"
 #include <iostream>
 #include <algorithm>
