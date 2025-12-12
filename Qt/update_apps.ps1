@@ -23,9 +23,12 @@ This script:
 3. Skips files that haven't changed
 
 Qt visualizers updated:
-- MML_ParametricCurve3D_Visualizer
 - MML_RealFunctionVisualizer
+- MML_ParametricCurve2D_Visualizer
+- MML_ParametricCurve3D_Visualizer
+- MML_ParticleVisualizer2D
 - MML_ParticleVisualizer3D
+- MML_VectorField2D_Visualizer
 - MML_VectorField3D_Visualizer
 - MML_ScalarFunction2D_Visualizer
 
@@ -42,19 +45,34 @@ $ProjectRoot = Split-Path $PSScriptRoot -Parent
 # Define visualizers to update
 $Visualizers = @(
     @{
-        Name = "MML_ParametricCurve3D_Visualizer"
-        SourceDir = "MML_ParametricCurve3D_Visualizer"
-        DestDir = "visualizers\win\Qt\MML_ParametricCurve3D_Visualizer"
-    },
-    @{
         Name = "MML_RealFunctionVisualizer"
         SourceDir = "MML_RealFunctionVisualizer"
         DestDir = "visualizers\win\Qt\MML_RealFunctionVisualizer"
     },
     @{
+        Name = "MML_ParametricCurve2D_Visualizer"
+        SourceDir = "MML_ParametricCurve2D_Visualizer"
+        DestDir = "visualizers\win\Qt\MML_ParametricCurve2D_Visualizer"
+    },
+    @{
+        Name = "MML_ParametricCurve3D_Visualizer"
+        SourceDir = "MML_ParametricCurve3D_Visualizer"
+        DestDir = "visualizers\win\Qt\MML_ParametricCurve3D_Visualizer"
+    },
+    @{
+        Name = "MML_ParticleVisualizer2D"
+        SourceDir = "MML_ParticleVisualizer2D"
+        DestDir = "visualizers\win\Qt\MML_ParticleVisualizer2D"
+    },
+    @{
         Name = "MML_ParticleVisualizer3D"
         SourceDir = "MML_ParticleVisualizer3D"
         DestDir = "visualizers\win\Qt\MML_ParticleVisualizer3D"
+    },
+    @{
+        Name = "MML_VectorField2D_Visualizer"
+        SourceDir = "MML_VectorField2D_Visualizer"
+        DestDir = "visualizers\win\Qt\MML_VectorField2D_Visualizer"
     },
     @{
         Name = "MML_VectorField3D_Visualizer"

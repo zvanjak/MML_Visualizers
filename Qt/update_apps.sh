@@ -9,10 +9,13 @@ DEPLOY_DIR="${SCRIPT_DIR}/../visualizers/linux/Qt"
 # Array of visualizers with their build directories
 declare -A VISUALIZERS=(
     ["MML_RealFunctionVisualizer_Qt"]="MML_RealFunctionVisualizer/build/bin"
+    ["MML_ParametricCurve2D_Visualizer_Qt"]="MML_ParametricCurve2D_Visualizer/build/bin"
     ["MML_ParametricCurve3D_Visualizer_Qt"]="MML_ParametricCurve3D_Visualizer/build/bin"
+    ["MML_ParticleVisualizer2D_Qt"]="MML_ParticleVisualizer2D/build/bin"
     ["MML_ParticleVisualizer3D_Qt"]="MML_ParticleVisualizer3D/build/bin"
-    ["MML_ScalarFunction2D_Visualizer_Qt"]="MML_ScalarFunction2D_Visualizer/build/bin"
+    ["MML_VectorField2D_Visualizer_Qt"]="MML_VectorField2D_Visualizer/build/bin"
     ["MML_VectorField3D_Visualizer_Qt"]="MML_VectorField3D_Visualizer/build/bin"
+    ["MML_ScalarFunction2D_Visualizer_Qt"]="MML_ScalarFunction2D_Visualizer/build/bin"
 )
 
 # Color codes for output
