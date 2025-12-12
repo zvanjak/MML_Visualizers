@@ -61,6 +61,18 @@ else()
     )
 endif()
 
+# Platform-specific binary naming
+if(WIN32)
+    set_target_properties(MML_VectorField2D_Visualizer PROPERTIES
+        OUTPUT_NAME "MML_VectorField2D_Visualizer_FLTK"
+    )
+elseif(UNIX AND NOT APPLE)
+    set_target_properties(MML_VectorField2D_Visualizer PROPERTIES
+        OUTPUT_NAME "MML_VectorField2D_Visualizer_FLTK"
+    )
+# macOS keeps standard name
+endif()
+
 # Set output directory
 set_target_properties(MML_VectorField2D_Visualizer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin

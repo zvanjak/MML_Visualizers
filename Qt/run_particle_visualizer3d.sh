@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to run Qt MML_ParticleVisualizer3D with all test data files
+# Script to run Qt MML_ParticleVisualizer3D_Qt with all test data files
 
-VISUALIZER="./MML_ParticleVisualizer3D/build/bin/MML_ParticleVisualizer3D"
+VISUALIZER="./MML_ParticleVisualizer3D/build/bin/MML_ParticleVisualizer3D_Qt"
 DATA_DIR="../WPF/MML_ParticleVisualizer3D/data"
 
 # Check if visualizer executable exists

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to run MML_VectorField2D_Visualizer with all test data files
+# Script to run MML_VectorField2D_Visualizer_FLTK with test data
 
-VISUALIZER="./MML_VectorField2D_Visualizer/build/bin/MML_VectorField2D_Visualizer"
+VISUALIZER="./MML_VectorField2D_Visualizer/build/bin/MML_VectorField2D_Visualizer_FLTK"
 DATA_DIR="../data/VectorFieldVisualizer2D"
 
 # Check if visualizer executable exists

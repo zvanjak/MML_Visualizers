@@ -48,6 +48,18 @@ target_link_libraries(MML_VectorField3D_Visualizer PRIVATE
     OpenGL::GL
 )
 
+# Platform-specific binary naming (Linux only gets _Qt suffix)
+if(UNIX AND NOT APPLE)
+    set_target_properties(MML_VectorField3D_Visualizer PROPERTIES
+        OUTPUT_NAME "MML_VectorField3D_Visualizer_Qt"
+    )
+endif()
+
+# Set output directory
+set_target_properties(MML_VectorField3D_Visualizer PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
 # Windows specific settings
 if(WIN32)
     set_target_properties(MML_VectorField3D_Visualizer PROPERTIES

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to run Qt MML_ParametricCurve3D_Visualizer with all test data files
+# Script to run Qt MML_ParametricCurve3D_Visualizer_Qt with all test data files
 
-VISUALIZER="./MML_ParametricCurve3D_Visualizer/build/bin/MML_ParametricCurve3D_Visualizer"
+VISUALIZER="./MML_ParametricCurve3D_Visualizer/build/bin/MML_ParametricCurve3D_Visualizer_Qt"
 DATA_DIR="../WPF/MML_ParametricCurve3D_Visualizer/data"
 
 # Check if visualizer executable exists

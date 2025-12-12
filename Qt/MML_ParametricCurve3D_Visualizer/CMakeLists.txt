@@ -48,6 +48,14 @@ else()
     # Linux - OpenGL is handled by Qt6::OpenGLWidgets
 endif()
 
+# Platform-specific binary naming (Linux only gets _Qt suffix)
+if(UNIX AND NOT APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "${PROJECT_NAME}_Qt"
+    )
+# Windows and macOS keep standard name
+endif()
+
 # Set output directory
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

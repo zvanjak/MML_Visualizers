@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to run MML_RealFunctionVisualizer with all test data files
+# Script to run MML_RealFunctionVisualizer_FLTK with all test data files
 
-VISUALIZER="./MML_RealFunctionVisualizer/build/bin/MML_RealFunctionVisualizer"
+VISUALIZER="./MML_RealFunctionVisualizer/build/bin/MML_RealFunctionVisualizer_FLTK"
 DATA_DIR="../data/RealFunction"
 
 # Check if visualizer executable exists

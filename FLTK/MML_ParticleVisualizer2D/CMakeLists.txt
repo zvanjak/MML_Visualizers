@@ -64,6 +64,18 @@ else()
     )
 endif()
 
+# Platform-specific binary naming
+if(WIN32)
+    set_target_properties(MML_ParticleVisualizer2D PROPERTIES
+        OUTPUT_NAME "MML_ParticleVisualizer2D_FLTK"
+    )
+elseif(UNIX AND NOT APPLE)
+    set_target_properties(MML_ParticleVisualizer2D PROPERTIES
+        OUTPUT_NAME "MML_ParticleVisualizer2D_FLTK"
+    )
+# macOS keeps standard name
+endif()
+
 # Set output directory
 set_target_properties(MML_ParticleVisualizer2D PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin

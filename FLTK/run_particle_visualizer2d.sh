@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to run MML_ParticleVisualizer2D with all test data files
+# Script to run MML_ParticleVisualizer2D_FLTK with all test data files
 
-VISUALIZER="./MML_ParticleVisualizer2D/build/bin/MML_ParticleVisualizer2D"
+VISUALIZER="./MML_ParticleVisualizer2D/build/bin/MML_ParticleVisualizer2D_FLTK"
 DATA_DIR="../data/ParticleVisualizer2D"
 
 # Check if visualizer executable exists

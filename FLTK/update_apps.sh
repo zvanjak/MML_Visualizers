@@ -7,12 +7,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${SCRIPT_DIR}/build/bin"
 DEPLOY_DIR="${SCRIPT_DIR}/../visualizers/linux/FLTK"
 
-# Array of visualizer executables
+# Array of visualizer executables (with _FLTK suffix on Linux)
 VISUALIZERS=(
-    "MML_RealFunctionVisualizer"
-    "MML_ParametricCurve2D_Visualizer"
-    "MML_ParticleVisualizer2D"
-    "MML_VectorField2D_Visualizer"
+    "MML_RealFunctionVisualizer_FLTK"
+    "MML_ParametricCurve2D_Visualizer_FLTK"
+    "MML_ParticleVisualizer2D_FLTK"
+    "MML_VectorField2D_Visualizer_FLTK"
 )
 
 # Color codes for output
