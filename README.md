@@ -3,9 +3,10 @@ Visualizer apps for MinimalMathLibrary
 
 ## Overview
 
-This repository contains visualizer applications for MinimalMathLibrary (MML) in two implementations:
-- **WPF**: Windows Presentation Foundation (Windows-only)
-- **FLTK**: Fast Light Toolkit (Cross-platform: Windows, Linux, macOS)
+This repository contains visualizer applications for MinimalMathLibrary (MML) in three implementations:
+- **WPF**: Windows Presentation Foundation (Windows-only, C#/XAML)
+- **FLTK**: Fast Light Toolkit (Cross-platform 2D, C++)
+- **Qt**: Qt6 + OpenGL (Cross-platform 2D/3D, C++)
 
 ## FLTK Visualizers (Cross-Platform)
 
@@ -97,9 +98,77 @@ Or use the "Load File" button for interactive file selection.
 
 Each visualizer has specific data format requirements. See individual README files in each visualizer directory for detailed format specifications.
 
+## Qt Visualizers (Cross-Platform with OpenGL)
+
+The Qt directory contains modern OpenGL-accelerated implementations:
+
+### 1. MML_RealFunctionVisualizer
+- 2D function visualization with OpenGL rendering
+- Interactive zoom/pan with mouse controls
+- Coordinate axes with labels and grid lines
+- Function legend with statistics
+- Supports multiple functions simultaneously
+
+### 2. MML_ParametricCurve3D_Visualizer
+- Full 3D parametric curve visualization
+- Interactive camera controls (rotate, zoom, pan)
+- Multiple curves with color coding
+- Real-time OpenGL rendering
+
+### Building Qt Projects
+
+#### Prerequisites
+- CMake 3.16 or higher
+- Qt6 (tested with Qt 6.9.3)
+- OpenGL support
+- C++17 compatible compiler
+
+#### Building
+
+```bash
+cd Qt/<visualizer-name>
+mkdir build
+cd build
+cmake -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x.x/gcc_64 ..
+make
+```
+
+Example:
+```bash
+cd Qt/MML_RealFunctionVisualizer
+mkdir build
+cd build
+cmake -DCMAKE_PREFIX_PATH=/home/user/Qt/6.9.3/gcc_64 ..
+make
+```
+
+#### Testing Scripts
+
+Automated testing scripts are available:
+```bash
+cd Qt
+./run_real_function.sh          # Test RealFunction with all data files
+./run_parametric_curve3d.sh     # Test ParametricCurve3D with all data files
+./update_apps.sh                # Deploy built executables
+```
+
 ## WPF Visualizers (Windows-only)
 
 The WPF directory contains Windows-specific implementations with additional visualizers including 3D variants. These require the .NET Framework and Visual Studio to build.
+
+## Project Structure
+
+```
+MML_Visualizers/
+├── FLTK/           # Cross-platform 2D visualizers (C++ + FLTK)
+├── Qt/             # Cross-platform 2D/3D visualizers (C++ + Qt6 + OpenGL)
+├── WPF/            # Windows-only visualizers (C# + XAML)
+├── data/           # Centralized test data directory
+└── visualizers/    # Deployed executables
+    └── linux/
+        ├── FLTK/   # FLTK executables
+        └── Qt/     # Qt executables
+```
 
 ## License
 
