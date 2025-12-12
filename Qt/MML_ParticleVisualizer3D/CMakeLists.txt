@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(MML_ParticleVisualizer3D)
+project(MML_ParticleVisualizer3D_Qt)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -38,14 +38,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::OpenGLWidgets
     OpenGL::GL
 )
-
-# Platform-specific binary naming (Linux only gets _Qt suffix)
-if(UNIX AND NOT APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME "${PROJECT_NAME}_Qt"
-    )
-# Windows and macOS keep standard name
-endif()
 
 # Set output directory
 set_target_properties(${PROJECT_NAME} PROPERTIES

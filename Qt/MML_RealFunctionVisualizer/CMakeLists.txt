@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(MML_RealFunctionVisualizer VERSION 1.0 LANGUAGES CXX)
+project(MML_RealFunctionVisualizer_Qt VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -46,14 +46,6 @@ elseif(APPLE)
     target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARY})
 endif()
 # On Linux, Qt6::OpenGLWidgets handles OpenGL linking automatically
-
-# Platform-specific binary naming (Linux only gets _Qt suffix)
-if(UNIX AND NOT APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME "${PROJECT_NAME}_Qt"
-    )
-# Windows and macOS keep standard name
-endif()
 
 # Set output directory
 set_target_properties(${PROJECT_NAME} PROPERTIES
