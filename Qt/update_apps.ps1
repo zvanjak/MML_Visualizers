@@ -25,6 +25,7 @@ This script:
 Qt visualizers updated:
 - MML_ParametricCurve3D_Visualizer
 - MML_RealFunctionVisualizer
+- MML_ParticleVisualizer3D
 
 Note: Run windeployqt manually after building if DLLs need updating
 "@
@@ -33,19 +34,25 @@ Note: Run windeployqt manually after building if DLLs need updating
 
 $ErrorActionPreference = "Stop"
 $QtPath = "C:\Dev\Qt\6.10.0\msvc2022_64"
-$ProjectRoot = $PSScriptRoot
+$QtFolder = $PSScriptRoot
+$ProjectRoot = Split-Path $PSScriptRoot -Parent
 
 # Define visualizers to update
 $Visualizers = @(
     @{
         Name = "MML_ParametricCurve3D_Visualizer"
-        SourceDir = "Qt\MML_ParametricCurve3D_Visualizer"
+        SourceDir = "MML_ParametricCurve3D_Visualizer"
         DestDir = "visualizers\win\Qt\MML_ParametricCurve3D_Visualizer"
     },
     @{
         Name = "MML_RealFunctionVisualizer"
-        SourceDir = "Qt\MML_RealFunctionVisualizer"
+        SourceDir = "MML_RealFunctionVisualizer"
         DestDir = "visualizers\win\Qt\MML_RealFunctionVisualizer"
+    },
+    @{
+        Name = "MML_ParticleVisualizer3D"
+        SourceDir = "MML_ParticleVisualizer3D"
+        DestDir = "visualizers\win\Qt\MML_ParticleVisualizer3D"
     }
 )
 
@@ -57,7 +64,7 @@ Write-Host ""
 foreach ($viz in $Visualizers) {
     Write-Host "Processing: $($viz.Name)" -ForegroundColor Yellow
     
-    $sourceDir = Join-Path $ProjectRoot $viz.SourceDir
+    $sourceDir = Join-Path $QtFolder $viz.SourceDir
     $releaseDir = Join-Path $sourceDir "build\bin\Release"
     $destDir = Join-Path $ProjectRoot $viz.DestDir
     
