@@ -10,6 +10,7 @@ DEPLOY_DIR="${SCRIPT_DIR}/../visualizers/linux/Qt"
 declare -A VISUALIZERS=(
     ["MML_RealFunctionVisualizer"]="MML_RealFunctionVisualizer/build/bin"
     ["MML_ParametricCurve3D_Visualizer"]="MML_ParametricCurve3D_Visualizer/build/bin"
+    ["MML_ParticleVisualizer3D"]="MML_ParticleVisualizer3D/build/bin"
 )
 
 # Color codes for output
