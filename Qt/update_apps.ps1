@@ -26,6 +26,7 @@ Qt visualizers updated:
 - MML_ParametricCurve3D_Visualizer
 - MML_RealFunctionVisualizer
 - MML_ParticleVisualizer3D
+- MML_VectorField3D_Visualizer
 
 Note: Run windeployqt manually after building if DLLs need updating
 "@
@@ -53,6 +54,11 @@ $Visualizers = @(
         Name = "MML_ParticleVisualizer3D"
         SourceDir = "MML_ParticleVisualizer3D"
         DestDir = "visualizers\win\Qt\MML_ParticleVisualizer3D"
+    },
+    @{
+        Name = "MML_VectorField3D_Visualizer"
+        SourceDir = "MML_VectorField3D_Visualizer"
+        DestDir = "visualizers\win\Qt\MML_VectorField3D_Visualizer"
     }
 )
 

@@ -16,6 +16,18 @@ This directory contains self-contained Qt visualizers with all necessary DLLs fo
 - **Features**: Multi-function support, pan/zoom, grid, axes
 - **Data Format**: REAL_FUNCTION
 
+### MML_ParticleVisualizer3D
+- **Executable**: `MML_ParticleVisualizer3D.exe` (118 KB)
+- **Purpose**: 3D particle animation with OpenGL sphere rendering
+- **Features**: Play/Pause/Restart, animation timeline, lighting
+- **Data Format**: PARTICLE_SIMULATION_DATA_3D
+
+### MML_VectorField3D_Visualizer
+- **Executable**: `MML_VectorField3D_Visualizer.exe` (122 KB)
+- **Purpose**: 3D vector field visualization with arrow rendering
+- **Features**: 27,000+ vectors, color by magnitude, adjustable scale, interactive camera
+- **Data Format**: VECTOR_FIELD_3D_CARTESIAN
+
 ## Deployment
 
 Each visualizer directory contains:
@@ -42,6 +54,12 @@ Each visualizer directory contains:
 
 # 2D Real Functions
 .\MML_RealFunctionVisualizer\MML_RealFunctionVisualizer.exe <function-file1> <function-file2> ...
+
+# 3D Particle Animation
+.\MML_ParticleVisualizer3D\MML_ParticleVisualizer3D.exe <simulation-file>
+
+# 3D Vector Field
+.\MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.exe <vector-field-file>
 ```
 
 ### Examples
@@ -62,6 +80,14 @@ Each visualizer directory contains:
 .\MML_RealFunctionVisualizer\MML_RealFunctionVisualizer.exe ^
   ..\..\WPF\MML_RealFunctionVisualizer\data\real_func1.txt ^
   ..\..\WPF\MML_RealFunctionVisualizer\data\real_func2.txt
+
+# 3D: Particle animation
+.\MML_ParticleVisualizer3D\MML_ParticleVisualizer3D.exe ^
+  ..\..\WPF\MML_ParticleVisualizer3D\data\SimData3D.txt
+
+# 3D: Vector field (gravity)
+.\MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.exe ^
+  ..\..\WPF\MML_VectorField3D_Visualizer\data\vector_field.txt
 ```
 
 ## Requirements
@@ -83,6 +109,19 @@ Each visualizer directory contains:
 - **Mouse Wheel**: Zoom in/out
 - **Load Function Button**: Add more functions
 - **Reset View Button**: Auto-fit all functions
+
+### MML_ParticleVisualizer3D (3D Animation)
+- **Left Mouse + Drag**: Rotate (orbit camera)
+- **Mouse Wheel**: Zoom in/out
+- **Start Button**: Begin animation
+- **Pause Button**: Pause/Resume animation
+- **Restart Button**: Reset to first frame
+
+### MML_VectorField3D_Visualizer (3D)
+- **Left Mouse + Drag**: Rotate (orbit camera)
+- **Mouse Wheel**: Zoom in/out
+- **Vector Scale Slider**: Adjust arrow sizes (0.1x to 10.0x)
+- **Color by Magnitude Checkbox**: Enable/disable magnitude-based coloring
 
 ## Known Issues
 
@@ -112,16 +151,22 @@ Both visualizers follow the same pattern:
 Qt/
 ├── MML_ParametricCurve3D_Visualizer/
 │   ├── MML_ParametricCurve3D_Visualizer.exe
-│   ├── Qt6Core.dll, Qt6Gui.dll, Qt6Widgets.dll
-│   ├── Qt6OpenGL.dll, Qt6OpenGLWidgets.dll
-│   ├── D3Dcompiler_47.dll, opengl32sw.dll
-│   └── platforms/, styles/, iconengines/, etc.
-└── MML_RealFunctionVisualizer/
-    ├── MML_RealFunctionVisualizer.exe
-    ├── Qt6Core.dll, Qt6Gui.dll, Qt6Widgets.dll
-    ├── Qt6OpenGL.dll, Qt6OpenGLWidgets.dll
-    ├── D3Dcompiler_47.dll, opengl32sw.dll
-    └── platforms/, styles/, iconengines/, etc.
+│   └── [Qt DLLs and plugins]
+├── MML_RealFunctionVisualizer/
+│   ├── MML_RealFunctionVisualizer.exe
+│   └── [Qt DLLs and plugins]
+├── MML_ParticleVisualizer3D/
+│   ├── MML_ParticleVisualizer3D.exe
+│   └── [Qt DLLs and plugins]
+└── MML_VectorField3D_Visualizer/
+    ├── MML_VectorField3D_Visualizer.exe
+    └── [Qt DLLs and plugins]
+
+Each visualizer includes:
+- Qt6Core.dll, Qt6Gui.dll, Qt6Widgets.dll
+- Qt6OpenGL.dll, Qt6OpenGLWidgets.dll
+- D3Dcompiler_47.dll, opengl32sw.dll
+- platforms/, styles/, iconengines/, etc.
 ```
 
 ## Distribution
@@ -143,6 +188,8 @@ These visualizers are fully self-contained and can be:
 
 - Source code: `../../Qt/MML_ParametricCurve3D_Visualizer/`
 - Source code: `../../Qt/MML_RealFunctionVisualizer/`
+- Source code: `../../Qt/MML_ParticleVisualizer3D/`
+- Source code: `../../Qt/MML_VectorField3D_Visualizer/`
 - FLTK versions: `../../visualizers/win/FLTK/` (coming soon)
 - WPF versions: `../../WPF/`
 
@@ -151,5 +198,7 @@ These visualizers are fully self-contained and can be:
 - **v1.0** (2025-12-12): Initial deployment
   - MML_ParametricCurve3D_Visualizer: 3D curve visualization
   - MML_RealFunctionVisualizer: 2D function visualization
+  - MML_ParticleVisualizer3D: 3D particle animation with spheres
+  - MML_VectorField3D_Visualizer: 3D vector field with 27,000+ arrows
   - Qt 6.10.0 with OpenGL acceleration
   - Full Qt DLL deployment via windeployqt
