@@ -4,7 +4,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VISUALIZER="$SCRIPT_DIR/MML_RealFunctionVisualizer_FLTK"
-DATA_DIR="$SCRIPT_DIR/../../../WPF/MML_RealFunctionVisualizer/data"
+DATA_DIR="$SCRIPT_DIR/../../../data/RealFunction/Basic"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then
