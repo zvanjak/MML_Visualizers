@@ -7,12 +7,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${SCRIPT_DIR}/build/bin"
 DEPLOY_DIR="${SCRIPT_DIR}/../visualizers/linux/FLTK"
 
-# Array of visualizer executables (with _FLTK suffix on Linux)
+# Array of visualizer executables
 VISUALIZERS=(
-    "MML_RealFunctionVisualizer_FLTK"
-    "MML_ParametricCurve2D_Visualizer_FLTK"
-    "MML_ParticleVisualizer2D_FLTK"
-    "MML_VectorField2D_Visualizer_FLTK"
+    "MML_RealFunctionVisualizer"
+    "MML_ParametricCurve2D_Visualizer"
+    "MML_ParticleVisualizer2D"
+    "MML_VectorField2D_Visualizer"
 )
 
 # Color codes for output
@@ -50,10 +50,10 @@ not_found=0
 # Process each visualizer
 for app in "${VISUALIZERS[@]}"; do
     src_file="$BUILD_DIR/$app"
-    dest_file="$DEPLOY_DIR/$app"
+    dest_file="$DEPLOY_DIR/${app}_FLTK"
     
     echo "----------------------------------------"
-    echo "Processing: $app"
+    echo "Processing: $app -> ${app}_FLTK"
     
     # Check if source file exists
     if [ ! -f "$src_file" ]; then
