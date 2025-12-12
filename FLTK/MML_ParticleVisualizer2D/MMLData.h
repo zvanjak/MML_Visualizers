@@ -71,9 +71,11 @@ private:
     std::vector<Ball> balls_;
     int numSteps_;
     std::vector<double> timeSteps_;  // Time value for each step
+    double width_;   // Simulation space width
+    double height_;  // Simulation space height
     
 public:
-    ParticleSimulationData() : numSteps_(0) {}
+    ParticleSimulationData() : numSteps_(0), width_(800.0), height_(600.0) {}
     
     void AddBall(const Ball& ball) {
         balls_.push_back(ball);
@@ -83,12 +85,22 @@ public:
         numSteps_ = steps;
     }
     
+    void SetWidth(double width) {
+        width_ = width;
+    }
+    
+    void SetHeight(double height) {
+        height_ = height;
+    }
+    
     void AddTimeStep(double time) {
         timeSteps_.push_back(time);
     }
     
     int GetNumBalls() const { return static_cast<int>(balls_.size()); }
     int GetNumSteps() const { return numSteps_; }
+    double GetWidth() const { return width_; }
+    double GetHeight() const { return height_; }
     const Ball& GetBall(int index) const { return balls_[index]; }
     Ball& GetBall(int index) { return balls_[index]; }
     double GetTimeStep(int step) const { 

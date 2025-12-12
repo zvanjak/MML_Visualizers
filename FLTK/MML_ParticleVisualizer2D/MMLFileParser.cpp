@@ -26,9 +26,30 @@ std::unique_ptr<ParticleSimulationData> MMLFileParser::ParseParticleSimulation2D
     
     std::string line;
     
-    // Parse NumBalls
+    // Try to parse Width (optional)
     std::getline(file, line);
     auto parts = Split(line, ' ');
+    
+    // Check if this line is Width or NumBalls
+    if (parts.size() >= 2 && parts[0] == "Width:") {
+        double width = ParseDouble(parts[1]);
+        simData->SetWidth(width);
+        
+        // Parse Height
+        std::getline(file, line);
+        parts = Split(line, ' ');
+        if (parts.size() < 2 || parts[0] != "Height:") {
+            throw std::runtime_error("Expected Height after Width");
+        }
+        double height = ParseDouble(parts[1]);
+        simData->SetHeight(height);
+        
+        // Now read NumBalls line
+        std::getline(file, line);
+        parts = Split(line, ' ');
+    }
+    
+    // Parse NumBalls
     if (parts.size() < 2) {
         throw std::runtime_error("Invalid NumBalls line");
     }

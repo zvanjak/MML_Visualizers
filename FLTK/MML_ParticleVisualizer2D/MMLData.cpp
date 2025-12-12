@@ -35,6 +35,16 @@ Color Color::FromString(const std::string& colorName) {
 }
 
 void ParticleSimulationData::GetBounds(double& xMin, double& xMax, double& yMin, double& yMax) const {
+    // If width and height are explicitly set, use them
+    if (width_ > 0 && height_ > 0) {
+        xMin = 0;
+        xMax = width_;
+        yMin = 0;
+        yMax = height_;
+        return;
+    }
+    
+    // Otherwise calculate from ball positions
     if (balls_.empty() || numSteps_ == 0) {
         xMin = 0; xMax = 100;
         yMin = 0; yMax = 100;
