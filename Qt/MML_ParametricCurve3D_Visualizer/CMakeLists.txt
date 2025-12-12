@@ -36,8 +36,17 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Gui 
     Qt6::Widgets
     Qt6::OpenGLWidgets
-    opengl32
 )
+
+# Platform-specific OpenGL linking
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} opengl32)
+elseif(APPLE)
+    find_library(OPENGL_LIBRARY OpenGL)
+    target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARY})
+else()
+    # Linux - OpenGL is handled by Qt6::OpenGLWidgets
+endif()
 
 # Set output directory
 set_target_properties(${PROJECT_NAME} PROPERTIES
