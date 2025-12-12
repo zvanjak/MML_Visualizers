@@ -2,8 +2,13 @@
 
 # Script to run Qt MML_ParametricCurve3D_Visualizer_Qt with all test data files
 
+# Set MML_PROJECT_PATH if not already set
+if [ -z "$MML_PROJECT_PATH" ]; then
+    export MML_PROJECT_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
 VISUALIZER="./MML_ParametricCurve3D_Visualizer/build/bin/MML_ParametricCurve3D_Visualizer_Qt"
-DATA_DIR="../WPF/MML_ParametricCurve3D_Visualizer/data"
+DATA_DIR="$MML_PROJECT_PATH/data/ParametricCurve3D"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then

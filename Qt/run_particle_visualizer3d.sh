@@ -2,8 +2,13 @@
 
 # Script to run Qt MML_ParticleVisualizer3D_Qt with all test data files
 
+# Set MML_PROJECT_PATH if not already set
+if [ -z "$MML_PROJECT_PATH" ]; then
+    export MML_PROJECT_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
 VISUALIZER="./MML_ParticleVisualizer3D/build/bin/MML_ParticleVisualizer3D_Qt"
-DATA_DIR="../WPF/MML_ParticleVisualizer3D/data"
+DATA_DIR="$MML_PROJECT_PATH/data/ParticleVisualizer3D"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then

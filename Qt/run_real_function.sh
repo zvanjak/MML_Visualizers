@@ -2,8 +2,13 @@
 
 # Script to run Qt MML_RealFunctionVisualizer_Qt with all test data files
 
+# Set MML_PROJECT_PATH if not already set
+if [ -z "$MML_PROJECT_PATH" ]; then
+    export MML_PROJECT_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
 VISUALIZER="./MML_RealFunctionVisualizer/build/bin/MML_RealFunctionVisualizer_Qt"
-DATA_DIR="../data/RealFunction"
+DATA_DIR="$MML_PROJECT_PATH/data/RealFunction"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then

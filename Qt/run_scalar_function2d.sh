@@ -1,9 +1,14 @@
 #!/bin/bash
 
-# Script to run Qt MML_ScalarFunction2D_Visualizer with all test data files
+# Script to run Qt MML_ScalarFunction2D_Visualizer_Qt with all test data files
+
+# Set MML_PROJECT_PATH if not already set
+if [ -z "$MML_PROJECT_PATH" ]; then
+    export MML_PROJECT_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+fi
 
 VISUALIZER="./MML_ScalarFunction2D_Visualizer/build/bin/MML_ScalarFunction2D_Visualizer_Qt"
-DATA_DIR="../WPF/MML_ScalarFunction2D_Visualizer/data"
+DATA_DIR="$MML_PROJECT_PATH/data/ScalarFunction2D"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then
