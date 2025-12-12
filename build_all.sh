@@ -31,9 +31,12 @@ FLTK_VISUALIZERS=(
 # Qt visualizers array
 QT_VISUALIZERS=(
     "MML_RealFunctionVisualizer"
+    "MML_ParametricCurve2D_Visualizer"
     "MML_ParametricCurve3D_Visualizer"
+    "MML_ParticleVisualizer2D"
     "MML_ParticleVisualizer3D"
     "MML_ScalarFunction2D_Visualizer"
+    "MML_VectorField2D_Visualizer"
     "MML_VectorField3D_Visualizer"
 )
 
