@@ -115,6 +115,27 @@ The Qt directory contains modern OpenGL-accelerated implementations:
 - Multiple curves with color coding
 - Real-time OpenGL rendering
 
+### 3. MML_ParticleVisualizer3D
+- 3D particle simulation visualization
+- Animation controls (play/pause/step/reset)
+- Bounding box toggle
+- Interactive camera controls
+- Multiple timestep support
+
+### 4. MML_ScalarFunction2D_Visualizer
+- 2D scalar function visualization with heatmaps/contours
+- Interactive zoom/pan controls
+- Color mode toggle for visualization
+- Grid point display option
+- Real-time OpenGL rendering
+
+### 5. MML_VectorField3D_Visualizer
+- 3D vector field visualization with arrow rendering
+- Interactive 3D camera controls
+- Color mode for magnitude visualization
+- Dynamic vector scaling
+- Full 3D navigation
+
 ### Building Qt Projects
 
 #### Prerequisites
@@ -149,6 +170,9 @@ Automated testing scripts are available:
 cd Qt
 ./run_real_function.sh          # Test RealFunction with all data files
 ./run_parametric_curve3d.sh     # Test ParametricCurve3D with all data files
+./run_particle_visualizer3d.sh  # Test ParticleVisualizer3D with all data files
+./run_scalar_function2d.sh      # Test ScalarFunction2D with all data files
+./run_vector_field3d.sh         # Test VectorField3D with all data files
 ./update_apps.sh                # Deploy built executables
 ```
 
