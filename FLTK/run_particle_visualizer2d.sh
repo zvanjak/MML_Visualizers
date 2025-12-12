@@ -2,8 +2,9 @@
 
 # Script to run MML_ParticleVisualizer2D_FLTK with all test data files
 
-VISUALIZER="./MML_ParticleVisualizer2D/build/bin/MML_ParticleVisualizer2D_FLTK"
-DATA_DIR="../data/ParticleVisualizer2D"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VISUALIZER="$SCRIPT_DIR/../visualizers/linux/FLTK/MML_ParticleVisualizer2D_FLTK"
+DATA_DIR="$SCRIPT_DIR/../WPF/MML_ParticleVisualizer2D/data"
 
 # Check if visualizer executable exists
 if [ ! -f "$VISUALIZER" ]; then
