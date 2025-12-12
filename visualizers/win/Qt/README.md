@@ -28,6 +28,12 @@ This directory contains self-contained Qt visualizers with all necessary DLLs fo
 - **Features**: 27,000+ vectors, color by magnitude, adjustable scale, interactive camera
 - **Data Format**: VECTOR_FIELD_3D_CARTESIAN
 
+### MML_ScalarFunction2D_Visualizer
+- **Executable**: `MML_ScalarFunction2D_Visualizer.exe` (105 KB)
+- **Purpose**: 2D scalar function f(x,y) as 3D surface visualization
+- **Features**: Quad mesh surface, color height map, grid points, X/Y scaling
+- **Data Format**: SCALAR_FUNCTION_CARTESIAN_2D
+
 ## Deployment
 
 Each visualizer directory contains:
@@ -60,6 +66,9 @@ Each visualizer directory contains:
 
 # 3D Vector Field
 .\MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.exe <vector-field-file>
+
+# 2D Scalar Function (3D Surface)
+.\MML_ScalarFunction2D_Visualizer\MML_ScalarFunction2D_Visualizer.exe <surface-file>
 ```
 
 ### Examples
@@ -88,6 +97,10 @@ Each visualizer directory contains:
 # 3D: Vector field (gravity)
 .\MML_VectorField3D_Visualizer\MML_VectorField3D_Visualizer.exe ^
   ..\..\WPF\MML_VectorField3D_Visualizer\data\vector_field.txt
+
+# 2D Scalar function (3D surface)
+.\MML_ScalarFunction2D_Visualizer\MML_ScalarFunction2D_Visualizer.exe ^
+  ..\..\WPF\MML_ScalarFunction2D_Visualizer\data\example3_wpf_surface1.txt
 ```
 
 ## Requirements
@@ -122,6 +135,13 @@ Each visualizer directory contains:
 - **Mouse Wheel**: Zoom in/out
 - **Vector Scale Slider**: Adjust arrow sizes (0.1x to 10.0x)
 - **Color by Magnitude Checkbox**: Enable/disable magnitude-based coloring
+
+### MML_ScalarFunction2D_Visualizer (3D Surface)
+- **Left Mouse + Drag**: Rotate (orbit camera)
+- **Mouse Wheel**: Zoom in/out
+- **Scale X/Y Sliders**: Adjust domain scaling (0.1x to 20.0x)
+- **Show Grid Points Checkbox**: Display/hide surface grid points
+- **Color by Height Checkbox**: Enable/disable height-based coloring
 
 ## Known Issues
 
@@ -190,6 +210,7 @@ These visualizers are fully self-contained and can be:
 - Source code: `../../Qt/MML_RealFunctionVisualizer/`
 - Source code: `../../Qt/MML_ParticleVisualizer3D/`
 - Source code: `../../Qt/MML_VectorField3D_Visualizer/`
+- Source code: `../../Qt/MML_ScalarFunction2D_Visualizer/`
 - FLTK versions: `../../visualizers/win/FLTK/` (coming soon)
 - WPF versions: `../../WPF/`
 
@@ -200,5 +221,6 @@ These visualizers are fully self-contained and can be:
   - MML_RealFunctionVisualizer: 2D function visualization
   - MML_ParticleVisualizer3D: 3D particle animation with spheres
   - MML_VectorField3D_Visualizer: 3D vector field with 27,000+ arrows
+  - MML_ScalarFunction2D_Visualizer: 2D scalar function as 3D surface
   - Qt 6.10.0 with OpenGL acceleration
   - Full Qt DLL deployment via windeployqt
