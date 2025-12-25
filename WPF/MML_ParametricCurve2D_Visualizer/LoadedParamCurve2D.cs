@@ -1,93 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-
 using WPF3DHelperLib;
 
 namespace MML_ParametricCurve2D_Visualizer
 {
-  class LoadedParamCurve2D
+  /// <summary>
+  /// Represents a loaded 2D parametric curve with proper encapsulation.
+  /// </summary>
+  public class LoadedParamCurve2D : ILoadedCurve2D
   {
-    public string? _title;
-    public int _index = 0;
+    private readonly List<double> _tVals = new List<double>();
+    private readonly List<double> _xVals = new List<double>();
+    private readonly List<double> _yVals = new List<double>();
+    private readonly int _index;
 
-    public List<double> _tVals = new List<double>();
-    public List<double> _xVals = new List<double>();
-    public List<double> _yVals = new List<double>();
+    public string Title { get; set; } = "";
+    public CurveDrawStyle DrawStyle { get; set; }
 
-    public int GetNumPoints()
-    {
-      return _xVals.Count;
-    }
-    public double GetMinX()
-    {
-      return _xVals.Min();
-    }
+    public IReadOnlyList<double> TValues => _tVals;
+    public IReadOnlyList<double> XValues => _xVals;
+    public IReadOnlyList<double> YValues => _yVals;
 
-    public double GetMaxX()
+    public LoadedParamCurve2D(int index = 0)
     {
-      return _xVals.Max();
+      _index = index;
+      DrawStyle = CurveDrawStyle.CreateDefault(index);
     }
 
-    public double GetMinY()
+    public void AddPoint(double t, double x, double y)
     {
-      return _yVals.Min();
-    }
-    public double GetMaxY()
-    {
-      return _yVals.Max();
+      _tVals.Add(t);
+      _xVals.Add(x);
+      _yVals.Add(y);
     }
 
-    public void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams, Brush drawBrush)
+    public int GetNumPoints() => _xVals.Count;
+
+    public double GetMinX() => _xVals.Count > 0 ? _xVals.Min() : 0;
+    public double GetMaxX() => _xVals.Count > 0 ? _xVals.Max() : 0;
+    public double GetMinY() => _yVals.Count > 0 ? _yVals.Min() : 0;
+    public double GetMaxY() => _yVals.Count > 0 ? _yVals.Max() : 0;
+    public double GetMinT() => _tVals.Count > 0 ? _tVals.Min() : 0;
+    public double GetMaxT() => _tVals.Count > 0 ? _tVals.Max() : 0;
+
+    public void Draw(Canvas canvas, CoordSystemParams coordParams)
     {
-      List<Color> colors = new List<Color>();
-      colors.Add(Colors.Black);
-      colors.Add(Colors.Blue);
-      colors.Add(Colors.Red);
-      colors.Add(Colors.Green);
-      colors.Add(Colors.Orange);
+      if (_xVals.Count < 2) return;
 
-
-
-      Utils.DrawCoordSystem(mainCanvas, coordSysParams, coordSysParams._xMin, coordSysParams._xMax, coordSysParams._yMin, coordSysParams._yMax);
-
-      for (int i = 0; i < _tVals.Count; i++)
+      // Use Polyline for better performance
+      Polyline polyline = new Polyline
       {
+        Stroke = DrawStyle.Stroke,
+        StrokeThickness = DrawStyle.StrokeThickness,
+        StrokeDashArray = DrawStyle.GetDashArray()
+      };
 
-        //Utils.DrawPoint(mainCanvas, coordSysParams, _xVals[i], _yVals[i], colors[_index]);
-
-        //Rectangle rect = new Rectangle();
-        //rect.Width = 100;
-        //rect.Height = 100;
-        //rect.Fill = new SolidColorBrush(Colors.PaleVioletRed);
-        //mainCanvas.Children.Add(rect);
-        //Canvas.SetLeft(rect, 10);
-        //Canvas.SetTop(rect, 10);
+      for (int i = 0; i < _xVals.Count; i++)
+      {
+        Point screenPoint = CoordTransform.WorldToScreen(_xVals[i], _yVals[i], coordParams);
+        polyline.Points.Add(screenPoint);
       }
 
-      for (int i = 0; i < _tVals.Count - 1; i++)
+      canvas.Children.Add(polyline);
+
+      // Optionally draw points
+      if (DrawStyle.ShowPoints)
       {
-        Line xAxis = new Line();
-        xAxis.Stroke = drawBrush;
-        xAxis.StrokeThickness = 2;
+        DrawPoints(canvas, coordParams);
+      }
+    }
 
-        double x1 = coordSysParams._centerX + _xVals[i] * coordSysParams._scaleX;
-        double y1 = coordSysParams._centerY - _yVals[i] * coordSysParams._scaleY;
-        double x2 = coordSysParams._centerX + _xVals[i + 1] * coordSysParams._scaleX;
-        double y2 = coordSysParams._centerY - _yVals[i + 1] * coordSysParams._scaleY;
+    private void DrawPoints(Canvas canvas, CoordSystemParams coordParams)
+    {
+      for (int i = 0; i < _xVals.Count; i++)
+      {
+        Point screenPoint = CoordTransform.WorldToScreen(_xVals[i], _yVals[i], coordParams);
 
-        xAxis.X1 = x1;
-        xAxis.Y1 = y1;
-        xAxis.X2 = x2;
-        xAxis.Y2 = y2;
+        Ellipse point = new Ellipse
+        {
+          Width = DrawStyle.PointRadius * 2,
+          Height = DrawStyle.PointRadius * 2,
+          Fill = DrawStyle.Stroke
+        };
 
-        mainCanvas.Children.Add(xAxis);
+        Canvas.SetLeft(point, screenPoint.X - DrawStyle.PointRadius);
+        Canvas.SetTop(point, screenPoint.Y - DrawStyle.PointRadius);
+        canvas.Children.Add(point);
       }
     }
   }

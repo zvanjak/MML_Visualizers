@@ -6,10 +6,11 @@
         xmlns:local="clr-namespace:MML_ParametricCurve2D_Visualizer"
         xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         mc:Ignorable="d"
-        Title="Parametric curve 2D visualizer" Height="850" Width="1200">
+        Title="Parametric curve 2D visualizer" Height="850" Width="1200" SizeChanged="Window_SizeChanged">
+  
   <Grid Background="White">
     <Grid.RowDefinitions>
-      <RowDefinition Height="100"/>
+      <RowDefinition Height="50"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -17,22 +18,83 @@
       <ColumnDefinition Width="200" />
     </Grid.ColumnDefinitions>
 
-    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" Width="1000" Height="700"/>
+    <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    </Canvas>
+    
+    <TextBox x:Name="txtTitle" Text="Title" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="769" Height="40" FontSize="22" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="0" BorderBrush="{x:Null}"/>
 
-    <Label Content="X min:" HorizontalAlignment="Left" Margin="13,14,0,0" VerticalAlignment="Top" Width="46"/>
-    <TextBox x:Name="txtXMin" HorizontalAlignment="Left" Margin="64,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
-    <Label Content="X max:" HorizontalAlignment="Left" Margin="183,13,0,0" VerticalAlignment="Top" Width="46"/>
-    <TextBox x:Name="txtXMax" HorizontalAlignment="Left" Margin="234,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
-    <Label Content="Y min:" HorizontalAlignment="Left" Margin="373,13,0,0" VerticalAlignment="Top" Width="46"/>
-    <TextBox x:Name="txtYMin" HorizontalAlignment="Left" Margin="430,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80"/>
-    <Label Content="Y max:" HorizontalAlignment="Left" Margin="554,13,0,0" VerticalAlignment="Top" Width="46"/>
-    <TextBox x:Name="txtYMax" HorizontalAlignment="Left" Margin="621,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-    <TextBox x:Name="txtTitle" Text="Title" HorizontalAlignment="Left" Margin="125,54,0,0" VerticalAlignment="Top" Width="769" Height="36" FontSize="25" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="0" BorderBrush="{x:Null}"/>
-    <Label Content="Num points:" HorizontalAlignment="Left" Margin="757,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.948,-0.191"/>
-    <TextBox x:Name="txtNumPoints" HorizontalAlignment="Left" Margin="843,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77"/>
-
-    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,150,20,20" />
-    <CheckBox Grid.Column="1" Name="checkPreserveAspectRatio" Content="Preserve aspect ratio" HorizontalAlignment="Center" Margin="0,26,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,10,10">
+      <GroupBox Header="Legend" Margin="0,0,0,10">
+        <vizbase:LegendWidget x:Name="LegendWidgetControl" Margin="5"/>
+      </GroupBox>
+      
+      <GroupBox Header="Graph settings">
+        <StackPanel Margin="5">
+          <CheckBox x:Name="chkPreserveAspectRatio" Content="Preserve aspect ratio" 
+                    Margin="0,5" Checked="OnPreserveAspectRatioChanged" Unchecked="OnPreserveAspectRatioChanged"/>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="X min:" Grid.Column="0"/>
+            <TextBox x:Name="txtXMin" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="X max:" Grid.Column="0"/>
+            <TextBox x:Name="txtXMax" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Y min:" Grid.Column="0"/>
+            <TextBox x:Name="txtYMin" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Y max:" Grid.Column="0"/>
+            <TextBox x:Name="txtYMax" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Num points:" Grid.Column="0"/>
+            <TextBox x:Name="txtNumPoints" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Curve info" Margin="0,10,0,0">
+        <StackPanel Margin="5">
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="50"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="T min:" Grid.Column="0" Padding="0,0,5,0"/>
+            <TextBox x:Name="txtTMin" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="50"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="T max:" Grid.Column="0" Padding="0,0,5,0"/>
+            <TextBox x:Name="txtTMax" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+    </StackPanel>
   </Grid>
 </Window>

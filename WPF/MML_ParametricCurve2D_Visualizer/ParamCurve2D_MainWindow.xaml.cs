@@ -1,17 +1,8 @@
 ﻿using MML_VisualizersBase;
-using System.Globalization;
-using System.IO;
-using System.Text;
+using System;
+using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using WPF3DHelperLib;
 
 namespace MML_ParametricCurve2D_Visualizer
@@ -21,15 +12,25 @@ namespace MML_ParametricCurve2D_Visualizer
   /// </summary>
   public partial class MainWindow : Window
   {
-    List<LoadedParamCurve2D> _loadedCurves = new List<LoadedParamCurve2D>();
-    CoordSystemParams _coordSystemParams = new CoordSystemParams();
+    private readonly List<LoadedParamCurve2D> _loadedCurves = new List<LoadedParamCurve2D>();
+    private readonly CoordSystemParams _coordSystemParams = new CoordSystemParams();
+    private readonly CoordSystemStyle _coordSystemStyle = new CoordSystemStyle();
     private string _title = "";
-    List<Brush> _brushes = new List<Brush>();
 
+    // Store original data bounds (before rounding)
+    private double _dataXMin, _dataXMax, _dataYMin, _dataYMax;
+    private double _dataTMin, _dataTMax;
+
+    // Aspect ratio setting
+    private bool _preserveAspectRatio = false;
+
+    private readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
     public MainWindow()
     {
       InitializeComponent();
+
+      Loaded += MainWindow_Loaded;
 
       var args = Environment.GetCommandLineArgs();
 
@@ -43,128 +44,145 @@ namespace MML_ParametricCurve2D_Visualizer
       for (int i = 0; i < numInputs; i++)
       {
         var fileName = args[i + 1];
-
         LoadData(fileName, i);
       }
+    }
 
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (_loadedCurves.Count == 0) return;
+
+      CalculateDataBounds();
       InitializeCoordSysParams();
+      UpdateLegend();
+      UpdateUITextBoxes();
 
-      txtXMin.Text = _coordSystemParams._xMin.ToString();
-      txtXMax.Text = _coordSystemParams._xMax.ToString();
-      txtYMin.Text = _coordSystemParams._yMin.ToString();
-      txtYMax.Text = _coordSystemParams._yMax.ToString();
-      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
       txtTitle.Text = _title;
 
-      _brushes.Add(Brushes.Black);
-      _brushes.Add(Brushes.Orange);
-      _brushes.Add(Brushes.Blue);
-      _brushes.Add(Brushes.Red);
-      _brushes.Add(Brushes.Green);
-      _brushes.Add(Brushes.Purple);
-      _brushes.Add(Brushes.Cyan);
-      _brushes.Add(Brushes.Brown);
-      _brushes.Add(Brushes.Magenta);
-      _brushes.Add(Brushes.Yellow);
-
       Redraw();
-
-      LegendWidgetControl.LegendItems.Clear();
-
-      for (int i = 0; i < _loadedCurves.Count && i < 10; i++)
-      {
-        LegendWidgetControl.LegendItems.Add(new LegendItem
-        {
-          Title = _loadedCurves[i]._title,
-          Color = _brushes[i % _brushes.Count]
-        });
-      }
-    }
-    private void Redraw()
-    {
-      for (int i = 0; i < _loadedCurves.Count; i++)
-      {
-        _loadedCurves[i].Draw(mainCanvas, _coordSystemParams, _brushes[i]);
-      }
     }
 
-    public bool LoadData(string inFileName, int index)
+    private void CalculateDataBounds()
     {
-      if (File.Exists(inFileName) == false)
+      if (_loadedCurves.Count == 0) return;
+
+      _dataXMin = _loadedCurves[0].GetMinX();
+      _dataXMax = _loadedCurves[0].GetMaxX();
+      _dataYMin = _loadedCurves[0].GetMinY();
+      _dataYMax = _loadedCurves[0].GetMaxY();
+      _dataTMin = _loadedCurves[0].GetMinT();
+      _dataTMax = _loadedCurves[0].GetMaxT();
+
+      for (int i = 1; i < _loadedCurves.Count; i++)
       {
-        MessageBox.Show("File does not exist: " + inFileName);
-        return false;
+        _dataXMin = Math.Min(_dataXMin, _loadedCurves[i].GetMinX());
+        _dataXMax = Math.Max(_dataXMax, _loadedCurves[i].GetMaxX());
+        _dataYMin = Math.Min(_dataYMin, _loadedCurves[i].GetMinY());
+        _dataYMax = Math.Max(_dataYMax, _loadedCurves[i].GetMaxY());
+        _dataTMin = Math.Min(_dataTMin, _loadedCurves[i].GetMinT());
+        _dataTMax = Math.Max(_dataTMax, _loadedCurves[i].GetMaxT());
       }
 
-      string[] lines = File.ReadAllLines(inFileName);
-      string type = lines[0];
-
-      if (type == "PARAMETRIC_CURVE_CARTESIAN_2D")
-      {
-        LoadedParamCurve2D newCurve = new LoadedParamCurve2D();
-
-        newCurve._title = lines[1];
-        _title = newCurve._title;
-
-        string[] partsT1 = lines[2].Split(' ');
-        double t1 = double.Parse(partsT1[1], CultureInfo.InvariantCulture);
-
-        string[] partsT2 = lines[3].Split(' ');
-        double t2 = double.Parse(partsT2[1], CultureInfo.InvariantCulture);
-
-        string[] partsNumPoints = lines[4].Split(' ');
-        int numPoints = int.Parse(partsNumPoints[1]);
-
-        for (int i = 5; i < lines.Length; i++)
-        {
-          string[] parts = lines[i].Split(' ');
-          newCurve._tVals.Add(double.Parse(parts[0], CultureInfo.InvariantCulture));
-          newCurve._xVals.Add(double.Parse(parts[1], CultureInfo.InvariantCulture));
-          newCurve._yVals.Add(double.Parse(parts[2], CultureInfo.InvariantCulture));
-        }
-        _loadedCurves.Add(newCurve);
-
-        return true;
-      }
-
-      return false;
+      _coordSystemParams._numPoints = _loadedCurves[0].GetNumPoints();
     }
 
     private void InitializeCoordSysParams()
     {
-      _coordSystemParams._xMin = _loadedCurves[0].GetMinX();
-      _coordSystemParams._xMax = _loadedCurves[0].GetMaxX();
-      _coordSystemParams._yMin = _loadedCurves[0].GetMinY();
-      _coordSystemParams._yMax = _loadedCurves[0].GetMaxY();
-      _coordSystemParams._numPoints = _loadedCurves[0].GetNumPoints();
+      if (_loadedCurves.Count == 0) return;
 
-      for (int i = 1; i < _loadedCurves.Count; i++)
+      _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
+      _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
+
+      // Use nice rounded bounds with optional aspect ratio preservation
+      CoordSystemRenderer.UpdateParamsWithNiceBounds(
+        _coordSystemParams, _dataXMin, _dataXMax, _dataYMin, _dataYMax, _preserveAspectRatio);
+    }
+
+    private void UpdateUITextBoxes()
+    {
+      txtXMin.Text = FormatBoundValue(_coordSystemParams._xMin);
+      txtXMax.Text = FormatBoundValue(_coordSystemParams._xMax);
+      txtYMin.Text = FormatBoundValue(_coordSystemParams._yMin);
+      txtYMax.Text = FormatBoundValue(_coordSystemParams._yMax);
+      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+      txtTMin.Text = FormatBoundValue(_dataTMin);
+      txtTMax.Text = FormatBoundValue(_dataTMax);
+    }
+
+    private string FormatBoundValue(double value)
+    {
+      if (Math.Abs(value) >= 10000 || (Math.Abs(value) > 0 && Math.Abs(value) < 0.01))
+        return value.ToString("E2");
+      if (Math.Abs(value - Math.Round(value)) < 1e-10)
+        return ((long)Math.Round(value)).ToString();
+      return value.ToString("G6");
+    }
+
+    private void Redraw()
+    {
+      if (_loadedCurves.Count == 0) return;
+
+      InitializeCoordSysParams();
+
+      mainCanvas.Children.Clear();
+
+      // Draw coordinate system with nice ticks
+      CoordSystemRenderer.Draw(mainCanvas, _coordSystemParams,
+        _dataXMin, _dataXMax, _dataYMin, _dataYMax, _coordSystemStyle);
+
+      // Draw all curves
+      foreach (var curve in _loadedCurves)
       {
-        _coordSystemParams._xMin = Math.Min(_coordSystemParams._xMin, _loadedCurves[i].GetMinX());
-        _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedCurves[i].GetMaxX());
-        _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedCurves[i].GetMinY());
-        _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedCurves[i].GetMaxY());
+        curve.Draw(mainCanvas, _coordSystemParams);
       }
+    }
 
-      _coordSystemParams._windowWidth = mainCanvas.Width;
-      _coordSystemParams._windowHeight = mainCanvas.Height;
+    public bool LoadData(string fileName, int index)
+    {
+      try
+      {
+        var (curve, title) = CurveLoader.Load(fileName, index);
 
-      // izracunati general scale - je li 1, 10, 1000, ili 10-3, 10-6
-      // prilagođavanje skaliranja i centra
-      // kod prikazivanja teksta, dok je unutar 0.001, 1000, s decimalama
-      // inače E notacija
-      double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
-      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
-      // ako je 0, onda je tocno sredina
-      // ako je manje od 0 , onda je vise sredina prema xMin
+        if (curve != null)
+        {
+          _loadedCurves.Add(curve);
+          _title = title ?? "";
+          return true;
+        }
+        return false;
+      }
+      catch (Exception e)
+      {
+        MessageBox.Show($"Error loading file {fileName}\nMessage: {e.Message}");
+        return false;
+      }
+    }
 
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      mainCanvas.Children.Clear();
+      Redraw();
+    }
 
-      _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
-      _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
-      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
-      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
-      //_coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2 * _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) + _coordSystemParams._windowHeight / 20;
+    private void OnPreserveAspectRatioChanged(object sender, RoutedEventArgs e)
+    {
+      _preserveAspectRatio = chkPreserveAspectRatio.IsChecked ?? false;
+      Redraw();
+      UpdateUITextBoxes();
+    }
 
+    private void UpdateLegend()
+    {
+      LegendWidgetControl.LegendItems.Clear();
+
+      for (int i = 0; i < _loadedCurves.Count; i++)
+      {
+        LegendWidgetControl.LegendItems.Add(new LegendItem
+        {
+          Title = _loadedCurves[i].Title,
+          Color = _brushes[i % _brushes.Count]
+        });
+      }
     }
   }
 }
