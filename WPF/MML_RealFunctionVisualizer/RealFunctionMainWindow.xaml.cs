@@ -33,6 +33,9 @@ namespace MML_RealFunctionVisualizer
     // Aspect ratio setting
     private bool _preserveAspectRatio = false;
 
+    // Flag to prevent recursive updates
+    private bool _isUpdatingTitle = false;
+
     private readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
     public MainWindow()
@@ -66,7 +69,11 @@ namespace MML_RealFunctionVisualizer
       UpdateLegend();
       UpdateUITextBoxes();
       
+      // Initialize both title displays
       txtTitle.Text = _title;
+      _isUpdatingTitle = true;
+      txtEditableTitle.Text = _title;
+      _isUpdatingTitle = false;
       
       Redraw();
     }
@@ -168,6 +175,16 @@ namespace MML_RealFunctionVisualizer
     {
       _preserveAspectRatio = chkPreserveAspectRatio.IsChecked ?? false;
       Redraw();
+      UpdateUITextBoxes();
+    }
+
+    private void OnTitleTextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (_isUpdatingTitle) return;
+
+      // Update the displayed title when user edits the text
+      _title = txtEditableTitle.Text;
+      txtTitle.Text = _title;
     }
 
     private void UpdateLegend()
