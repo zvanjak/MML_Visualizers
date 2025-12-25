@@ -20,7 +20,8 @@ namespace MML_VectorField2D_Visualizer
   /// It supports loading vector field data from text files and provides features including:
   /// </para>
   /// <list type="bullet">
-  ///   <item><description>Vector arrows with customizable scale and size</description></item>
+  ///   <item><description>Vector arrows with adjustable scale via slider</description></item>
+  ///   <item><description>Automatic scaling based on data analysis</description></item>
   ///   <item><description>Color coding by vector magnitude</description></item>
   ///   <item><description>Option to normalize vectors for uniform display</description></item>
   ///   <item><description>Aspect ratio preservation</description></item>
@@ -35,18 +36,22 @@ namespace MML_VectorField2D_Visualizer
 
     private string _title = "";
     private bool _isUpdatingTitle = false;
+    private bool _isInitialized = false;
 
     // Data bounds
     private double _dataXMin, _dataXMax, _dataYMin, _dataYMax;
-    private double _minMagnitude, _maxMagnitude;
+    private double _minMagnitude, _maxMagnitude, _avgMagnitude;
+
+    // Calculated optimal scale
+    private double _optimalVectorScale = 1.0;
 
     // Display options
     private bool _preserveAspectRatio = false;
     private bool _normalizeVectors = false;
     private bool _colorByMagnitude = true;
-    private double _vectorScale = 0.5;
-    private double _arrowSize = 10;
-    private double _arrowAngle = 30;
+    private double _magnitudeScale = 1.0;
+    private double _arrowSize = 8;
+    private double _arrowAngle = 25;
     private Color _arrowColor = Colors.Black;
 
     /// <summary>
@@ -78,6 +83,7 @@ namespace MML_VectorField2D_Visualizer
       if (_vectors.Count == 0) return;
 
       CalculateDataBounds();
+      CalculateOptimalScale();
       InitializeCoordSysParams();
       UpdateUITextBoxes();
 
@@ -86,11 +92,12 @@ namespace MML_VectorField2D_Visualizer
       txtEditableTitle.Text = _title;
       _isUpdatingTitle = false;
 
+      _isInitialized = true;
       Redraw();
     }
 
     /// <summary>
-    /// Calculates data bounds and magnitude range from loaded vectors.
+    /// Calculates data bounds and magnitude statistics from loaded vectors.
     /// </summary>
     private void CalculateDataBounds()
     {
@@ -102,6 +109,7 @@ namespace MML_VectorField2D_Visualizer
       _dataYMax = double.MinValue;
       _minMagnitude = double.MaxValue;
       _maxMagnitude = double.MinValue;
+      double totalMagnitude = 0;
 
       foreach (var v in _vectors)
       {
@@ -113,9 +121,44 @@ namespace MML_VectorField2D_Visualizer
         double magnitude = Math.Sqrt(v.Vec.X * v.Vec.X + v.Vec.Y * v.Vec.Y);
         _minMagnitude = Math.Min(_minMagnitude, magnitude);
         _maxMagnitude = Math.Max(_maxMagnitude, magnitude);
+        totalMagnitude += magnitude;
       }
 
+      _avgMagnitude = totalMagnitude / _vectors.Count;
       _coordSystemParams._numPoints = _vectors.Count;
+    }
+
+    /// <summary>
+    /// Calculates the optimal vector scale based on data analysis.
+    /// The goal is to make vectors visible but not overlapping.
+    /// </summary>
+    private void CalculateOptimalScale()
+    {
+      if (_vectors.Count == 0 || _maxMagnitude < 1e-10) return;
+
+      // Calculate average spacing between vector positions
+      double xRange = _dataXMax - _dataXMin;
+      double yRange = _dataYMax - _dataYMin;
+
+      // Estimate grid spacing (assuming roughly uniform distribution)
+      int estimatedGridSize = (int)Math.Sqrt(_vectors.Count);
+      double avgSpacingX = xRange / Math.Max(1, estimatedGridSize - 1);
+      double avgSpacingY = yRange / Math.Max(1, estimatedGridSize - 1);
+      double avgSpacing = Math.Min(avgSpacingX, avgSpacingY);
+
+      // We want the average vector to be about 70% of the grid spacing
+      // So: avgMagnitude * optimalScale = 0.7 * avgSpacing
+      if (_avgMagnitude > 1e-10)
+      {
+        _optimalVectorScale = (0.7 * avgSpacing) / _avgMagnitude;
+      }
+      else
+      {
+        _optimalVectorScale = 1.0;
+      }
+
+      // Clamp to reasonable range
+      _optimalVectorScale = Math.Clamp(_optimalVectorScale, 0.001, 1000);
     }
 
     /// <summary>
@@ -128,23 +171,33 @@ namespace MML_VectorField2D_Visualizer
       _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
       _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
 
+      if (_coordSystemParams._windowWidth < 1 || _coordSystemParams._windowHeight < 1)
+        return;
+
       double xRange = _dataXMax - _dataXMin;
       double yRange = _dataYMax - _dataYMin;
 
       // Add small margin if range is zero
-      if (xRange < 1e-10) { xRange = 1; _dataXMin -= 0.5; _dataXMax += 0.5; }
-      if (yRange < 1e-10) { yRange = 1; _dataYMin -= 0.5; _dataYMax += 0.5; }
+      if (xRange < 1e-10) { xRange = 2; _dataXMin -= 1; _dataXMax += 1; }
+      if (yRange < 1e-10) { yRange = 2; _dataYMin -= 1; _dataYMax += 1; }
 
-      _coordSystemParams._xMin = _dataXMin;
-      _coordSystemParams._xMax = _dataXMax;
-      _coordSystemParams._yMin = _dataYMin;
-      _coordSystemParams._yMax = _dataYMax;
+      // Add 10% margin around the data
+      double marginX = xRange * 0.1;
+      double marginY = yRange * 0.1;
 
-      double midPointX = (_dataXMin + _dataXMax) / 2;
-      double midPointY = (_dataYMin + _dataYMax) / 2;
+      _coordSystemParams._xMin = _dataXMin - marginX;
+      _coordSystemParams._xMax = _dataXMax + marginX;
+      _coordSystemParams._yMin = _dataYMin - marginY;
+      _coordSystemParams._yMax = _dataYMax + marginY;
 
-      double availableWidth = _coordSystemParams._windowWidth * 0.9;
-      double availableHeight = _coordSystemParams._windowHeight * 0.9;
+      xRange = _coordSystemParams._xMax - _coordSystemParams._xMin;
+      yRange = _coordSystemParams._yMax - _coordSystemParams._yMin;
+
+      double midPointX = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
+      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
+
+      double availableWidth = _coordSystemParams._windowWidth * 0.95;
+      double availableHeight = _coordSystemParams._windowHeight * 0.95;
 
       if (_preserveAspectRatio)
       {
@@ -177,6 +230,7 @@ namespace MML_VectorField2D_Visualizer
       txtNumVectors.Text = _vectors.Count.ToString();
       txtMaxMagnitude.Text = FormatValue(_maxMagnitude);
       txtMinMagnitude.Text = FormatValue(_minMagnitude);
+      txtAvgMagnitude.Text = FormatValue(_avgMagnitude);
     }
 
     /// <summary>
@@ -189,7 +243,7 @@ namespace MML_VectorField2D_Visualizer
         return value.ToString("E2");
       if (Math.Abs(value - Math.Round(value)) < 1e-10)
         return ((long)Math.Round(value)).ToString();
-      return value.ToString("G6");
+      return value.ToString("G4");
     }
 
     /// <summary>
@@ -197,9 +251,13 @@ namespace MML_VectorField2D_Visualizer
     /// </summary>
     private void Redraw()
     {
-      if (_vectors.Count == 0) return;
+      if (_vectors.Count == 0 || !_isInitialized) return;
 
       InitializeCoordSysParams();
+
+      if (_coordSystemParams._windowWidth < 1 || _coordSystemParams._windowHeight < 1)
+        return;
+
       mainCanvas.Children.Clear();
 
       // Draw coordinate system
@@ -210,12 +268,12 @@ namespace MML_VectorField2D_Visualizer
     }
 
     /// <summary>
-    /// Draws the coordinate system (axes).
+    /// Draws the coordinate system (axes at origin if visible).
     /// </summary>
     private void DrawCoordSystem()
     {
       // Draw X axis if y=0 is in range
-      if (_dataYMin <= 0 && _dataYMax >= 0)
+      if (_coordSystemParams._yMin <= 0 && _coordSystemParams._yMax >= 0)
       {
         double y0 = _coordSystemParams._centerY;
         Line xAxis = new Line
@@ -224,15 +282,14 @@ namespace MML_VectorField2D_Visualizer
           Y1 = y0,
           X2 = _coordSystemParams._windowWidth,
           Y2 = y0,
-          Stroke = Brushes.Gray,
-          StrokeThickness = 1,
-          StrokeDashArray = new DoubleCollection { 4, 2 }
+          Stroke = Brushes.LightGray,
+          StrokeThickness = 1
         };
         mainCanvas.Children.Add(xAxis);
       }
 
       // Draw Y axis if x=0 is in range
-      if (_dataXMin <= 0 && _dataXMax >= 0)
+      if (_coordSystemParams._xMin <= 0 && _coordSystemParams._xMax >= 0)
       {
         double x0 = _coordSystemParams._centerX;
         Line yAxis = new Line
@@ -241,9 +298,8 @@ namespace MML_VectorField2D_Visualizer
           Y1 = 0,
           X2 = x0,
           Y2 = _coordSystemParams._windowHeight,
-          Stroke = Brushes.Gray,
-          StrokeThickness = 1,
-          StrokeDashArray = new DoubleCollection { 4, 2 }
+          Stroke = Brushes.LightGray,
+          StrokeThickness = 1
         };
         mainCanvas.Children.Add(yAxis);
       }
@@ -261,29 +317,39 @@ namespace MML_VectorField2D_Visualizer
     }
 
     /// <summary>
-    /// Draws a single vector arrow.
+    /// Draws a single vector arrow with proper scaling.
     /// </summary>
     private void DrawArrow(Vector2Repr vector)
     {
       double magnitude = Math.Sqrt(vector.Vec.X * vector.Vec.X + vector.Vec.Y * vector.Vec.Y);
 
+      // Skip zero vectors
+      if (magnitude < 1e-10) return;
+
       // Calculate screen coordinates for start point
       double x1 = _coordSystemParams._centerX + vector.Pos.X * _coordSystemParams._scaleX;
       double y1 = _coordSystemParams._centerY - vector.Pos.Y * _coordSystemParams._scaleY;
 
-      // Calculate vector components (optionally normalized)
+      // Calculate vector components
       double vx = vector.Vec.X;
       double vy = vector.Vec.Y;
 
-      if (_normalizeVectors && magnitude > 1e-10)
+      // Apply normalization if requested
+      if (_normalizeVectors)
       {
         vx /= magnitude;
         vy /= magnitude;
       }
 
-      // Calculate screen coordinates for end point
-      double x2 = _coordSystemParams._centerX + (vector.Pos.X + _vectorScale * vx) * _coordSystemParams._scaleX;
-      double y2 = _coordSystemParams._centerY - (vector.Pos.Y + _vectorScale * vy) * _coordSystemParams._scaleY;
+      // Apply the combined scale: optimal scale * user scale
+      double effectiveScale = _optimalVectorScale * _magnitudeScale;
+
+      // Calculate end point in world coordinates, then convert to screen
+      double endX = vector.Pos.X + effectiveScale * vx;
+      double endY = vector.Pos.Y + effectiveScale * vy;
+
+      double x2 = _coordSystemParams._centerX + endX * _coordSystemParams._scaleX;
+      double y2 = _coordSystemParams._centerY - endY * _coordSystemParams._scaleY;
 
       // Determine color
       Brush brush;
@@ -307,14 +373,16 @@ namespace MML_VectorField2D_Visualizer
       };
       mainCanvas.Children.Add(mainLine);
 
-      // Draw arrowhead
-      double angle = Math.Atan2(vy, vx);
+      // Draw arrowhead (in screen coordinates)
+      double screenDx = x2 - x1;
+      double screenDy = y2 - y1;
+      double screenAngle = Math.Atan2(screenDy, screenDx);
       double arrowAngleRad = _arrowAngle * Math.PI / 180;
 
-      double xArrow1 = x2 - _arrowSize * Math.Cos(angle + arrowAngleRad);
-      double yArrow1 = y2 + _arrowSize * Math.Sin(angle + arrowAngleRad);
-      double xArrow2 = x2 - _arrowSize * Math.Cos(angle - arrowAngleRad);
-      double yArrow2 = y2 + _arrowSize * Math.Sin(angle - arrowAngleRad);
+      double xArrow1 = x2 - _arrowSize * Math.Cos(screenAngle - arrowAngleRad);
+      double yArrow1 = y2 - _arrowSize * Math.Sin(screenAngle - arrowAngleRad);
+      double xArrow2 = x2 - _arrowSize * Math.Cos(screenAngle + arrowAngleRad);
+      double yArrow2 = y2 - _arrowSize * Math.Sin(screenAngle + arrowAngleRad);
 
       Line arrow1 = new Line
       {
@@ -459,7 +527,7 @@ namespace MML_VectorField2D_Visualizer
     /// </summary>
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-      if (_vectors.Count > 0)
+      if (_vectors.Count > 0 && _isInitialized)
         Redraw();
     }
 
@@ -480,7 +548,7 @@ namespace MML_VectorField2D_Visualizer
     private void OnPreserveAspectRatioChanged(object sender, RoutedEventArgs e)
     {
       _preserveAspectRatio = chkPreserveAspectRatio.IsChecked ?? false;
-      if (_vectors.Count > 0)
+      if (_vectors.Count > 0 && _isInitialized)
         Redraw();
     }
 
@@ -490,7 +558,7 @@ namespace MML_VectorField2D_Visualizer
     private void OnNormalizeVectorsChanged(object sender, RoutedEventArgs e)
     {
       _normalizeVectors = chkNormalizeVectors.IsChecked ?? false;
-      if (_vectors.Count > 0)
+      if (_vectors.Count > 0 && _isInitialized)
         Redraw();
     }
 
@@ -500,7 +568,7 @@ namespace MML_VectorField2D_Visualizer
     private void OnColorByMagnitudeChanged(object sender, RoutedEventArgs e)
     {
       _colorByMagnitude = chkColorByMagnitude.IsChecked ?? true;
-      if (_vectors.Count > 0)
+      if (_vectors.Count > 0 && _isInitialized)
         Redraw();
     }
 
@@ -512,38 +580,36 @@ namespace MML_VectorField2D_Visualizer
       if (cmbArrowColor == null) return;
 
       _arrowColor = GetColorFromComboBox(cmbArrowColor);
-      if (_vectors.Count > 0 && !_colorByMagnitude)
+      if (_vectors.Count > 0 && !_colorByMagnitude && _isInitialized)
         Redraw();
     }
 
     /// <summary>
-    /// Handles vector scale text change.
+    /// Handles magnitude scale slider change.
     /// </summary>
-    private void OnVectorScaleChanged(object sender, TextChangedEventArgs e)
+    private void sliderMagnitudeScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-      if (txtVectorScale == null) return;
+      if (sliderMagnitudeScale == null || txtMagnitudeScale == null) return;
 
-      if (double.TryParse(txtVectorScale.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double scale) && scale > 0)
-      {
-        _vectorScale = scale;
-        if (_vectors.Count > 0)
-          Redraw();
-      }
+      _magnitudeScale = sliderMagnitudeScale.Value;
+      txtMagnitudeScale.Text = _magnitudeScale.ToString("F2");
+
+      if (_vectors.Count > 0 && _isInitialized)
+        Redraw();
     }
 
     /// <summary>
-    /// Handles arrow size text change.
+    /// Handles arrow size slider change.
     /// </summary>
-    private void OnArrowSizeChanged(object sender, TextChangedEventArgs e)
+    private void sliderArrowSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-      if (txtArrowSize == null) return;
+      if (sliderArrowSize == null || txtArrowSizeDisplay == null) return;
 
-      if (double.TryParse(txtArrowSize.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double size) && size > 0)
-      {
-        _arrowSize = size;
-        if (_vectors.Count > 0)
-          Redraw();
-      }
+      _arrowSize = sliderArrowSize.Value;
+      txtArrowSizeDisplay.Text = ((int)_arrowSize).ToString();
+
+      if (_vectors.Count > 0 && _isInitialized)
+        Redraw();
     }
 
     #endregion
