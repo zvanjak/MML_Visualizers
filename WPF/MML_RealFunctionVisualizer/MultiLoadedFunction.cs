@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,109 +10,164 @@ using WPF3DHelperLib;
 
 namespace MML_RealFunctionVisualizer
 {
-  class MultiLoadedFunction : LoadedFunction
+  public class MultiLoadedFunction : ILoadedFunction
   {
-    public string? _title;
-    public string[]? _legend;
+    private string[] _legend = Array.Empty<string>();
+    private MML.Vector? _xValues;
+    private MML.Matrix? _yValues;
+    private List<FunctionDrawStyle> _drawStyles = new List<FunctionDrawStyle>();
 
-    public MML.Vector? _multiFuncX;
-    public MML.Matrix? _multiFuncY;
-
-    public int GetDimension()
+    public string Title { get; set; } = "";
+    
+    public string[] Legend
     {
-      if (_multiFuncY == null)
-        throw new InvalidOperationException("_multiFuncY is null.");
-      return _multiFuncY.Rows;
+      get => _legend;
+      set => _legend = value ?? Array.Empty<string>();
     }
 
-    public string GetFunctionTitle(int i)
+    public int Dimension => _yValues?.Rows ?? 0;
+
+    public IReadOnlyList<FunctionDrawStyle> DrawStyles => _drawStyles;
+
+    public void SetData(MML.Vector xValues, MML.Matrix yValues)
     {
-      if (_multiFuncY == null)
-        throw new InvalidOperationException("_multiFuncY is null.");
-      if (_legend == null)
-        throw new InvalidOperationException("_legend is null.");
-      if (i < 0 || i >= _multiFuncY.Rows)
-        throw new ArgumentOutOfRangeException("Index out of range for function title retrieval.");
-      return _legend[i];
+      _xValues = xValues ?? throw new ArgumentNullException(nameof(xValues));
+      _yValues = yValues ?? throw new ArgumentNullException(nameof(yValues));
+
+      // Initialize default draw styles for each function
+      _drawStyles.Clear();
+      for (int i = 0; i < yValues.Rows; i++)
+      {
+        var style = FunctionDrawStyle.CreateDefault(i);
+        style.LineStyle = LineStyle.DashDot; // Default for multi-function
+        _drawStyles.Add(style);
+      }
     }
 
-    public override int GetNumPoints()
+    public void SetDrawStyle(int functionIndex, FunctionDrawStyle style)
     {
-      if (_multiFuncX?.Elements == null)
-        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
-      return _multiFuncX.Elements.Length;
+      if (functionIndex >= 0 && functionIndex < _drawStyles.Count)
+        _drawStyles[functionIndex] = style;
     }
 
-    public override double GetMinX()
+    public MML.Vector? GetXValues() => _xValues;
+    public MML.Matrix? GetYValues() => _yValues;
+
+    public string GetFunctionTitle(int index)
     {
-      if (_multiFuncX?.Elements == null)
-        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
-      return _multiFuncX.Elements.Min();
+      if (index < 0 || index >= Dimension)
+        throw new ArgumentOutOfRangeException(nameof(index));
+      
+      return index < _legend.Length ? _legend[index] : $"Function {index + 1}";
     }
 
-    public override double GetMaxX()
+    public int GetNumPoints() => _xValues?.Elements?.Length ?? 0;
+
+    public double GetMinX()
     {
-      if (_multiFuncX?.Elements == null)
-        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
-      return _multiFuncX.Elements.Max();
+      if (_xValues?.Elements == null || _xValues.Elements.Length == 0)
+        return 0;
+      return _xValues.Elements.Min();
     }
 
-    public override double GetMinY()
+    public double GetMaxX()
     {
-      if (_multiFuncY == null)
-        throw new InvalidOperationException("_multiFuncY is null.");
-      double min = _multiFuncY.ElemAt(0, 0);
-      for (int j = 0; j < _multiFuncY.Rows; j++)
-        for (int i = 0; i < _multiFuncY.Cols; i++)
-          if (_multiFuncY.ElemAt(j, i) < min)
-            min = _multiFuncY.ElemAt(j, i);
+      if (_xValues?.Elements == null || _xValues.Elements.Length == 0)
+        return 0;
+      return _xValues.Elements.Max();
+    }
+
+    public double GetMinY()
+    {
+      if (_yValues == null || _yValues.Rows == 0 || _yValues.Cols == 0)
+        return 0;
+
+      double min = _yValues.ElemAt(0, 0);
+      for (int row = 0; row < _yValues.Rows; row++)
+        for (int col = 0; col < _yValues.Cols; col++)
+          if (_yValues.ElemAt(row, col) < min)
+            min = _yValues.ElemAt(row, col);
 
       return min;
     }
-    public override double GetMaxY()
+
+    public double GetMaxY()
     {
-      if (_multiFuncY == null)
-        throw new InvalidOperationException("_multiFuncY is null.");
-      double max = _multiFuncY.ElemAt(0, 0);
-      for (int j = 0; j < _multiFuncY.Rows; j++)
-        for (int i = 0; i < _multiFuncY.Cols; i++)
-          if (_multiFuncY.ElemAt(j, i) > max)
-            max = _multiFuncY.ElemAt(j, i);
+      if (_yValues == null || _yValues.Rows == 0 || _yValues.Cols == 0)
+        return 0;
+
+      double max = _yValues.ElemAt(0, 0);
+      for (int row = 0; row < _yValues.Rows; row++)
+        for (int col = 0; col < _yValues.Cols; col++)
+          if (_yValues.ElemAt(row, col) > max)
+            max = _yValues.ElemAt(row, col);
 
       return max;
     }
-    public override void Draw(Canvas mainCanvas, CoordSystemParams coordSysParams)
+
+    public void Draw(Canvas canvas, CoordSystemParams coordParams)
     {
-      if (_multiFuncX?.Elements == null)
-        throw new InvalidOperationException("_multiFuncX or its Elements are null.");
-      if (_multiFuncY == null)
-        throw new InvalidOperationException("_multiFuncY is null.");
+      if (_xValues?.Elements == null || _yValues == null)
+        return;
 
-      for (int i = 0; i < _multiFuncX.Elements.Length - 1; i++)
+      int numPoints = _xValues.Elements.Length;
+      if (numPoints < 2) return;
+
+      // Draw each function as a separate Polyline
+      for (int funcIndex = 0; funcIndex < _yValues.Rows; funcIndex++)
       {
-        for (int j = 0; j < _multiFuncY.Rows; j++)
+        var style = funcIndex < _drawStyles.Count 
+          ? _drawStyles[funcIndex] 
+          : FunctionDrawStyle.CreateDefault(funcIndex);
+
+        Polyline polyline = new Polyline
         {
-          Line xAxis = new Line();
-          if (j < LineBrushes.brushes.Length)
-            xAxis.Stroke = LineBrushes.brushes[j];
-          else
-            xAxis.Stroke = Brushes.Black;
+          Stroke = style.Stroke,
+          StrokeThickness = style.StrokeThickness,
+          StrokeDashArray = style.GetDashArray()
+        };
 
-          xAxis.StrokeDashArray = new DoubleCollection() { 4, 2, 1, 2 };
+        for (int i = 0; i < numPoints; i++)
+        {
+          Point screenPoint = CoordTransform.WorldToScreen(
+            _xValues.Elements[i], 
+            _yValues.ElemAt(funcIndex, i), 
+            coordParams);
+          polyline.Points.Add(screenPoint);
+        }
 
-          double x1 = coordSysParams._centerX + _multiFuncX.Elements[i] * coordSysParams._scaleX;
-          double y1 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i) * coordSysParams._scaleY;
-          double x2 = coordSysParams._centerX + _multiFuncX.Elements[i + 1] * coordSysParams._scaleX;
-          double y2 = coordSysParams._centerY - _multiFuncY.ElemAt(j, i + 1) * coordSysParams._scaleY;
+        canvas.Children.Add(polyline);
 
-          xAxis.X1 = x1;
-          xAxis.Y1 = y1;
-          xAxis.X2 = x2;
-          xAxis.Y2 = y2;
-
-          mainCanvas.Children.Add(xAxis);
+        // Optionally draw points
+        if (style.ShowPoints)
+        {
+          DrawPoints(canvas, coordParams, funcIndex, style);
         }
       }
     }
-  };
+
+    private void DrawPoints(Canvas canvas, CoordSystemParams coordParams, int funcIndex, FunctionDrawStyle style)
+    {
+      if (_xValues?.Elements == null || _yValues == null) return;
+
+      for (int i = 0; i < _xValues.Elements.Length; i++)
+      {
+        Point screenPoint = CoordTransform.WorldToScreen(
+          _xValues.Elements[i],
+          _yValues.ElemAt(funcIndex, i),
+          coordParams);
+
+        Ellipse point = new Ellipse
+        {
+          Width = style.PointRadius * 2,
+          Height = style.PointRadius * 2,
+          Fill = style.Stroke
+        };
+
+        Canvas.SetLeft(point, screenPoint.X - style.PointRadius);
+        Canvas.SetTop(point, screenPoint.Y - style.PointRadius);
+        canvas.Children.Add(point);
+      }
+    }
+  }
 }
