@@ -1,9 +1,12 @@
 ﻿using MML_VisualizersBase;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using WPF3DHelperLib;
 
 namespace MML_ParametricCurve2D_Visualizer
@@ -21,6 +24,7 @@ namespace MML_ParametricCurve2D_Visualizer
   ///   <item><description>Automatic calculation of nice rounded axis tick values</description></item>
   ///   <item><description>Aspect ratio preservation for accurate geometric representation</description></item>
   ///   <item><description>Interactive legend with visibility toggles for each curve</description></item>
+  ///   <item><description>Animation of points along curve trajectories with pause/resume/reset</description></item>
   ///   <item><description>Editable graph title</description></item>
   ///   <item><description>Display of parameter range (T min/max) information</description></item>
   ///   <item><description>Responsive resizing</description></item>
@@ -43,6 +47,14 @@ namespace MML_ParametricCurve2D_Visualizer
 
     private bool _preserveAspectRatio = false;
     private bool _isUpdatingTitle = false;
+
+    // Animation state
+    private bool _isAnimating = false;
+    private bool _isPaused = false;
+    private int _currentAnimationStep = 0;
+    private CancellationTokenSource? _animationCancellation;
+    private readonly List<Ellipse> _animationMarkers = new List<Ellipse>();
+    private const double MarkerRadius = 6.0;
 
     private readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
@@ -180,6 +192,7 @@ namespace MML_ParametricCurve2D_Visualizer
       InitializeCoordSysParams();
 
       mainCanvas.Children.Clear();
+      _animationMarkers.Clear();
 
       CoordSystemRenderer.Draw(mainCanvas, _coordSystemParams,
         _dataXMin, _dataXMax, _dataYMin, _dataYMax, _coordSystemStyle);
@@ -223,6 +236,7 @@ namespace MML_ParametricCurve2D_Visualizer
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       mainCanvas.Children.Clear();
+      _animationMarkers.Clear();
       Redraw();
     }
 
@@ -288,5 +302,202 @@ namespace MML_ParametricCurve2D_Visualizer
         });
       }
     }
+
+    #region Animation Controls
+
+    /// <summary>
+    /// Creates animated marker ellipses for each visible curve.
+    /// </summary>
+    private void CreateAnimationMarkers()
+    {
+      _animationMarkers.Clear();
+
+      for (int i = 0; i < _loadedCurves.Count; i++)
+      {
+        if (!_loadedCurves[i].IsVisible) 
+        {
+          _animationMarkers.Add(null!);
+          continue;
+        }
+
+        Ellipse marker = new Ellipse
+        {
+          Width = MarkerRadius * 2,
+          Height = MarkerRadius * 2,
+          Fill = _brushes[i % _brushes.Count],
+          Stroke = Brushes.Black,
+          StrokeThickness = 1
+        };
+
+        _animationMarkers.Add(marker);
+        mainCanvas.Children.Add(marker);
+      }
+    }
+
+    /// <summary>
+    /// Updates marker positions to the specified animation step.
+    /// </summary>
+    /// <param name="step">The animation step (index into curve points).</param>
+    private void UpdateMarkerPositions(int step)
+    {
+      for (int i = 0; i < _loadedCurves.Count; i++)
+      {
+        if (!_loadedCurves[i].IsVisible || i >= _animationMarkers.Count || _animationMarkers[i] == null)
+          continue;
+
+        if (step >= _loadedCurves[i].XValues.Count) continue;
+
+        Point screenPoint = CoordTransform.WorldToScreen(
+          _loadedCurves[i].XValues[step], 
+          _loadedCurves[i].YValues[step], 
+          _coordSystemParams);
+
+        Canvas.SetLeft(_animationMarkers[i], screenPoint.X - MarkerRadius);
+        Canvas.SetTop(_animationMarkers[i], screenPoint.Y - MarkerRadius);
+      }
+    }
+
+    /// <summary>
+    /// Gets the current animation delay in milliseconds based on the speed TextBox.
+    /// </summary>
+    /// <returns>Delay in milliseconds.</returns>
+    private int GetAnimationDelayMs()
+    {
+      int delayMs = 100; // Default: 10 points per second
+
+      this.Dispatcher.Invoke(() =>
+      {
+        if (double.TryParse(txtAnimationSpeed.Text, out double pointsPerSecond) && pointsPerSecond > 0)
+        {
+          delayMs = (int)(1000.0 / pointsPerSecond);
+        }
+      });
+
+      return delayMs;
+    }
+
+    /// <summary>
+    /// Handles the Start Animation button click.
+    /// </summary>
+    private void btnStartAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      // If already animating but paused, resume
+      if (_isAnimating && _isPaused)
+      {
+        _isPaused = false;
+        btnPauseAnimation.Content = "Pause";
+        return;
+      }
+
+      // If already animating, stop first
+      if (_isAnimating)
+      {
+        StopAnimation();
+      }
+
+      // Validate speed input
+      if (!double.TryParse(txtAnimationSpeed.Text, out double pointsPerSecond) || pointsPerSecond <= 0)
+      {
+        txtAnimationSpeed.Text = "10";
+      }
+
+      Redraw();
+      CreateAnimationMarkers();
+
+      // Position markers at current step
+      UpdateMarkerPositions(_currentAnimationStep);
+
+      int numSteps = _loadedCurves.Count > 0 ? _loadedCurves[0].GetNumPoints() : 0;
+
+      _isAnimating = true;
+      _isPaused = false;
+      _animationCancellation = new CancellationTokenSource();
+
+      Task.Run(() => Animate(numSteps, _animationCancellation.Token));
+    }
+
+    /// <summary>
+    /// Handles the Pause button click.
+    /// </summary>
+    private void btnPauseAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      if (!_isAnimating) return;
+
+      _isPaused = !_isPaused;
+      btnPauseAnimation.Content = _isPaused ? "Resume" : "Pause";
+    }
+
+    /// <summary>
+    /// Handles the Reset button click.
+    /// </summary>
+    private void btnResetAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      // Stop any running animation
+      StopAnimation();
+
+      // Reset to beginning
+      _currentAnimationStep = 0;
+      _isPaused = false;
+      btnPauseAnimation.Content = "Pause";
+
+      // Redraw scene and create markers at starting position
+      Redraw();
+      CreateAnimationMarkers();
+      UpdateMarkerPositions(0);
+    }
+
+    /// <summary>
+    /// Stops the running animation.
+    /// </summary>
+    private void StopAnimation()
+    {
+      _animationCancellation?.Cancel();
+      _isAnimating = false;
+      _isPaused = false;
+    }
+
+    /// <summary>
+    /// Animates markers along their respective curve trajectories.
+    /// </summary>
+    /// <param name="numSteps">The total number of animation steps.</param>
+    /// <param name="cancellationToken">Token to cancel the animation.</param>
+    /// <remarks>
+    /// The animation speed is read dynamically from the UI, allowing speed changes
+    /// while the animation is running or paused.
+    /// </remarks>
+    private void Animate(int numSteps, CancellationToken cancellationToken)
+    {
+      while (_currentAnimationStep < numSteps && !cancellationToken.IsCancellationRequested)
+      {
+        // Handle pause
+        while (_isPaused && !cancellationToken.IsCancellationRequested)
+        {
+          Thread.Sleep(50);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+          break;
+
+        this.Dispatcher.Invoke(() => UpdateMarkerPositions(_currentAnimationStep));
+
+        _currentAnimationStep++;
+
+        // Read delay dynamically to allow speed changes during animation
+        int delayMs = GetAnimationDelayMs();
+        Thread.Sleep(delayMs);
+      }
+
+      // Animation completed
+      if (!cancellationToken.IsCancellationRequested)
+      {
+        this.Dispatcher.Invoke(() =>
+        {
+          _isAnimating = false;
+          _currentAnimationStep = 0;
+        });
+      }
+    }
+
+    #endregion
   }
 }

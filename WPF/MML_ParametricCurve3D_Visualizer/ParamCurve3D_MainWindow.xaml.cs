@@ -27,8 +27,8 @@ namespace MML_ParametricCurve3D_Visualizer
   /// <list type="bullet">
   ///   <item><description>Display of single or multiple 3D parametric curves</description></item>
   ///   <item><description>Interactive camera control (rotate, pan, zoom)</description></item>
-  ///   <item><description>Animation of points along curve trajectories</description></item>
-  ///   <item><description>Adjustable line width for curve rendering</description></item>
+  ///   <item><description>Animation of points along curve trajectories with pause/resume/reset</description></item>
+  ///   <item><description>Adjustable animation speed and line width</description></item>
   ///   <item><description>Interactive legend with visibility toggles for each curve</description></item>
   ///   <item><description>Editable graph title</description></item>
   /// </list>
@@ -53,6 +53,12 @@ namespace MML_ParametricCurve3D_Visualizer
     private string _title = "";
     private bool _isUpdatingTitle = false;
     private bool _sceneInitialized = false;
+
+    // Animation state
+    private bool _isAnimating = false;
+    private bool _isPaused = false;
+    private int _currentAnimationStep = 0;
+    private CancellationTokenSource? _animationCancellation;
 
     // Store parameter bounds across all curves
     private double _dataTMin, _dataTMax;
@@ -321,7 +327,7 @@ namespace MML_ParametricCurve3D_Visualizer
     private void OnLegendItemVisibilityChanged(object? sender, EventArgs e)
     {
       UpdateCurveVisibility();
-      RedrawScene();  // Use RedrawScene to preserve camera position
+      RedrawScene();
     }
 
     /// <summary>
@@ -385,16 +391,13 @@ namespace MML_ParametricCurve3D_Visualizer
 
     #endregion
 
-    #region Button Click Handlers
+    #region Animation Controls
 
     /// <summary>
-    /// Handles the Animate button click to animate spheres along curves.
+    /// Creates animated sphere markers for each visible curve.
     /// </summary>
-    private void cmdAnimate_Click(object sender, RoutedEventArgs e)
+    private void CreateAnimationSpheres()
     {
-      RedrawScene();  // Use RedrawScene to preserve camera position
-
-      // Create animated spheres for each visible curve
       for (int i = 0; i < _curves.Count; i++)
       {
         if (!_curves[i].IsVisible) continue;
@@ -419,42 +422,175 @@ namespace MML_ParametricCurve3D_Visualizer
         _spheres[i].RefGeomModel = sphereModel;
         _myModel3DGroup.Children.Add(sphereModel);
       }
+    }
+
+    /// <summary>
+    /// Updates sphere positions to the specified animation step.
+    /// </summary>
+    /// <param name="step">The animation step (index into curve trace).</param>
+    private void UpdateSpherePositions(int step)
+    {
+      for (int i = 0; i < _curves.Count; i++)
+      {
+        if (!_curves[i].IsVisible || step >= _curves[i].CurveTrace.Count) continue;
+
+        if (_spheres[i]?.RefGeomModel != null)
+        {
+          TranslateTransform3D offset = new TranslateTransform3D
+          {
+            OffsetX = _curves[i].CurveTrace[step].X,
+            OffsetY = _curves[i].CurveTrace[step].Y,
+            OffsetZ = _curves[i].CurveTrace[step].Z
+          };
+          _spheres[i].RefGeomModel.Transform = offset;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the current animation delay in milliseconds based on the speed TextBox.
+    /// </summary>
+    /// <returns>Delay in milliseconds.</returns>
+    private int GetAnimationDelayMs()
+    {
+      int delayMs = 100; // Default: 10 points per second
+
+      this.Dispatcher.Invoke(() =>
+      {
+        if (double.TryParse(txtAnimationSpeed.Text, out double pointsPerSecond) && pointsPerSecond > 0)
+        {
+          delayMs = (int)(1000.0 / pointsPerSecond);
+        }
+      });
+
+      return delayMs;
+    }
+
+    /// <summary>
+    /// Handles the Start Animation button click.
+    /// </summary>
+    private void btnStartAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      // If already animating but paused, resume
+      if (_isAnimating && _isPaused)
+      {
+        _isPaused = false;
+        btnPauseAnimation.Content = "Pause";
+        return;
+      }
+
+      // If already animating, stop first
+      if (_isAnimating)
+      {
+        StopAnimation();
+      }
+
+      // Validate speed input
+      if (!double.TryParse(txtAnimationSpeed.Text, out double pointsPerSecond) || pointsPerSecond <= 0)
+      {
+        txtAnimationSpeed.Text = "10";
+      }
+
+      RedrawScene();
+      CreateAnimationSpheres();
+
+      // Position spheres at current step
+      UpdateSpherePositions(_currentAnimationStep);
 
       int numSteps = _curves.Count > 0 ? _curves[0].CurveTrace.Count : 0;
 
-      Task.Run(() => Animate(numSteps));
+      _isAnimating = true;
+      _isPaused = false;
+      _animationCancellation = new CancellationTokenSource();
+
+      Task.Run(() => Animate(numSteps, _animationCancellation.Token));
+    }
+
+    /// <summary>
+    /// Handles the Pause button click.
+    /// </summary>
+    private void btnPauseAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      if (!_isAnimating) return;
+
+      _isPaused = !_isPaused;
+      btnPauseAnimation.Content = _isPaused ? "Resume" : "Pause";
+    }
+
+    /// <summary>
+    /// Handles the Reset button click.
+    /// </summary>
+    private void btnResetAnimation_Click(object sender, RoutedEventArgs e)
+    {
+      // Stop any running animation
+      StopAnimation();
+
+      // Reset to beginning
+      _currentAnimationStep = 0;
+      _isPaused = false;
+      btnPauseAnimation.Content = "Pause";
+
+      // Redraw scene and create spheres at starting position
+      RedrawScene();
+      CreateAnimationSpheres();
+      UpdateSpherePositions(0);
+    }
+
+    /// <summary>
+    /// Stops the running animation.
+    /// </summary>
+    private void StopAnimation()
+    {
+      _animationCancellation?.Cancel();
+      _isAnimating = false;
+      _isPaused = false;
     }
 
     /// <summary>
     /// Animates spheres along their respective curve trajectories.
     /// </summary>
-    /// <param name="numSteps">The number of animation steps.</param>
-    private void Animate(int numSteps)
+    /// <param name="numSteps">The total number of animation steps.</param>
+    /// <param name="cancellationToken">Token to cancel the animation.</param>
+    /// <remarks>
+    /// The animation speed is read dynamically from the UI, allowing speed changes
+    /// while the animation is running or paused.
+    /// </remarks>
+    private void Animate(int numSteps, CancellationToken cancellationToken)
     {
-      for (int t = 0; t < numSteps; t++)
+      while (_currentAnimationStep < numSteps && !cancellationToken.IsCancellationRequested)
       {
-        for (int i = 0; i < _curves.Count; i++)
+        // Handle pause
+        while (_isPaused && !cancellationToken.IsCancellationRequested)
         {
-          if (!_curves[i].IsVisible || t >= _curves[i].CurveTrace.Count) continue;
-
-          this.Dispatcher.Invoke(() =>
-          {
-            if (_spheres[i]?.RefGeomModel != null)
-            {
-              TranslateTransform3D offset = new TranslateTransform3D
-              {
-                OffsetX = _curves[i].CurveTrace[t].X,
-                OffsetY = _curves[i].CurveTrace[t].Y,
-                OffsetZ = _curves[i].CurveTrace[t].Z
-              };
-              _spheres[i].RefGeomModel.Transform = offset;
-            }
-          });
+          Thread.Sleep(50);
         }
 
-        Thread.Sleep(100);
+        if (cancellationToken.IsCancellationRequested)
+          break;
+
+        this.Dispatcher.Invoke(() => UpdateSpherePositions(_currentAnimationStep));
+
+        _currentAnimationStep++;
+
+        // Read delay dynamically to allow speed changes during animation
+        int delayMs = GetAnimationDelayMs();
+        Thread.Sleep(delayMs);
+      }
+
+      // Animation completed
+      if (!cancellationToken.IsCancellationRequested)
+      {
+        this.Dispatcher.Invoke(() =>
+        {
+          _isAnimating = false;
+          _currentAnimationStep = 0;
+        });
       }
     }
+
+    #endregion
+
+    #region Button Click Handlers
 
     /// <summary>
     /// Handles the increase line width button click.
@@ -462,7 +598,7 @@ namespace MML_ParametricCurve3D_Visualizer
     private void btnIncWidth_Click(object sender, RoutedEventArgs e)
     {
       _lineWidth *= 1.1;
-      RedrawScene();  // Use RedrawScene to preserve camera position
+      RedrawScene();
     }
 
     /// <summary>
@@ -471,7 +607,7 @@ namespace MML_ParametricCurve3D_Visualizer
     private void btnDecWidth_Click(object sender, RoutedEventArgs e)
     {
       _lineWidth *= 0.9;
-      RedrawScene();  // Use RedrawScene to preserve camera position
+      RedrawScene();
     }
 
     #endregion
