@@ -4,43 +4,100 @@ using System.Collections.Generic;
 namespace MML_RealFunctionVisualizer
 {
   /// <summary>
-  /// Represents a single tick on an axis.
+  /// Represents a single tick mark on a coordinate axis.
   /// </summary>
   public class AxisTick
   {
+    /// <summary>
+    /// Gets or sets the numerical value at this tick position.
+    /// </summary>
     public double Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the formatted text label to display at this tick.
+    /// </summary>
     public string Label { get; set; } = "";
+
+    /// <summary>
+    /// Gets or sets whether this is a major tick (typically longer with a label).
+    /// </summary>
     public bool IsMajor { get; set; } = true;
   }
 
   /// <summary>
-  /// Contains the calculated tick information for an axis.
+  /// Contains comprehensive tick information for rendering an axis.
   /// </summary>
+  /// <remarks>
+  /// This class holds all the information needed to render axis ticks,
+  /// including the computed nice bounds, tick positions, and formatting settings.
+  /// </remarks>
   public class AxisTickInfo
   {
+    /// <summary>Gets or sets the nice rounded minimum value for the axis.</summary>
     public double Min { get; set; }
+
+    /// <summary>Gets or sets the nice rounded maximum value for the axis.</summary>
     public double Max { get; set; }
+
+    /// <summary>Gets or sets the spacing between consecutive ticks.</summary>
     public double TickSpacing { get; set; }
+
+    /// <summary>Gets or sets the list of tick marks for the axis.</summary>
     public List<AxisTick> Ticks { get; set; } = new List<AxisTick>();
+
+    /// <summary>Gets or sets the number of decimal places for tick labels.</summary>
     public int DecimalPlaces { get; set; }
+
+    /// <summary>Gets or sets whether tick labels should use scientific notation.</summary>
     public bool UseScientificNotation { get; set; }
   }
 
   /// <summary>
-  /// Calculates optimal axis ticks with rounded values.
+  /// Calculates optimal axis tick positions with "nice" rounded values.
   /// </summary>
+  /// <remarks>
+  /// <para>
+  /// This class implements an algorithm to find visually pleasing tick intervals for axes.
+  /// Instead of using arbitrary values, it rounds to "nice" numbers like 1, 2, 2.5, 5, 10
+  /// and their powers of 10.
+  /// </para>
+  /// <para>
+  /// The algorithm:
+  /// </para>
+  /// <list type="number">
+  ///   <item><description>Calculate rough tick spacing based on data range and desired tick count</description></item>
+  ///   <item><description>Find the magnitude (power of 10) of the spacing</description></item>
+  ///   <item><description>Normalize to 1-10 range and find nearest "nice" number</description></item>
+  ///   <item><description>Round min/max to tick spacing boundaries</description></item>
+  ///   <item><description>Generate tick labels with appropriate formatting</description></item>
+  /// </list>
+  /// </remarks>
+  /// <example>
+  /// <code>
+  /// // For data ranging from 0.3 to 47.8:
+  /// var tickInfo = AxisTickCalculator.CalculateTicks(0.3, 47.8, 8);
+  /// // Result: Min=0, Max=50, Ticks at 0, 10, 20, 30, 40, 50
+  /// </code>
+  /// </example>
   public static class AxisTickCalculator
   {
-    // Preferred tick intervals (normalized to 1-10 range)
+    /// <summary>
+    /// Preferred tick intervals normalized to the 1-10 range.
+    /// These values produce visually pleasing axis labels.
+    /// </summary>
     private static readonly double[] NiceNumbers = { 1.0, 2.0, 2.5, 5.0, 10.0 };
 
     /// <summary>
-    /// Calculates nice tick values for an axis.
+    /// Calculates nice tick values for an axis based on data range.
     /// </summary>
-    /// <param name="dataMin">Minimum data value</param>
-    /// <param name="dataMax">Maximum data value</param>
-    /// <param name="targetTickCount">Desired number of ticks (approximate)</param>
-    /// <returns>Axis tick information with rounded values</returns>
+    /// <param name="dataMin">The minimum value in the data.</param>
+    /// <param name="dataMax">The maximum value in the data.</param>
+    /// <param name="targetTickCount">The approximate number of ticks desired (default: 8).</param>
+    /// <returns>An <see cref="AxisTickInfo"/> containing the calculated ticks and bounds.</returns>
+    /// <remarks>
+    /// The actual number of ticks may vary from the target to achieve nice rounded values.
+    /// Edge cases like NaN, infinity, or equal min/max are handled gracefully.
+    /// </remarks>
     public static AxisTickInfo CalculateTicks(double dataMin, double dataMax, int targetTickCount = 8)
     {
       var result = new AxisTickInfo();
@@ -62,43 +119,33 @@ namespace MML_RealFunctionVisualizer
       }
 
       double range = dataMax - dataMin;
-
-      // Calculate the rough tick spacing
       double roughTickSpacing = range / (targetTickCount - 1);
-
-      // Find the magnitude (power of 10)
       double magnitude = Math.Pow(10, Math.Floor(Math.Log10(roughTickSpacing)));
-
-      // Normalize the rough tick spacing to 1-10 range
       double normalizedSpacing = roughTickSpacing / magnitude;
-
-      // Find the nearest "nice" number
       double niceSpacing = FindNiceNumber(normalizedSpacing);
-
-      // Calculate the actual tick spacing
       double tickSpacing = niceSpacing * magnitude;
 
-      // Calculate the nice min and max (rounded to tick spacing)
       double niceMin = Math.Floor(dataMin / tickSpacing) * tickSpacing;
       double niceMax = Math.Ceiling(dataMax / tickSpacing) * tickSpacing;
 
-      // Determine formatting
       result.DecimalPlaces = CalculateDecimalPlaces(tickSpacing);
       result.UseScientificNotation = ShouldUseScientificNotation(niceMin, niceMax, tickSpacing);
-
       result.Min = niceMin;
       result.Max = niceMax;
       result.TickSpacing = tickSpacing;
-
-      // Generate the ticks
       result.Ticks = GenerateTicks(niceMin, niceMax, tickSpacing, result.DecimalPlaces, result.UseScientificNotation);
 
       return result;
     }
 
     /// <summary>
-    /// Calculates ticks with a specific range that includes padding.
+    /// Calculates ticks with additional padding around the data range.
     /// </summary>
+    /// <param name="dataMin">The minimum value in the data.</param>
+    /// <param name="dataMax">The maximum value in the data.</param>
+    /// <param name="targetTickCount">The approximate number of ticks desired.</param>
+    /// <param name="paddingPercent">The percentage of range to add as padding on each side.</param>
+    /// <returns>An <see cref="AxisTickInfo"/> with padded bounds.</returns>
     public static AxisTickInfo CalculateTicksWithPadding(double dataMin, double dataMax, int targetTickCount = 8, double paddingPercent = 5)
     {
       double range = dataMax - dataMin;
@@ -106,49 +153,53 @@ namespace MML_RealFunctionVisualizer
       return CalculateTicks(dataMin - padding, dataMax + padding, targetTickCount);
     }
 
+    /// <summary>
+    /// Finds the smallest "nice" number that is approximately >= the given value.
+    /// </summary>
     private static double FindNiceNumber(double value)
     {
-      // Find the smallest nice number that is >= value
       foreach (double nice in NiceNumbers)
       {
-        if (nice >= value * 0.9) // Allow 10% tolerance
+        if (nice >= value * 0.9)
           return nice;
       }
       return NiceNumbers[NiceNumbers.Length - 1];
     }
 
+    /// <summary>
+    /// Determines the number of decimal places needed for tick labels.
+    /// </summary>
     private static int CalculateDecimalPlaces(double tickSpacing)
     {
       if (tickSpacing >= 1.0)
         return 0;
 
-      // Calculate number of decimal places needed
       double log = Math.Log10(tickSpacing);
       int decimals = (int)Math.Ceiling(-log);
-      return Math.Max(0, Math.Min(decimals, 10)); // Clamp to reasonable range
+      return Math.Max(0, Math.Min(decimals, 10));
     }
 
+    /// <summary>
+    /// Determines whether scientific notation should be used for tick labels.
+    /// </summary>
     private static bool ShouldUseScientificNotation(double min, double max, double tickSpacing)
     {
       double maxAbs = Math.Max(Math.Abs(min), Math.Abs(max));
-      
-      // Use scientific notation for very large or very small numbers
       return maxAbs >= 100000 || (maxAbs > 0 && maxAbs < 0.01);
     }
 
+    /// <summary>
+    /// Generates the list of tick marks between min and max.
+    /// </summary>
     private static List<AxisTick> GenerateTicks(double min, double max, double spacing, int decimalPlaces, bool useScientific)
     {
       var ticks = new List<AxisTick>();
-
-      // Add a small epsilon to handle floating point errors
       double epsilon = spacing * 1e-10;
 
       for (double value = min; value <= max + epsilon; value += spacing)
       {
-        // Round to avoid floating point errors
         double roundedValue = Math.Round(value / spacing) * spacing;
         
-        // Handle very small values that should be zero
         if (Math.Abs(roundedValue) < spacing * 1e-10)
           roundedValue = 0;
 
@@ -163,24 +214,26 @@ namespace MML_RealFunctionVisualizer
       return ticks;
     }
 
+    /// <summary>
+    /// Formats a tick value as a display string.
+    /// </summary>
     private static string FormatTickLabel(double value, int decimalPlaces, bool useScientific)
     {
       if (Math.Abs(value) < 1e-15)
         return "0";
 
       if (useScientific)
-      {
         return value.ToString("E2");
-      }
 
       if (decimalPlaces == 0)
-      {
         return ((long)Math.Round(value)).ToString();
-      }
 
       return value.ToString($"F{decimalPlaces}");
     }
 
+    /// <summary>
+    /// Creates default tick information when normal calculation fails.
+    /// </summary>
     private static AxisTickInfo CreateDefaultTicks(double min, double max, int tickCount)
     {
       var result = new AxisTickInfo
@@ -207,8 +260,15 @@ namespace MML_RealFunctionVisualizer
     }
 
     /// <summary>
-    /// Calculates both X and Y axis ticks for a coordinate system.
+    /// Calculates tick information for both X and Y axes simultaneously.
     /// </summary>
+    /// <param name="xMin">Minimum X data value.</param>
+    /// <param name="xMax">Maximum X data value.</param>
+    /// <param name="yMin">Minimum Y data value.</param>
+    /// <param name="yMax">Maximum Y data value.</param>
+    /// <param name="xTickCount">Target number of X axis ticks.</param>
+    /// <param name="yTickCount">Target number of Y axis ticks.</param>
+    /// <returns>A tuple containing tick information for both axes.</returns>
     public static (AxisTickInfo xTicks, AxisTickInfo yTicks) CalculateAxisTicks(
       double xMin, double xMax, double yMin, double yMax, 
       int xTickCount = 10, int yTickCount = 8)
