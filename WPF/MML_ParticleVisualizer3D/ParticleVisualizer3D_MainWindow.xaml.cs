@@ -16,6 +16,19 @@ using WPF3DHelperLib;
 namespace MML_ParticleVisualizer3D
 {
   /// <summary>
+  /// Display mode options for the 3D visualization.
+  /// </summary>
+  public enum DisplayMode
+  {
+    /// <summary>Only coordinate axes are shown.</summary>
+    None,
+    /// <summary>Bounding box with planes in the positive quadrant only.</summary>
+    BoundingBox,
+    /// <summary>Full coordinate planes extending in both directions from origin.</summary>
+    CoordinatePlanes
+  }
+
+  /// <summary>
   /// Main window for the 3D Particle Visualizer application.
   /// </summary>
   /// <remarks>
@@ -28,7 +41,7 @@ namespace MML_ParticleVisualizer3D
   ///   <item><description>Start, Pause, and Reset controls with progress bar</description></item>
   ///   <item><description>Adjustable animation speed and refresh rate</description></item>
   ///   <item><description>Interactive camera control (rotate, pan, zoom, keyboard)</description></item>
-  ///   <item><description>Optional bounding box display</description></item>
+  ///   <item><description>Display mode: None, Bounding box, or Coordinate planes</description></item>
   ///   <item><description>Legend showing particle names and colors</description></item>
   ///   <item><description>Editable simulation title</description></item>
   /// </list>
@@ -45,7 +58,7 @@ namespace MML_ParticleVisualizer3D
     private double _containerHeight = 1000;
     private double _containerDepth = 1000;
 
-    private bool _showBoundingBox = true;
+    private DisplayMode _displayMode = DisplayMode.BoundingBox;
     private bool _sceneInitialized = false;
 
     private int _numSteps = 0;
@@ -96,7 +109,8 @@ namespace MML_ParticleVisualizer3D
       txtEditableTitle.Text = _title;
       _isUpdatingTitle = false;
 
-      chkShowBox.IsChecked = _showBoundingBox;
+      // Set initial display mode radio button
+      rbDisplayBoundingBox.IsChecked = true;
 
       // Set initial button states
       btnPauseSim.IsEnabled = false;
@@ -138,7 +152,7 @@ namespace MML_ParticleVisualizer3D
     }
 
     /// <summary>
-    /// Initializes the 3D scene with camera, lights, particles, and bounding box.
+    /// Initializes the 3D scene with camera, lights, particles, and display elements.
     /// </summary>
     private void InitializeScene()
     {
@@ -170,15 +184,8 @@ namespace MML_ParticleVisualizer3D
       ModelVisual3D myModelVisual3D = new ModelVisual3D { Content = _myModel3DGroup };
       myViewport3D.Children.Add(myModelVisual3D);
 
-      // Draw bounding box or coordinate system
-      if (_showBoundingBox)
-      {
-        DrawBoundingBox();
-      }
-      else
-      {
-        Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
-      }
+      // Draw based on display mode
+      DrawDisplayElements();
 
       // Set initial positions
       SetBallsPositionToStep(0);
@@ -210,39 +217,148 @@ namespace MML_ParticleVisualizer3D
       ModelVisual3D myModelVisual3D = new ModelVisual3D { Content = _myModel3DGroup };
       myViewport3D.Children.Add(myModelVisual3D);
 
-      // Draw bounding box or coordinate system
-      if (_showBoundingBox)
-      {
-        DrawBoundingBox();
-      }
-      else
-      {
-        Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
-      }
+      // Draw based on display mode
+      DrawDisplayElements();
 
       // Restore current position
       SetBallsPositionToStep(_currStep);
     }
 
     /// <summary>
-    /// Draws the semi-transparent bounding box planes.
+    /// Draws display elements based on current display mode.
+    /// </summary>
+    private void DrawDisplayElements()
+    {
+      switch (_displayMode)
+      {
+        case DisplayMode.None:
+          Utils.DrawCoordSystem(_myModel3DGroup, _lineWidth * 3, _axisLen);
+          break;
+        case DisplayMode.BoundingBox:
+          DrawBoundingBox();
+          break;
+        case DisplayMode.CoordinatePlanes:
+          DrawCoordinatePlanes();
+          break;
+      }
+    }
+
+    /// <summary>
+    /// Draws semi-transparent bounding box planes in the positive quadrant only.
     /// </summary>
     private void DrawBoundingBox()
     {
-      var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = 0.3 });
+      double planeThickness = 0.5;
+      double opacity = 0.2;
 
-      MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, 0.02);
-      GeometryModel3D xyPlaneModel = new GeometryModel3D(xyPlaneMesh, planeMaterial);
+      var planeMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightSkyBlue) { Opacity = opacity });
 
-      MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(_boxLen / 2, 0, _boxLen / 2), _boxLen, 0.02, _boxLen);
-      GeometryModel3D xzPlaneModel = new GeometryModel3D(xzPlaneMesh, planeMaterial);
+      // XY plane at Z=0 (floor)
+      MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(_boxLen / 2, _boxLen / 2, 0), _boxLen, _boxLen, planeThickness);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xyPlaneMesh, planeMaterial));
 
-      MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(new Point3D(0, _boxLen / 2, _boxLen / 2), 0.02, _boxLen, _boxLen);
-      GeometryModel3D yzPlaneModel = new GeometryModel3D(yzPlaneMesh, planeMaterial);
+      // XZ plane at Y=0 (back wall)
+      MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(_boxLen / 2, 0, _boxLen / 2), _boxLen, planeThickness, _boxLen);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xzPlaneMesh, planeMaterial));
 
-      _myModel3DGroup.Children.Add(xyPlaneModel);
-      _myModel3DGroup.Children.Add(xzPlaneModel);
-      _myModel3DGroup.Children.Add(yzPlaneModel);
+      // YZ plane at X=0 (left wall)
+      MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(0, _boxLen / 2, _boxLen / 2), planeThickness, _boxLen, _boxLen);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(yzPlaneMesh, planeMaterial));
+
+      // Draw coordinate axes
+      DrawCoordinateAxes(false);
+    }
+
+    /// <summary>
+    /// Draws semi-transparent coordinate planes (XY, XZ, YZ) extending in both directions from origin.
+    /// </summary>
+    private void DrawCoordinatePlanes()
+    {
+      double planeSize = _boxLen * 2;  // Extend in both directions
+      double planeThickness = 0.5;
+      double opacity = 0.12;
+
+      // XY plane (Z=0) - Blue tint - centered at origin
+      var xyMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue) { Opacity = opacity });
+      MeshGeometry3D xyPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(0, 0, 0), planeSize, planeSize, planeThickness);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xyPlaneMesh, xyMaterial));
+
+      // XZ plane (Y=0) - Green tint - centered at origin
+      var xzMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightGreen) { Opacity = opacity });
+      MeshGeometry3D xzPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(0, 0, 0), planeSize, planeThickness, planeSize);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xzPlaneMesh, xzMaterial));
+
+      // YZ plane (X=0) - Red/Coral tint - centered at origin
+      var yzMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.LightCoral) { Opacity = opacity });
+      MeshGeometry3D yzPlaneMesh = Geometries.CreateParallelepiped(
+        new Point3D(0, 0, 0), planeThickness, planeSize, planeSize);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(yzPlaneMesh, yzMaterial));
+
+      // Draw coordinate axes extending in both directions
+      DrawCoordinateAxes(true);
+    }
+
+    /// <summary>
+    /// Draws the X, Y, Z coordinate axes with distinct colors.
+    /// </summary>
+    /// <param name="extendBothDirections">If true, axes extend in both positive and negative directions.</param>
+    private void DrawCoordinateAxes(bool extendBothDirections)
+    {
+      double axisLength = _boxLen * 1.1;
+      double axisThickness = 2.0;
+      double tipRadius = 8.0;
+
+      double startOffset = extendBothDirections ? -axisLength : 0;
+      double totalLength = extendBothDirections ? axisLength * 2 : axisLength;
+      double centerOffset = extendBothDirections ? 0 : axisLength / 2;
+
+      // X axis - Red
+      var xMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+      MeshGeometry3D xAxis = Geometries.CreateParallelepiped(
+        new Point3D(centerOffset, 0, 0), totalLength, axisThickness, axisThickness);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xAxis, xMaterial));
+
+      // Y axis - Green
+      var yMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+      MeshGeometry3D yAxis = Geometries.CreateParallelepiped(
+        new Point3D(0, centerOffset, 0), axisThickness, totalLength, axisThickness);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(yAxis, yMaterial));
+
+      // Z axis - Blue
+      var zMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
+      MeshGeometry3D zAxis = Geometries.CreateParallelepiped(
+        new Point3D(0, 0, centerOffset), axisThickness, axisThickness, totalLength);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(zAxis, zMaterial));
+
+      // Add spheres at positive axis endpoints as arrow tips
+      MeshGeometry3D xTip = Geometries.CreateSphere(new Point3D(axisLength, 0, 0), tipRadius);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(xTip, xMaterial));
+
+      MeshGeometry3D yTip = Geometries.CreateSphere(new Point3D(0, axisLength, 0), tipRadius);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(yTip, yMaterial));
+
+      MeshGeometry3D zTip = Geometries.CreateSphere(new Point3D(0, 0, axisLength), tipRadius);
+      _myModel3DGroup.Children.Add(new GeometryModel3D(zTip, zMaterial));
+
+      // Add smaller spheres at negative endpoints if extending both directions
+      if (extendBothDirections)
+      {
+        double negativeTipRadius = tipRadius * 0.6;
+
+        MeshGeometry3D xNegTip = Geometries.CreateSphere(new Point3D(-axisLength, 0, 0), negativeTipRadius);
+        _myModel3DGroup.Children.Add(new GeometryModel3D(xNegTip, xMaterial));
+
+        MeshGeometry3D yNegTip = Geometries.CreateSphere(new Point3D(0, -axisLength, 0), negativeTipRadius);
+        _myModel3DGroup.Children.Add(new GeometryModel3D(yNegTip, yMaterial));
+
+        MeshGeometry3D zNegTip = Geometries.CreateSphere(new Point3D(0, 0, -axisLength), negativeTipRadius);
+        _myModel3DGroup.Children.Add(new GeometryModel3D(zNegTip, zMaterial));
+      }
     }
 
     /// <summary>
@@ -466,12 +582,19 @@ namespace MML_ParticleVisualizer3D
     }
 
     /// <summary>
-    /// Handles the Show Bounding Box checkbox click.
+    /// Handles the display mode radio button click.
     /// </summary>
-    private void chkShowBox_Click(object sender, RoutedEventArgs e)
+    private void rbDisplayMode_Click(object sender, RoutedEventArgs e)
     {
-      _showBoundingBox = chkShowBox.IsChecked ?? true;
-      RedrawScene();
+      if (rbDisplayNone.IsChecked == true)
+        _displayMode = DisplayMode.None;
+      else if (rbDisplayBoundingBox.IsChecked == true)
+        _displayMode = DisplayMode.BoundingBox;
+      else if (rbDisplayCoordPlanes.IsChecked == true)
+        _displayMode = DisplayMode.CoordinatePlanes;
+
+      if (_sceneInitialized)
+        RedrawScene();
     }
 
     #endregion

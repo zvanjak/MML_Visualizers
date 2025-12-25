@@ -96,8 +96,17 @@
         <StackPanel Margin="5">
           <Button x:Name="btnLookAtCenter" Content="Look at center" Margin="0,3" Click="btnLookAtCenter_Click"/>
           <Button x:Name="btnResetCamera" Content="Reset camera" Margin="0,3" Click="btnResetCamera_Click"/>
-          <CheckBox x:Name="chkShowBox" Content="Show bounding box" Margin="0,5" 
-                    IsChecked="True" Click="chkShowBox_Click"/>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Display mode" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <RadioButton x:Name="rbDisplayNone" Content="None (axes only)" Margin="0,3" 
+                       GroupName="DisplayMode" Click="rbDisplayMode_Click"/>
+          <RadioButton x:Name="rbDisplayBoundingBox" Content="Bounding box" Margin="0,3" 
+                       GroupName="DisplayMode" IsChecked="True" Click="rbDisplayMode_Click"/>
+          <RadioButton x:Name="rbDisplayCoordPlanes" Content="Coordinate planes" Margin="0,3" 
+                       GroupName="DisplayMode" Click="rbDisplayMode_Click"/>
         </StackPanel>
       </GroupBox>
       
