@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MML_ParametricCurve3D_Visualizer"
         xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         mc:Ignorable="d"
-        Title="Parametric curve visualizer" Height="800" Width="1200" 
+        Title="Parametric curve 3D visualizer" Height="800" Width="1200" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" 
         MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown">
   
@@ -17,11 +17,10 @@
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="200" />
+      <ColumnDefinition Width="220" />
     </Grid.ColumnDefinitions>
 
-    <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="25" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="0" BorderBrush="{x:Null}"/>
-    <Button x:Name="cmdAnimate" Grid.Row="1" Grid.Column="1" Content="Animate" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Click="cmdAnimate_Click"/>
+    <TextBox x:Name="txtTitle" Grid.Column="0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="352" HorizontalAlignment="Center" FontSize="22" FontWeight="Bold" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="0" BorderBrush="{x:Null}" IsReadOnly="True"/>
 
     <Viewport3D Name="myViewport3D"
                 Grid.Row="1"
@@ -31,12 +30,62 @@
                 VerticalAlignment="Stretch">
     </Viewport3D>
     
-    <Button x:Name="btnIncWidth" Grid.Column="1" Content="  +  " HorizontalAlignment="Left" Margin="99,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnIncWidth_Click"/>
-    <Button x:Name="btnDecWidth" Grid.Column="1" Content="  -  " HorizontalAlignment="Left" Margin="145,94,0,0" Grid.Row="1" VerticalAlignment="Top" Click="btnDecWidth_Click"/>
-    <Label Grid.Column="1" Content="Line width" HorizontalAlignment="Left" Margin="20,91,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-
-    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,150,20,20" />
-
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,10,10">
+      <GroupBox Header="Graph title" Margin="0,0,0,10">
+        <TextBox x:Name="txtEditableTitle" TextWrapping="Wrap" AcceptsReturn="True" 
+                 Height="50" Margin="5" VerticalScrollBarVisibility="Auto"
+                 TextChanged="OnTitleTextChanged"/>
+      </GroupBox>
+      
+      <GroupBox Header="Legend" Margin="0,0,0,10">
+        <vizbase:LegendWidget x:Name="LegendWidgetControl" Margin="5"/>
+      </GroupBox>
+      
+      <GroupBox Header="Controls" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <Button x:Name="cmdAnimate" Content="Animate" HorizontalAlignment="Stretch" Margin="0,5" Click="cmdAnimate_Click"/>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Line width:" Grid.Column="0" Padding="0,0,5,0" VerticalAlignment="Center"/>
+            <Button x:Name="btnDecWidth" Grid.Column="1" Content="  −  " Margin="0,0,5,0" Click="btnDecWidth_Click"/>
+            <Button x:Name="btnIncWidth" Grid.Column="2" Content="  +  " Click="btnIncWidth_Click"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Curve info">
+        <StackPanel Margin="5">
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Num points:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtNumPoints" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="T min:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtTMin" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="T max:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtTMax" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+    </StackPanel>
   </Grid>
 
 </Window>
