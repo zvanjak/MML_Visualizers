@@ -8,36 +8,89 @@ using WPF3DHelperLib;
 namespace MML_ParametricCurve2D_Visualizer
 {
   /// <summary>
-  /// Configuration for coordinate system rendering.
+  /// Configuration class for coordinate system visual styling.
   /// </summary>
+  /// <remarks>
+  /// This class provides comprehensive control over the appearance of the coordinate system,
+  /// including colors, line thicknesses, fonts, and visibility options for various elements.
+  /// </remarks>
   public class CoordSystemStyle
   {
+    /// <summary>Gets or sets the brush used for the main axis lines.</summary>
     public Brush AxisColor { get; set; } = Brushes.Black;
+
+    /// <summary>Gets or sets the brush used for grid lines.</summary>
     public Brush GridColor { get; set; } = Brushes.LightGray;
+
+    /// <summary>Gets or sets the brush used for tick marks.</summary>
     public Brush TickColor { get; set; } = Brushes.Black;
+
+    /// <summary>Gets or sets the brush used for axis labels.</summary>
     public Brush LabelColor { get; set; } = Brushes.Black;
 
+    /// <summary>Gets or sets the thickness of axis lines in pixels.</summary>
     public double AxisThickness { get; set; } = 1.5;
+
+    /// <summary>Gets or sets the thickness of grid lines in pixels.</summary>
     public double GridThickness { get; set; } = 0.5;
+
+    /// <summary>Gets or sets the length of tick marks in pixels.</summary>
     public double TickLength { get; set; } = 5;
 
+    /// <summary>Gets or sets the font size for axis labels.</summary>
     public double LabelFontSize { get; set; } = 11;
+
+    /// <summary>Gets or sets the font family for axis labels.</summary>
     public FontFamily LabelFontFamily { get; set; } = new FontFamily("Segoe UI");
 
+    /// <summary>Gets or sets whether to display the grid lines.</summary>
     public bool ShowGrid { get; set; } = true;
+
+    /// <summary>Gets or sets whether to display numerical labels on the axes.</summary>
     public bool ShowAxisLabels { get; set; } = true;
 
+    /// <summary>Gets or sets the horizontal offset for Y-axis labels from the axis.</summary>
     public double LabelOffsetX { get; set; } = 5;
+
+    /// <summary>Gets or sets the vertical offset for X-axis labels from the axis.</summary>
     public double LabelOffsetY { get; set; } = 5;
   }
 
   /// <summary>
-  /// Renders coordinate system with properly rounded axis ticks.
+  /// Renders a complete coordinate system with axes, grid lines, ticks, and labels.
   /// </summary>
+  /// <remarks>
+  /// <para>
+  /// This class is responsible for drawing all the visual elements of a 2D coordinate system:
+  /// </para>
+  /// <list type="bullet">
+  ///   <item><description>Grid lines at calculated tick positions</description></item>
+  ///   <item><description>X and Y axes (at y=0 and x=0, or at edges if 0 is out of range)</description></item>
+  ///   <item><description>Tick marks at nice rounded intervals</description></item>
+  ///   <item><description>Numerical labels with appropriate formatting</description></item>
+  /// </list>
+  /// <para>
+  /// The renderer works with the <see cref="AxisTickCalculator"/> to determine optimal
+  /// tick positions and the <see cref="CoordTransform"/> to convert between coordinate systems.
+  /// </para>
+  /// </remarks>
   public static class CoordSystemRenderer
   {
     private static readonly CoordSystemStyle DefaultStyle = new CoordSystemStyle();
 
+    /// <summary>
+    /// Draws a complete coordinate system on the specified canvas.
+    /// </summary>
+    /// <param name="canvas">The WPF canvas to draw on.</param>
+    /// <param name="coordParams">The coordinate system transformation parameters.</param>
+    /// <param name="dataXMin">The minimum X value from the data.</param>
+    /// <param name="dataXMax">The maximum X value from the data.</param>
+    /// <param name="dataYMin">The minimum Y value from the data.</param>
+    /// <param name="dataYMax">The maximum Y value from the data.</param>
+    /// <param name="style">Optional styling configuration. Uses default if null.</param>
+    /// <remarks>
+    /// The coordinate system is drawn in layers: grid (back), axes (middle), ticks and labels (front).
+    /// </remarks>
     public static void Draw(Canvas canvas, CoordSystemParams coordParams,
       double dataXMin, double dataXMax, double dataYMin, double dataYMax,
       CoordSystemStyle? style = null)
@@ -57,6 +110,9 @@ namespace MML_ParametricCurve2D_Visualizer
       DrawYAxisTicks(canvas, coordParams, xTickInfo, yTickInfo, style);
     }
 
+    /// <summary>
+    /// Draws vertical and horizontal grid lines at tick positions.
+    /// </summary>
     private static void DrawGrid(Canvas canvas, CoordSystemParams coordParams,
       AxisTickInfo xTicks, AxisTickInfo yTicks, CoordSystemStyle style)
     {
@@ -91,6 +147,13 @@ namespace MML_ParametricCurve2D_Visualizer
       }
     }
 
+    /// <summary>
+    /// Draws the X and Y axes.
+    /// </summary>
+    /// <remarks>
+    /// Axes are drawn at y=0 and x=0 if these values are within the data range.
+    /// Otherwise, they are drawn at the edge of the visible area.
+    /// </remarks>
     private static void DrawAxes(Canvas canvas, CoordSystemParams coordParams,
       AxisTickInfo xTicks, AxisTickInfo yTicks, CoordSystemStyle style)
     {
@@ -127,6 +190,9 @@ namespace MML_ParametricCurve2D_Visualizer
       canvas.Children.Add(yAxis);
     }
 
+    /// <summary>
+    /// Draws tick marks and labels along the X axis.
+    /// </summary>
     private static void DrawXAxisTicks(Canvas canvas, CoordSystemParams coordParams,
       AxisTickInfo xTicks, AxisTickInfo yTicks, CoordSystemStyle style)
     {
@@ -173,6 +239,9 @@ namespace MML_ParametricCurve2D_Visualizer
       }
     }
 
+    /// <summary>
+    /// Draws tick marks and labels along the Y axis.
+    /// </summary>
     private static void DrawYAxisTicks(Canvas canvas, CoordSystemParams coordParams,
       AxisTickInfo xTicks, AxisTickInfo yTicks, CoordSystemStyle style)
     {
@@ -219,6 +288,31 @@ namespace MML_ParametricCurve2D_Visualizer
       }
     }
 
+    /// <summary>
+    /// Updates coordinate system parameters with nice rounded bounds and calculates scales.
+    /// </summary>
+    /// <param name="coordParams">The parameters object to update.</param>
+    /// <param name="dataXMin">The minimum X value from the data.</param>
+    /// <param name="dataXMax">The maximum X value from the data.</param>
+    /// <param name="dataYMin">The minimum Y value from the data.</param>
+    /// <param name="dataYMax">The maximum Y value from the data.</param>
+    /// <param name="preserveAspectRatio">If true, uses uniform scaling for both axes.</param>
+    /// <remarks>
+    /// <para>
+    /// This method performs several calculations:
+    /// </para>
+    /// <list type="number">
+    ///   <item><description>Computes nice rounded bounds using <see cref="AxisTickCalculator"/></description></item>
+    ///   <item><description>Calculates X and Y scale factors to fit the canvas (with 10% margin)</description></item>
+    ///   <item><description>Computes center offsets to center the visualization</description></item>
+    /// </list>
+    /// <para>
+    /// When <paramref name="preserveAspectRatio"/> is true, both axes use the same scale factor
+    /// (the smaller of the two), ensuring that circles appear as circles and geometric shapes
+    /// maintain their true proportions. This is particularly important for parametric curves
+    /// like spirals, Lissajous figures, and other curves where shape matters.
+    /// </para>
+    /// </remarks>
     public static void UpdateParamsWithNiceBounds(CoordSystemParams coordParams,
       double dataXMin, double dataXMax, double dataYMin, double dataYMax,
       bool preserveAspectRatio = false)
