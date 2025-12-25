@@ -28,7 +28,7 @@
         <vizbase:LegendWidget x:Name="LegendWidgetControl" Margin="5"/>
       </GroupBox>
       
-      <GroupBox Header="Info">
+      <GroupBox Header="Graph settings">
         <StackPanel Margin="5">
           <Grid Margin="0,5">
             <Grid.ColumnDefinitions>

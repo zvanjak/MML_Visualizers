@@ -24,7 +24,11 @@ namespace MML_RealFunctionVisualizer
   {
     private readonly List<ILoadedFunction> _loadedFunctions = new List<ILoadedFunction>();
     private readonly CoordSystemParams _coordSystemParams = new CoordSystemParams();
+    private readonly CoordSystemStyle _coordSystemStyle = new CoordSystemStyle();
     private string _title = "";
+
+    // Store original data bounds (before rounding)
+    private double _dataXMin, _dataXMax, _dataYMin, _dataYMax;
 
     private readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
@@ -54,48 +58,64 @@ namespace MML_RealFunctionVisualizer
     {
       if (_loadedFunctions.Count == 0) return;
 
+      CalculateDataBounds();
       InitializeCoordSysParams();
       UpdateLegend();
-
-      txtXMin.Text = _coordSystemParams._xMin.ToString();
-      txtXMax.Text = _coordSystemParams._xMax.ToString();
-      txtYMin.Text = _coordSystemParams._yMin.ToString();
-      txtYMax.Text = _coordSystemParams._yMax.ToString();
-      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+      UpdateUITextBoxes();
       
       txtTitle.Text = _title;
       
       Redraw();
     }
 
+    private void CalculateDataBounds()
+    {
+      if (_loadedFunctions.Count == 0) return;
+
+      _dataXMin = _loadedFunctions[0].GetMinX();
+      _dataXMax = _loadedFunctions[0].GetMaxX();
+      _dataYMin = _loadedFunctions[0].GetMinY();
+      _dataYMax = _loadedFunctions[0].GetMaxY();
+
+      for (int i = 1; i < _loadedFunctions.Count; i++)
+      {
+        _dataXMin = Math.Min(_dataXMin, _loadedFunctions[i].GetMinX());
+        _dataXMax = Math.Max(_dataXMax, _loadedFunctions[i].GetMaxX());
+        _dataYMin = Math.Min(_dataYMin, _loadedFunctions[i].GetMinY());
+        _dataYMax = Math.Max(_dataYMax, _loadedFunctions[i].GetMaxY());
+      }
+
+      _coordSystemParams._numPoints = _loadedFunctions[0].GetNumPoints();
+    }
+
     private void InitializeCoordSysParams()
     {
       if (_loadedFunctions.Count == 0) return;
 
-      _coordSystemParams._xMin = _loadedFunctions[0].GetMinX();
-      _coordSystemParams._xMax = _loadedFunctions[0].GetMaxX();
-      _coordSystemParams._yMin = _loadedFunctions[0].GetMinY();
-      _coordSystemParams._yMax = _loadedFunctions[0].GetMaxY();
-      _coordSystemParams._numPoints = _loadedFunctions[0].GetNumPoints();
-
-      for (int i = 1; i < _loadedFunctions.Count; i++)
-      {
-        _coordSystemParams._xMin = Math.Min(_coordSystemParams._xMin, _loadedFunctions[i].GetMinX());
-        _coordSystemParams._xMax = Math.Max(_coordSystemParams._xMax, _loadedFunctions[i].GetMaxX());
-        _coordSystemParams._yMin = Math.Min(_coordSystemParams._yMin, _loadedFunctions[i].GetMinY());
-        _coordSystemParams._yMax = Math.Max(_coordSystemParams._yMax, _loadedFunctions[i].GetMaxY());
-      }
-
       _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
       _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
 
-      double midPoint = (_coordSystemParams._xMin + _coordSystemParams._xMax) / 2;
-      double midPointY = (_coordSystemParams._yMin + _coordSystemParams._yMax) / 2;
+      // Use nice rounded bounds
+      CoordSystemRenderer.UpdateParamsWithNiceBounds(
+        _coordSystemParams, _dataXMin, _dataXMax, _dataYMin, _dataYMax);
+    }
 
-      _coordSystemParams._scaleX = _coordSystemParams._windowWidth / (_coordSystemParams._xMax - _coordSystemParams._xMin) * 0.9;
-      _coordSystemParams._scaleY = _coordSystemParams._windowHeight / (_coordSystemParams._yMax - _coordSystemParams._yMin) * 0.9;
-      _coordSystemParams._centerX = _coordSystemParams._windowWidth / 2 - midPoint * _coordSystemParams._scaleX;
-      _coordSystemParams._centerY = _coordSystemParams._windowHeight / 2 + midPointY * _coordSystemParams._scaleY;
+    private void UpdateUITextBoxes()
+    {
+      txtXMin.Text = FormatBoundValue(_coordSystemParams._xMin);
+      txtXMax.Text = FormatBoundValue(_coordSystemParams._xMax);
+      txtYMin.Text = FormatBoundValue(_coordSystemParams._yMin);
+      txtYMax.Text = FormatBoundValue(_coordSystemParams._yMax);
+      txtNumPoints.Text = _coordSystemParams._numPoints.ToString();
+    }
+
+    private string FormatBoundValue(double value)
+    {
+      if (Math.Abs(value) >= 10000 || (Math.Abs(value) > 0 && Math.Abs(value) < 0.01))
+        return value.ToString("E2");
+      if (Math.Abs(value - Math.Round(value)) < 1e-10)
+        return ((long)Math.Round(value)).ToString();
+      return value.ToString("G6");
     }
 
     private void Redraw()
@@ -103,7 +123,10 @@ namespace MML_RealFunctionVisualizer
       InitializeCoordSysParams();
 
       mainCanvas.Children.Clear();
-      Utils.DrawCoordSystem(mainCanvas, _coordSystemParams, _coordSystemParams._xMin, _coordSystemParams._xMax, _coordSystemParams._yMin, _coordSystemParams._yMax);
+      
+      // Use the new coordinate system renderer with nice ticks
+      CoordSystemRenderer.Draw(mainCanvas, _coordSystemParams, 
+        _dataXMin, _dataXMax, _dataYMin, _dataYMax, _coordSystemStyle);
 
       foreach (var function in _loadedFunctions)
       {
