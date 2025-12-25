@@ -30,6 +30,8 @@
       
       <GroupBox Header="Graph settings">
         <StackPanel Margin="5">
+          <CheckBox x:Name="chkPreserveAspectRatio" Content="Preserve aspect ratio" 
+                    Margin="0,5" Checked="OnPreserveAspectRatioChanged" Unchecked="OnPreserveAspectRatioChanged"/>
           <Grid Margin="0,5">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="70"/>
@@ -67,7 +69,7 @@
               <ColumnDefinition Width="70"/>
               <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Num points:" Grid.Column="0"/>
+            <Label Content="Num pnts:" Grid.Column="0"/>
             <TextBox x:Name="txtNumPoints" Grid.Column="1" TextWrapping="Wrap"/>
           </Grid>
         </StackPanel>

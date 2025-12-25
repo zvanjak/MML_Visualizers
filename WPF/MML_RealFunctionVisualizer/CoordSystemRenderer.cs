@@ -259,7 +259,8 @@ namespace MML_RealFunctionVisualizer
     /// Updates coordinate system parameters to use nice rounded bounds.
     /// </summary>
     public static void UpdateParamsWithNiceBounds(CoordSystemParams coordParams, 
-      double dataXMin, double dataXMax, double dataYMin, double dataYMax)
+      double dataXMin, double dataXMax, double dataYMin, double dataYMax,
+      bool preserveAspectRatio = false)
     {
       var (xTicks, yTicks) = AxisTickCalculator.CalculateAxisTicks(
         dataXMin, dataXMax, dataYMin, dataYMax);
@@ -270,12 +271,37 @@ namespace MML_RealFunctionVisualizer
       coordParams._yMin = yTicks.Min;
       coordParams._yMax = yTicks.Max;
 
-      // Recalculate scale and center
+      // Calculate data ranges
+      double xRange = coordParams._xMax - coordParams._xMin;
+      double yRange = coordParams._yMax - coordParams._yMin;
+
+      // Calculate midpoints
       double midPointX = (coordParams._xMin + coordParams._xMax) / 2;
       double midPointY = (coordParams._yMin + coordParams._yMax) / 2;
 
-      coordParams._scaleX = coordParams._windowWidth / (coordParams._xMax - coordParams._xMin) * 0.9;
-      coordParams._scaleY = coordParams._windowHeight / (coordParams._yMax - coordParams._yMin) * 0.9;
+      // Available drawing area (with 10% margin)
+      double availableWidth = coordParams._windowWidth * 0.9;
+      double availableHeight = coordParams._windowHeight * 0.9;
+
+      if (preserveAspectRatio)
+      {
+        // Calculate scale that preserves aspect ratio
+        // Use the same scale for both axes (choose the smaller one to fit both)
+        double scaleX = availableWidth / xRange;
+        double scaleY = availableHeight / yRange;
+        double uniformScale = Math.Min(scaleX, scaleY);
+
+        coordParams._scaleX = uniformScale;
+        coordParams._scaleY = uniformScale;
+      }
+      else
+      {
+        // Independent scaling for X and Y
+        coordParams._scaleX = availableWidth / xRange;
+        coordParams._scaleY = availableHeight / yRange;
+      }
+
+      // Calculate center positions to center the graph in the canvas
       coordParams._centerX = coordParams._windowWidth / 2 - midPointX * coordParams._scaleX;
       coordParams._centerY = coordParams._windowHeight / 2 + midPointY * coordParams._scaleY;
     }

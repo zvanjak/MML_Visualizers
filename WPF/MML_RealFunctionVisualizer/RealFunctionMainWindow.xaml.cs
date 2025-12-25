@@ -30,6 +30,9 @@ namespace MML_RealFunctionVisualizer
     // Store original data bounds (before rounding)
     private double _dataXMin, _dataXMax, _dataYMin, _dataYMax;
 
+    // Aspect ratio setting
+    private bool _preserveAspectRatio = false;
+
     private readonly List<SolidColorBrush> _brushes = Defaults.GetBrushList();
 
     public MainWindow()
@@ -95,9 +98,9 @@ namespace MML_RealFunctionVisualizer
       _coordSystemParams._windowWidth = mainCanvas.ActualWidth;
       _coordSystemParams._windowHeight = mainCanvas.ActualHeight;
 
-      // Use nice rounded bounds
+      // Use nice rounded bounds with optional aspect ratio preservation
       CoordSystemRenderer.UpdateParamsWithNiceBounds(
-        _coordSystemParams, _dataXMin, _dataXMax, _dataYMin, _dataYMax);
+        _coordSystemParams, _dataXMin, _dataXMax, _dataYMin, _dataYMax, _preserveAspectRatio);
     }
 
     private void UpdateUITextBoxes()
@@ -158,6 +161,12 @@ namespace MML_RealFunctionVisualizer
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       mainCanvas.Children.Clear();
+      Redraw();
+    }
+
+    private void OnPreserveAspectRatioChanged(object sender, RoutedEventArgs e)
+    {
+      _preserveAspectRatio = chkPreserveAspectRatio.IsChecked ?? false;
       Redraw();
     }
 
