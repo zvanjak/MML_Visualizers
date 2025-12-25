@@ -318,6 +318,7 @@ namespace MML_VectorField2D_Visualizer
 
     /// <summary>
     /// Draws a single vector arrow with proper scaling.
+    /// The arrow is centered at the data point, not starting from it.
     /// </summary>
     private void DrawArrow(Vector2Repr vector)
     {
@@ -325,10 +326,6 @@ namespace MML_VectorField2D_Visualizer
 
       // Skip zero vectors
       if (magnitude < 1e-10) return;
-
-      // Calculate screen coordinates for start point
-      double x1 = _coordSystemParams._centerX + vector.Pos.X * _coordSystemParams._scaleX;
-      double y1 = _coordSystemParams._centerY - vector.Pos.Y * _coordSystemParams._scaleY;
 
       // Calculate vector components
       double vx = vector.Vec.X;
@@ -344,10 +341,19 @@ namespace MML_VectorField2D_Visualizer
       // Apply the combined scale: optimal scale * user scale
       double effectiveScale = _optimalVectorScale * _magnitudeScale;
 
-      // Calculate end point in world coordinates, then convert to screen
-      double endX = vector.Pos.X + effectiveScale * vx;
-      double endY = vector.Pos.Y + effectiveScale * vy;
+      // Calculate start and end points in world coordinates
+      // Arrow is CENTERED at the data point, so we go half back and half forward
+      double halfVx = effectiveScale * vx / 2;
+      double halfVy = effectiveScale * vy / 2;
 
+      double startX = vector.Pos.X - halfVx;
+      double startY = vector.Pos.Y - halfVy;
+      double endX = vector.Pos.X + halfVx;
+      double endY = vector.Pos.Y + halfVy;
+
+      // Convert to screen coordinates
+      double x1 = _coordSystemParams._centerX + startX * _coordSystemParams._scaleX;
+      double y1 = _coordSystemParams._centerY - startY * _coordSystemParams._scaleY;
       double x2 = _coordSystemParams._centerX + endX * _coordSystemParams._scaleX;
       double y2 = _coordSystemParams._centerY - endY * _coordSystemParams._scaleY;
 
