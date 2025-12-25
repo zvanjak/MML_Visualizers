@@ -5,7 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MML_ScalarFunction2Visualizer"
         mc:Ignorable="d"
-        Title="Scalar function 2D visualizer" Height="800" Width="1200" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel">
+        Title="Scalar function 2D visualizer" Height="800" Width="1200" 
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" 
+        MouseMove="Window_MouseMove" MouseRightButtonDown="Window_MouseRightButtonDown" 
+        MouseRightButtonUp="Window_MouseRightButtonUp" MouseWheel="Window_MouseWheel"
+        KeyDown="Window_KeyDown">
   <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="50"/>
@@ -13,15 +17,147 @@
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="200" />
+      <ColumnDefinition Width="220" />
     </Grid.ColumnDefinitions>
 
-    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Width="400" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}"/>
+    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" 
+             Text="Title" VerticalAlignment="Center" Width="500" FontSize="22" FontWeight="Bold" 
+             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}" IsReadOnly="True"/>
 
     <Viewbox Grid.Row="1" Grid.Column="0">
-      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0" >
+      <Viewport3D Name="myViewport3D" ClipToBounds="True" Width="1600" Height="950" Canvas.Left="0" Canvas.Top="0">
       </Viewport3D>
     </Viewbox>
-    <CheckBox x:Name="checkShowSurfacePoints" Grid.Column="1" Content="Show surface points" HorizontalAlignment="Center" Margin="0,24,0,0" Grid.Row="1" VerticalAlignment="Top" Click="checkShowSurfacePoints_Click"/>
+    
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,10,10">
+      <GroupBox Header="Graph title" Margin="0,0,0,10">
+        <TextBox x:Name="txtEditableTitle" TextWrapping="Wrap" AcceptsReturn="True" 
+                 Height="50" Margin="5" VerticalScrollBarVisibility="Auto"
+                 TextChanged="OnTitleTextChanged"/>
+      </GroupBox>
+      
+      <GroupBox Header="Display options" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <CheckBox x:Name="chkShowSurfacePoints" Content="Show surface points" 
+                    Margin="0,5" Click="chkShowSurfacePoints_Click"/>
+          <Grid Margin="0,10,0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Surface color:" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="cmbSurfaceColor" Grid.Column="1" SelectionChanged="cmbSurfaceColor_SelectionChanged">
+              <ComboBoxItem Content="Red" IsSelected="True"/>
+              <ComboBoxItem Content="Blue"/>
+              <ComboBoxItem Content="Green"/>
+              <ComboBoxItem Content="Orange"/>
+              <ComboBoxItem Content="Purple"/>
+              <ComboBoxItem Content="Cyan"/>
+              <ComboBoxItem Content="Yellow"/>
+              <ComboBoxItem Content="Gray"/>
+            </ComboBox>
+          </Grid>
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Points color:" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="cmbPointsColor" Grid.Column="1" SelectionChanged="cmbPointsColor_SelectionChanged">
+              <ComboBoxItem Content="Blue" IsSelected="True"/>
+              <ComboBoxItem Content="Red"/>
+              <ComboBoxItem Content="Green"/>
+              <ComboBoxItem Content="Orange"/>
+              <ComboBoxItem Content="Purple"/>
+              <ComboBoxItem Content="Cyan"/>
+              <ComboBoxItem Content="Black"/>
+              <ComboBoxItem Content="White"/>
+            </ComboBox>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Graph bounds" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="X min:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtXMin" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="X max:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtXMax" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Y min:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtYMin" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Y max:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtYMax" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Z min:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtZMin" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="55"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Z max:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtZMax" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Grid info">
+        <StackPanel Margin="5">
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Points X:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtNumPointsX" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Points Y:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtNumPointsY" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Total:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtTotalPoints" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+    </StackPanel>
   </Grid>
 </Window>
