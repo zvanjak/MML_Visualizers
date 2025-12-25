@@ -7,33 +7,119 @@
         xmlns:vizbase="clr-namespace:MML_VisualizersBase;assembly=MML_VisualizersBase"
         mc:Ignorable="d"
         Title="Particle visualizer 2D" Height="1055" Width="1300">
-  <Grid Margin="0,0,0,0" >
+  
+  <Grid Background="White">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="50"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="200" />
+      <ColumnDefinition Width="220" />
     </Grid.ColumnDefinitions>
 
-    <Canvas Name="MyCanvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Width="1000" Height="1000" Margin="0,4,0,0" VerticalAlignment="Top"  />
+    <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="0" Text="Particle Simulation 2D" 
+             HorizontalAlignment="Center" VerticalAlignment="Center" Width="500" 
+             FontSize="22" FontWeight="Bold" HorizontalContentAlignment="Center" 
+             VerticalContentAlignment="Center" BorderBrush="{x:Null}" IsReadOnly="True"/>
 
-    <Button x:Name="btnStartSim" Content="Start" Grid.Column="1" HorizontalAlignment="Left" Margin="16,16,0,0" Click="btnStartSim_Click" VerticalAlignment="Top" Width="50"/>
-    <Button x:Name="btnPauseSim" Content="Pause" Grid.Column="1" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="50" Click="btnPauseSim_Click"/>
-    <Button x:Name="btnRestartSim" Content="Restart" Grid.Column="1" HorizontalAlignment="Left" Margin="132,16,0,0" VerticalAlignment="Top" Width="50" Click="btnRestartSim_Click"/>
+    <Canvas Name="MyCanvas" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" 
+            Width="1000" Height="1000" Margin="10,10,0,0" VerticalAlignment="Top"/>
 
-    <Label Content="Num. of steps:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="14,131,0,0" VerticalAlignment="Top"/>
-    <TextBox x:Name="txtNumSteps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,135,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="60"/>
-
-    <Label Content="Refresh every " Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="16,203,0,0" VerticalAlignment="Top"/>
-    <TextBox x:Name="txtRefreshEvery" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,211,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="33"/>
-    <Label Content="steps" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="153,207,0,0" VerticalAlignment="Top"/>
-
-    <Label Content="Step delay" Grid.Column="1" HorizontalAlignment="Left" Margin="16,264,0,0" VerticalAlignment="Top"/>
-    <TextBox x:Name="txtDT" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="116,268,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="33"/>
-    <Label Content="ms"  Grid.Column="1" HorizontalAlignment="Left" Margin="154,264,0,0" VerticalAlignment="Top"/>
-
-    <Label Grid.Column="1" Content="Curr.step" HorizontalAlignment="Left" Margin="16,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.158,-0.191"/>
-    <TextBox x:Name="txtCurrStep" Grid.Column="1" HorizontalAlignment="Left" Margin="116,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60" Height="18"/>
-
-    <vizbase:LegendWidget x:Name="LegendWidgetControl" Grid.Row="1" Grid.Column="1" Margin="20,300,20,20" />
-
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,10,10">
+      <GroupBox Header="Simulation title" Margin="0,0,0,10">
+        <TextBox x:Name="txtEditableTitle" TextWrapping="Wrap" AcceptsReturn="True" 
+                 Height="40" Margin="5" VerticalScrollBarVisibility="Auto"
+                 TextChanged="OnTitleTextChanged"/>
+      </GroupBox>
+      
+      <GroupBox Header="Simulation controls" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <Grid Margin="0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnStartSim" Grid.Column="0" Content="Start" Margin="0,0,2,0" Click="btnStartSim_Click"/>
+            <Button x:Name="btnPauseSim" Grid.Column="1" Content="Pause" Margin="2,0,2,0" Click="btnPauseSim_Click"/>
+            <Button x:Name="btnRestartSim" Grid.Column="2" Content="Reset" Margin="2,0,0,0" Click="btnRestartSim_Click"/>
+          </Grid>
+          <Grid Margin="0,10,0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Current step:" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtCurrStep" Grid.Column="1" Text="0" IsReadOnly="True" 
+                     HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+          </Grid>
+          <ProgressBar x:Name="progressBar" Height="8" Margin="0,5" Minimum="0" Maximum="100" Value="0"/>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Animation settings" Margin="0,0,0,10">
+        <StackPanel Margin="5">
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Total steps:" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtNumSteps" Grid.Column="1" Text="100" IsReadOnly="True" 
+                     HorizontalContentAlignment="Center"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Step delay (ms):" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtStepDelay" Grid.Column="1" Text="10" HorizontalContentAlignment="Center"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Refresh every:" Grid.Column="0" Padding="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtRefreshEvery" Grid.Column="1" Text="1" HorizontalContentAlignment="Center"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+      
+      <GroupBox Header="Particles" Margin="0,0,0,10">
+        <vizbase:LegendWidget x:Name="LegendWidgetControl" Margin="5"/>
+      </GroupBox>
+      
+      <GroupBox Header="Container info">
+        <StackPanel Margin="5">
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Width:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtContainerWidth" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Height:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtContainerHeight" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="70"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Particles:" Grid.Column="0" Padding="0"/>
+            <TextBox x:Name="txtNumParticles" Grid.Column="1" IsReadOnly="True"/>
+          </Grid>
+        </StackPanel>
+      </GroupBox>
+    </StackPanel>
   </Grid>
 </Window>

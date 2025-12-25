@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq.Expressions;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MML;
@@ -19,26 +14,51 @@ using MML_VisualizersBase;
 
 namespace MML_ParticleVisualizer2D
 {
+  /// <summary>
+  /// Main window for the 2D Particle Visualizer application.
+  /// </summary>
+  /// <remarks>
+  /// <para>
+  /// This window provides visualization of 2D particle simulations.
+  /// It supports loading simulation data from text files and provides features including:
+  /// </para>
+  /// <list type="bullet">
+  ///   <item><description>Playback of particle simulation trajectories</description></item>
+  ///   <item><description>Start, Pause, and Reset controls</description></item>
+  ///   <item><description>Adjustable animation speed and refresh rate</description></item>
+  ///   <item><description>Progress bar showing simulation progress</description></item>
+  ///   <item><description>Legend showing particle names and colors</description></item>
+  ///   <item><description>Editable simulation title</description></item>
+  /// </list>
+  /// </remarks>
   public partial class ParticleVisualizer2D_MainWindow : Window
   {
-    double _width = 1000;
-    double _height = 800;
+    private double _containerWidth = 1000;
+    private double _containerHeight = 800;
 
-    double _fixedCanvasWidth = 1000;
-    double _fixedCanvasHeight = 1000;
+    private readonly double _fixedCanvasWidth = 1000;
+    private readonly double _fixedCanvasHeight = 1000;
 
-    double _scaleX = 1.0;
-    double _scaleY = 1.0;
+    private double _scaleX = 1.0;
+    private double _scaleY = 1.0;
 
-    List<Ball> _balls = new List<Ball>();
-    Ellipse[] _shapes;
+    private readonly List<Ball> _balls = new List<Ball>();
+    private Ellipse[] _shapes = Array.Empty<Ellipse>();
 
-    int _numSteps = 0;
-    int _stepDelayMiliSec = 100;
+    private int _numSteps = 0;
+    private int _stepDelayMs = 10;
+    private int _refreshEvery = 1;
 
-    int _currStep = 0;
-    bool _isPausedClicked = false;
+    private int _currStep = 0;
+    private bool _isPaused = false;
+    private bool _isRunning = false;
 
+    private string _title = "Particle Simulation 2D";
+    private bool _isUpdatingTitle = false;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParticleVisualizer2D_MainWindow"/> class.
+    /// </summary>
     public ParticleVisualizer2D_MainWindow()
     {
       InitializeComponent();
@@ -50,272 +70,336 @@ namespace MML_ParticleVisualizer2D
         MessageBox.Show("No file name specified.");
         return;
       }
+
       var fileName = args[1];
 
       if (!LoadData(fileName))
       {
-        MessageBox.Show("Error loading data from file " + fileName);
+        MessageBox.Show($"Error loading data from file {fileName}");
         return;
       }
 
-      // set the title of the window
-      this.Title = "Visualizing particle simulation 2D - " + fileName;
+      _title = $"Particle Simulation - {System.IO.Path.GetFileNameWithoutExtension(fileName)}";
+      
+      InitializeVisualization();
+      UpdateLegend();
+      UpdateUITextBoxes();
 
-      // fill the legend widget with balls info
+      txtTitle.Text = _title;
+      _isUpdatingTitle = true;
+      txtEditableTitle.Text = _title;
+      _isUpdatingTitle = false;
+
+      // Set initial button states
+      btnPauseSim.IsEnabled = false;
+      btnRestartSim.IsEnabled = false;
+    }
+
+    /// <summary>
+    /// Updates the legend with particle information.
+    /// </summary>
+    private void UpdateLegend()
+    {
       LegendWidgetControl.LegendItems.Clear();
+
       for (int i = 0; i < _balls.Count && i < 10; i++)
       {
         LegendWidgetControl.LegendItems.Add(new LegendItem
         {
           Title = _balls[i].Name,
-          Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_balls[i].Color))
+          Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_balls[i].Color)),
+          IsVisible = true
         });
       }
+    }
 
+    /// <summary>
+    /// Updates the UI text boxes with current simulation info.
+    /// </summary>
+    private void UpdateUITextBoxes()
+    {
       txtNumSteps.Text = _numSteps.ToString();
-      txtDT.Text = _stepDelayMiliSec.ToString();
+      txtStepDelay.Text = _stepDelayMs.ToString();
+      txtRefreshEvery.Text = _refreshEvery.ToString();
+      txtContainerWidth.Text = _containerWidth.ToString("F0");
+      txtContainerHeight.Text = _containerHeight.ToString("F0");
+      txtNumParticles.Text = _balls.Count.ToString();
+      progressBar.Maximum = _numSteps;
+      progressBar.Value = 0;
+    }
 
-      // let's visualize those balls
+    /// <summary>
+    /// Initializes the visualization canvas with container and particles.
+    /// </summary>
+    private void InitializeVisualization()
+    {
+      MyCanvas.Children.Clear();
 
-      // First, the border rectangle
-      // we have to determine scaling factor for the balls in x and y direction
-      // depending on the size of the container
-      // we want to preserve aspect ratio of the container
-      double drawRectWidth = 0;
-      double drawRectHeight = 0;
+      // Calculate scaling to preserve aspect ratio
+      double drawRectWidth, drawRectHeight;
 
-      if (_width >= _height)
+      if (_containerWidth >= _containerHeight)
       {
         drawRectWidth = _fixedCanvasWidth;
-        _scaleX = _fixedCanvasWidth / _width;
-        _scaleY = _fixedCanvasWidth / _width; // preserve aspect ratio
-        drawRectHeight = _height * _scaleY;
+        _scaleX = _fixedCanvasWidth / _containerWidth;
+        _scaleY = _scaleX; // preserve aspect ratio
+        drawRectHeight = _containerHeight * _scaleY;
       }
       else
       {
         drawRectHeight = _fixedCanvasHeight;
-        _scaleY = _fixedCanvasHeight / _height;
-        _scaleX = _fixedCanvasHeight / _height; // preserve aspect ratio
-        drawRectWidth = _width * _scaleX;
+        _scaleY = _fixedCanvasHeight / _containerHeight;
+        _scaleX = _scaleY; // preserve aspect ratio
+        drawRectWidth = _containerWidth * _scaleX;
       }
 
-      var border = new Rectangle();
-      border.Stroke = Brushes.Black;
-      border.Fill = Brushes.AntiqueWhite;
-      border.HorizontalAlignment = HorizontalAlignment.Left;
-      border.VerticalAlignment = VerticalAlignment.Center;
-      border.Width = drawRectWidth;
-      border.Height = drawRectHeight;
-
+      // Draw container border
+      var border = new Rectangle
+      {
+        Stroke = Brushes.Black,
+        Fill = Brushes.AntiqueWhite,
+        Width = drawRectWidth,
+        Height = drawRectHeight
+      };
       MyCanvas.Children.Add(border);
 
+      // Create particle shapes
       _shapes = new Ellipse[_balls.Count];
 
       for (int i = 0; i < _balls.Count; i++)
       {
-        _shapes[i] = new Ellipse();
+        Color color = (Color)ColorConverter.ConvertFromString(_balls[i].Color);
 
-        // set Ellipse Fill to ball color
-        string colorName = _balls[i].Color;
-        Color color = (Color)ColorConverter.ConvertFromString(colorName);
-        _shapes[i].Fill = new SolidColorBrush(color);
-
-        _shapes[i].Width = (_balls[i].Radius * 2) * _scaleX;
-        _shapes[i].Height = (_balls[i].Radius * 2) * _scaleY;
+        _shapes[i] = new Ellipse
+        {
+          Fill = new SolidColorBrush(color),
+          Width = (_balls[i].Radius * 2) * _scaleX,
+          Height = (_balls[i].Radius * 2) * _scaleY
+        };
 
         MyCanvas.Children.Add(_shapes[i]);
       }
 
-      SetBallsPosToTimestep(0);
-
-      btnPauseSim.IsEnabled = false;
-      btnRestartSim.IsEnabled = false;
+      SetBallsPositionToStep(0);
     }
-    private void SetBallsPosToTimestep(int timeStep)
+
+    /// <summary>
+    /// Sets all particle positions to the specified simulation step.
+    /// </summary>
+    /// <param name="step">The simulation step index.</param>
+    private void SetBallsPositionToStep(int step)
     {
       for (int i = 0; i < _balls.Count; i++)
       {
-        Canvas.SetLeft(_shapes[i], (_balls[i].Pos(timeStep).X1 - _balls[i].Radius) * _scaleX);
-        Canvas.SetTop(_shapes[i], (_balls[i].Pos(timeStep).X2 - _balls[i].Radius) * _scaleY);
+        Canvas.SetLeft(_shapes[i], (_balls[i].Pos(step).X1 - _balls[i].Radius) * _scaleX);
+        Canvas.SetTop(_shapes[i], (_balls[i].Pos(step).X2 - _balls[i].Radius) * _scaleY);
       }
     }
 
-    public bool LoadData(string fileName)
+    /// <summary>
+    /// Loads particle simulation data from a file.
+    /// </summary>
+    /// <param name="fileName">The path to the data file.</param>
+    /// <returns>True if loading was successful, false otherwise.</returns>
+    private bool LoadData(string fileName)
     {
-      if (File.Exists(fileName) == false)
+      if (!File.Exists(fileName))
       {
-        MessageBox.Show("File does not exist: " + fileName);
+        MessageBox.Show($"File does not exist: {fileName}");
         return false;
       }
 
       try
       {
-        // get number of balls
-        int numBalls = 0;
-        string[] lines = System.IO.File.ReadAllLines(fileName);
+        string[] lines = File.ReadAllLines(fileName);
 
-        if (lines[0] == "PARTICLE_SIMULATION_DATA_2D")
+        if (lines[0] != "PARTICLE_SIMULATION_DATA_2D")
         {
-          // read width and height
-          string[] parts1 = lines[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts1.Length != 2)
-            throw new Exception("Invalid width!");
-
-          _width = int.Parse(parts1[1]);
-
-          string[] parts2 = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts2.Length != 2)
-            throw new Exception("Invalid height!");
-
-          _height = int.Parse(parts2[1]);
-
-          // read the number of balls
-          string[] parts = lines[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-          if (parts.Length != 2)
-            throw new Exception("Invalid number of balls in SimData.txt");
-
-          numBalls = int.Parse(parts[1]);
-
-          int lineNumber = 4;
-
-          // read the balls attributes - name, radius, type
-          for (int i = 0; i < numBalls; i++)
-          {
-            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (parts.Length != 3)
-              throw new Exception("Invalid ball attributes in SimData.txt");
-
-            string name = parts[0];
-            string color = parts[1];
-            double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
-            Ball ball = new Ball(name, color, radius);
-
-            _balls.Add(ball);
-          }
-
-          // read number of steps
-          parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-          if (parts.Length != 2)
-            throw new Exception("Invalid number of steps in SimData.txt");
-          int numSteps = int.Parse(parts[1]);
-
-          _numSteps = numSteps;
-
-          // read the steps
-          for (int i = 0; i < numSteps; i++)
-          {
-            // we expect "Step 0" together with timing (ie, additional double to specify T)
-            parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 3)
-              throw new Exception("Invalid number of steps in SimData.txt");
-
-            if (parts[0] != "Step")
-              throw new Exception("Invalid step in SimData.txt");
-
-            //if (parts[1] != i.ToString())
-            //  throw new Exception("Invalid step number in SimData.txt");
-
-            double T = double.Parse(parts[2], CultureInfo.InvariantCulture);
-
-            // read the positions of the balls
-            for (int j = 0; j < numBalls; j++)
-            {
-              parts = lines[lineNumber++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-              if (parts.Length != 3)
-                throw new Exception("Invalid ball position coords in SimData.txt, line number - " + lineNumber.ToString());
-
-              int index = int.Parse(parts[0]);
-              double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
-              double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
-
-              Vector2Cartesian pos = new Vector2Cartesian(x, y);
-
-              _balls[j].AddPos(pos);
-            }
-          }
-        }
-        else
-        {
-          MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_2D' at the beginning.");
+          MessageBox.Show("Invalid file format. Expected 'PARTICLE_SIMULATION_DATA_2D'.");
           return false;
         }
+
+        // Read container dimensions
+        string[] widthParts = lines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        _containerWidth = double.Parse(widthParts[1], CultureInfo.InvariantCulture);
+
+        string[] heightParts = lines[2].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        _containerHeight = double.Parse(heightParts[1], CultureInfo.InvariantCulture);
+
+        // Read number of particles
+        string[] numBallsParts = lines[3].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        int numBalls = int.Parse(numBallsParts[1]);
+
+        int lineNumber = 4;
+
+        // Read particle attributes
+        for (int i = 0; i < numBalls; i++)
+        {
+          string[] parts = lines[lineNumber++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+          if (parts.Length < 3)
+            throw new Exception($"Invalid particle attributes at line {lineNumber}");
+
+          string name = parts[0];
+          string color = parts[1];
+          double radius = double.Parse(parts[2], CultureInfo.InvariantCulture);
+
+          _balls.Add(new Ball(name, color, radius));
+        }
+
+        // Read number of steps
+        string[] stepsParts = lines[lineNumber++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        _numSteps = int.Parse(stepsParts[1]);
+
+        // Read simulation steps
+        for (int i = 0; i < _numSteps; i++)
+        {
+          string[] stepHeader = lines[lineNumber++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+          if (stepHeader[0] != "Step")
+            throw new Exception($"Expected 'Step' at line {lineNumber}");
+
+          // Read positions for each particle
+          for (int j = 0; j < numBalls; j++)
+          {
+            string[] posParts = lines[lineNumber++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (posParts.Length < 3)
+              throw new Exception($"Invalid position at line {lineNumber}");
+
+            double x = double.Parse(posParts[1], CultureInfo.InvariantCulture);
+            double y = double.Parse(posParts[2], CultureInfo.InvariantCulture);
+
+            _balls[j].AddPos(new Vector2Cartesian(x, y));
+          }
+        }
+
+        return true;
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Error - " + ex.Message);
+        MessageBox.Show($"Error loading file: {ex.Message}");
         return false;
       }
-
-      return true;
     }
 
+    #region Event Handlers
+
+    /// <summary>
+    /// Handles changes to the editable title text box.
+    /// </summary>
+    private void OnTitleTextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (_isUpdatingTitle) return;
+
+      _title = txtEditableTitle.Text;
+      txtTitle.Text = _title;
+    }
+
+    /// <summary>
+    /// Handles the Start button click.
+    /// </summary>
     private void btnStartSim_Click(object sender, RoutedEventArgs e)
     {
-      btnRestartSim.IsEnabled = false;
-      btnStartSim.IsEnabled = false;
-      btnPauseSim.IsEnabled = true;
-
-      _stepDelayMiliSec = int.Parse(txtDT.Text);
-
-      Task.Run(() =>
+      // If paused, resume
+      if (_isPaused)
       {
-        Animate(_numSteps, 1);
-      });
-    }
-
-    private void Animate(int numSteps, int refreshEvery)
-    {
-      for (int t = _currStep; t < numSteps; t++, _currStep++)
-      {
-        Thread.Sleep(_stepDelayMiliSec); // Simulate time delay
-
-        if (_isPausedClicked)
-        {
-          _isPausedClicked = false;
-          return;
-        }
-
-        if (t % refreshEvery == 0)
-        {
-          this.Dispatcher.Invoke((Action)(() =>
-          {
-            txtCurrStep.Text = t.ToString();
-
-            SetBallsPosToTimestep(t);
-          }));
-        }
+        _isPaused = false;
+        btnPauseSim.Content = "Pause";
+        return;
       }
 
-      // enable buttons at the end of simulation
-      this.Dispatcher.Invoke((Action)(() =>
-      {
-        btnStartSim.IsEnabled = false;
-        btnPauseSim.IsEnabled = false;
-        btnRestartSim.IsEnabled = true;
-      }));
+      // Parse settings
+      if (int.TryParse(txtStepDelay.Text, out int delay))
+        _stepDelayMs = Math.Max(1, delay);
+
+      if (int.TryParse(txtRefreshEvery.Text, out int refresh))
+        _refreshEvery = Math.Max(1, refresh);
+
+      btnStartSim.IsEnabled = false;
+      btnPauseSim.IsEnabled = true;
+      btnRestartSim.IsEnabled = false;
+
+      _isRunning = true;
+
+      Task.Run(() => Animate());
     }
 
+    /// <summary>
+    /// Handles the Pause button click.
+    /// </summary>
     private void btnPauseSim_Click(object sender, RoutedEventArgs e)
     {
-      _isPausedClicked = true;
-      btnRestartSim.IsEnabled = true;
-      btnPauseSim.IsEnabled = false;
-      btnStartSim.IsEnabled = true;
+      _isPaused = !_isPaused;
+      btnPauseSim.Content = _isPaused ? "Resume" : "Pause";
+      
+      if (_isPaused)
+      {
+        btnStartSim.IsEnabled = true;
+        btnRestartSim.IsEnabled = true;
+      }
     }
 
+    /// <summary>
+    /// Handles the Reset button click.
+    /// </summary>
     private void btnRestartSim_Click(object sender, RoutedEventArgs e)
     {
-      btnRestartSim.IsEnabled = false;
-      btnPauseSim.IsEnabled = false;
-      btnStartSim.IsEnabled = true;
-
+      _isRunning = false;
+      _isPaused = false;
       _currStep = 0;
-      txtCurrStep.Text = "0";
 
-      // set all shapes to initial positions
-      SetBallsPosToTimestep(0);
+      btnStartSim.IsEnabled = true;
+      btnPauseSim.IsEnabled = false;
+      btnPauseSim.Content = "Pause";
+      btnRestartSim.IsEnabled = false;
+
+      txtCurrStep.Text = "0";
+      progressBar.Value = 0;
+
+      SetBallsPositionToStep(0);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Animates the particle simulation.
+    /// </summary>
+    private void Animate()
+    {
+      while (_currStep < _numSteps && _isRunning)
+      {
+        // Handle pause
+        while (_isPaused && _isRunning)
+        {
+          Thread.Sleep(50);
+        }
+
+        if (!_isRunning) break;
+
+        if (_currStep % _refreshEvery == 0)
+        {
+          this.Dispatcher.Invoke(() =>
+          {
+            txtCurrStep.Text = _currStep.ToString();
+            progressBar.Value = _currStep;
+            SetBallsPositionToStep(_currStep);
+          });
+        }
+
+        _currStep++;
+        Thread.Sleep(_stepDelayMs);
+      }
+
+      // Simulation completed
+      this.Dispatcher.Invoke(() =>
+      {
+        if (_currStep >= _numSteps)
+        {
+          btnStartSim.IsEnabled = false;
+          btnPauseSim.IsEnabled = false;
+          btnRestartSim.IsEnabled = true;
+          progressBar.Value = _numSteps;
+        }
+        _isRunning = false;
+      });
     }
   }
 }
