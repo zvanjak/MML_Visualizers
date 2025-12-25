@@ -21,9 +21,15 @@
     <Canvas Grid.Row="1" Grid.Column="0" x:Name="mainCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     </Canvas>
     
-    <TextBox x:Name="txtTitle" Text="Title" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="769" Height="40" FontSize="22" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="0" BorderBrush="{x:Null}"/>
+    <TextBox x:Name="txtTitle" Text="Title" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="769" Height="40" FontSize="22" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="0" BorderBrush="{x:Null}" IsReadOnly="True"/>
 
     <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,10,10">
+      <GroupBox Header="Graph title" Margin="0,0,0,10">
+        <TextBox x:Name="txtEditableTitle" TextWrapping="Wrap" AcceptsReturn="True" 
+                 Height="50" Margin="5" VerticalScrollBarVisibility="Auto"
+                 TextChanged="OnTitleTextChanged"/>
+      </GroupBox>
+      
       <GroupBox Header="Legend" Margin="0,0,0,10">
         <vizbase:LegendWidget x:Name="LegendWidgetControl" Margin="5"/>
       </GroupBox>

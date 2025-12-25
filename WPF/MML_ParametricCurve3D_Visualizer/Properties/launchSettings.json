@@ -2,7 +2,7 @@
   "profiles": {
     "MML_ParametricCurveVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "body4.txt"
+      "commandLineArgs": "body0.txt body1.txt body2.txt"
     }
   }
 }
