@@ -16,6 +16,7 @@ namespace MML_RealFunctionVisualizer
     private MML.Vector? _xValues;
     private MML.Matrix? _yValues;
     private List<FunctionDrawStyle> _drawStyles = new List<FunctionDrawStyle>();
+    private List<bool> _visibilityFlags = new List<bool>();
 
     public string Title { get; set; } = "";
     
@@ -34,13 +35,15 @@ namespace MML_RealFunctionVisualizer
       _xValues = xValues ?? throw new ArgumentNullException(nameof(xValues));
       _yValues = yValues ?? throw new ArgumentNullException(nameof(yValues));
 
-      // Initialize default draw styles for each function
+      // Initialize default draw styles and visibility for each function
       _drawStyles.Clear();
+      _visibilityFlags.Clear();
       for (int i = 0; i < yValues.Rows; i++)
       {
         var style = FunctionDrawStyle.CreateDefault(i);
         style.LineStyle = LineStyle.DashDot; // Default for multi-function
         _drawStyles.Add(style);
+        _visibilityFlags.Add(true);
       }
     }
 
@@ -48,6 +51,19 @@ namespace MML_RealFunctionVisualizer
     {
       if (functionIndex >= 0 && functionIndex < _drawStyles.Count)
         _drawStyles[functionIndex] = style;
+    }
+
+    public void SetFunctionVisibility(int functionIndex, bool isVisible)
+    {
+      if (functionIndex >= 0 && functionIndex < _visibilityFlags.Count)
+        _visibilityFlags[functionIndex] = isVisible;
+    }
+
+    public bool GetFunctionVisibility(int functionIndex)
+    {
+      if (functionIndex >= 0 && functionIndex < _visibilityFlags.Count)
+        return _visibilityFlags[functionIndex];
+      return true;
     }
 
     public MML.Vector? GetXValues() => _xValues;
@@ -113,9 +129,13 @@ namespace MML_RealFunctionVisualizer
       int numPoints = _xValues.Elements.Length;
       if (numPoints < 2) return;
 
-      // Draw each function as a separate Polyline
+      // Draw each function as a separate Polyline (if visible)
       for (int funcIndex = 0; funcIndex < _yValues.Rows; funcIndex++)
       {
+        // Skip if this function is not visible
+        if (funcIndex < _visibilityFlags.Count && !_visibilityFlags[funcIndex])
+          continue;
+
         var style = funcIndex < _drawStyles.Count 
           ? _drawStyles[funcIndex] 
           : FunctionDrawStyle.CreateDefault(funcIndex);

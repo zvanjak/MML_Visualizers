@@ -74,6 +74,9 @@ namespace MML_RealFunctionVisualizer
       _isUpdatingTitle = true;
       txtEditableTitle.Text = _title;
       _isUpdatingTitle = false;
+
+      // Subscribe to legend visibility changes
+      LegendWidgetControl.ItemVisibilityChanged += OnLegendItemVisibilityChanged;
       
       Redraw();
     }
@@ -187,6 +190,41 @@ namespace MML_RealFunctionVisualizer
       txtTitle.Text = _title;
     }
 
+    private void OnLegendItemVisibilityChanged(object? sender, EventArgs e)
+    {
+      // Update visibility of functions based on legend item state
+      UpdateFunctionVisibility();
+      Redraw();
+    }
+
+    private void UpdateFunctionVisibility()
+    {
+      int legendIndex = 0;
+
+      foreach (var func in _loadedFunctions)
+      {
+        if (func is SingleLoadedFunction slf)
+        {
+          if (legendIndex < LegendWidgetControl.LegendItems.Count)
+          {
+            slf.IsVisible = LegendWidgetControl.LegendItems[legendIndex].IsVisible;
+          }
+          legendIndex++;
+        }
+        else if (func is MultiLoadedFunction mlf)
+        {
+          for (int i = 0; i < mlf.Dimension; i++)
+          {
+            if (legendIndex < LegendWidgetControl.LegendItems.Count)
+            {
+              mlf.SetFunctionVisibility(i, LegendWidgetControl.LegendItems[legendIndex].IsVisible);
+            }
+            legendIndex++;
+          }
+        }
+      }
+    }
+
     private void UpdateLegend()
     {
       LegendWidgetControl.LegendItems.Clear();
@@ -200,7 +238,8 @@ namespace MML_RealFunctionVisualizer
           LegendWidgetControl.LegendItems.Add(new LegendItem
           {
             Title = title,
-            Color = _brushes[ind % _brushes.Count]
+            Color = _brushes[ind % _brushes.Count],
+            IsVisible = true
           });
           ind++;
         }

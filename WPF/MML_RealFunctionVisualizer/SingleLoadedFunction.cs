@@ -22,6 +22,7 @@ namespace MML_RealFunctionVisualizer
     public IReadOnlyList<double> YValues => _yVals;
     public int Dimension => 1;
     public FunctionDrawStyle DrawStyle { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     public SingleLoadedFunction(int index)
     {
@@ -49,6 +50,8 @@ namespace MML_RealFunctionVisualizer
 
     public void Draw(Canvas canvas, CoordSystemParams coordParams)
     {
+      // Skip drawing if not visible
+      if (!IsVisible) return;
       if (_xVals.Count < 2) return;
 
       // Use Polyline for better performance

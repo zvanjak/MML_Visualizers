@@ -1,15 +1,24 @@
 ﻿<UserControl x:Class="MML_VisualizersBase.LegendWidget"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MML_VisualizersBase"
              x:Name="LegendRoot"
              MinWidth="180">
+  
+  <UserControl.Resources>
+    <local:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+  </UserControl.Resources>
+  
   <StackPanel>
     <ItemsControl ItemsSource="{Binding LegendItems, ElementName=LegendRoot}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-            <Rectangle Width="24" Height="4" Fill="{Binding Color}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <Label Content="{Binding Title}" VerticalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+            <CheckBox IsChecked="{Binding IsVisible, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <Rectangle Width="20" Height="3" Fill="{Binding Color}" VerticalAlignment="Center" Margin="0,0,6,0"
+                       Opacity="{Binding IsVisible, Converter={StaticResource BoolToOpacityConverter}}"/>
+            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" FontSize="11" 
+                       Opacity="{Binding IsVisible, Converter={StaticResource BoolToOpacityConverter}}"/>
           </StackPanel>
         </DataTemplate>
       </ItemsControl.ItemTemplate>

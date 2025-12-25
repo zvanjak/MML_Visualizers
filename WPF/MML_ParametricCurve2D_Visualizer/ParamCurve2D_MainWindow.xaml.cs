@@ -67,6 +67,9 @@ namespace MML_ParametricCurve2D_Visualizer
       txtEditableTitle.Text = _title;
       _isUpdatingTitle = false;
 
+      // Subscribe to legend visibility changes
+      LegendWidgetControl.ItemVisibilityChanged += OnLegendItemVisibilityChanged;
+
       Redraw();
     }
 
@@ -188,6 +191,21 @@ namespace MML_ParametricCurve2D_Visualizer
       txtTitle.Text = _title;
     }
 
+    private void OnLegendItemVisibilityChanged(object? sender, EventArgs e)
+    {
+      // Update visibility of curves based on legend item state
+      UpdateCurveVisibility();
+      Redraw();
+    }
+
+    private void UpdateCurveVisibility()
+    {
+      for (int i = 0; i < _loadedCurves.Count && i < LegendWidgetControl.LegendItems.Count; i++)
+      {
+        _loadedCurves[i].IsVisible = LegendWidgetControl.LegendItems[i].IsVisible;
+      }
+    }
+
     private void UpdateLegend()
     {
       LegendWidgetControl.LegendItems.Clear();
@@ -197,7 +215,8 @@ namespace MML_ParametricCurve2D_Visualizer
         LegendWidgetControl.LegendItems.Add(new LegendItem
         {
           Title = _loadedCurves[i].Title,
-          Color = _brushes[i % _brushes.Count]
+          Color = _brushes[i % _brushes.Count],
+          IsVisible = true
         });
       }
     }

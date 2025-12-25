@@ -21,6 +21,7 @@ namespace MML_ParametricCurve2D_Visualizer
 
     public string Title { get; set; } = "";
     public CurveDrawStyle DrawStyle { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     public IReadOnlyList<double> TValues => _tVals;
     public IReadOnlyList<double> XValues => _xVals;
@@ -50,6 +51,8 @@ namespace MML_ParametricCurve2D_Visualizer
 
     public void Draw(Canvas canvas, CoordSystemParams coordParams)
     {
+      // Skip drawing if not visible
+      if (!IsVisible) return;
       if (_xVals.Count < 2) return;
 
       // Use Polyline for better performance
