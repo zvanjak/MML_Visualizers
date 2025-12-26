@@ -33,7 +33,7 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
             return false;
         }
 
-        // Line 2: Width
+        // Line 2: Width (with or without colon)
         if (!std::getline(file, line)) {
             errorMsg = "Missing Width line";
             return false;
@@ -42,12 +42,16 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
         std::istringstream iss(line);
         std::string keyword;
         iss >> keyword >> data.width;
+        // Remove trailing colon if present
+        if (!keyword.empty() && keyword.back() == ':') {
+            keyword.pop_back();
+        }
         if (keyword != "Width") {
             errorMsg = "Expected 'Width' keyword at line " + std::to_string(lineNum);
             return false;
         }
 
-        // Line 3: Height
+        // Line 3: Height (with or without colon)
         if (!std::getline(file, line)) {
             errorMsg = "Missing Height line";
             return false;
@@ -56,12 +60,16 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
         iss.clear();
         iss.str(line);
         iss >> keyword >> data.height;
+        // Remove trailing colon if present
+        if (!keyword.empty() && keyword.back() == ':') {
+            keyword.pop_back();
+        }
         if (keyword != "Height") {
             errorMsg = "Expected 'Height' keyword at line " + std::to_string(lineNum);
             return false;
         }
 
-        // Line 4: NumBalls
+        // Line 4: NumBalls (with or without colon)
         if (!std::getline(file, line)) {
             errorMsg = "Missing NumBalls line";
             return false;
@@ -71,6 +79,10 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
         iss.clear();
         iss.str(line);
         iss >> keyword >> numBalls;
+        // Remove trailing colon if present
+        if (!keyword.empty() && keyword.back() == ':') {
+            keyword.pop_back();
+        }
         if (keyword != "NumBalls") {
             errorMsg = "Expected 'NumBalls' keyword at line " + std::to_string(lineNum);
             return false;
@@ -98,7 +110,7 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
             data.balls.push_back(Ball(name, color, radius));
         }
 
-        // NumSteps
+        // NumSteps (with or without colon)
         if (!std::getline(file, line)) {
             errorMsg = "Missing NumSteps line";
             return false;
@@ -107,6 +119,10 @@ bool MMLFileParser::ParseFile(const std::string& filename, SimulationData& data,
         iss.clear();
         iss.str(line);
         iss >> keyword >> data.numSteps;
+        // Remove trailing colon if present
+        if (!keyword.empty() && keyword.back() == ':') {
+            keyword.pop_back();
+        }
         if (keyword != "NumSteps") {
             errorMsg = "Expected 'NumSteps' keyword at line " + std::to_string(lineNum);
             return false;
