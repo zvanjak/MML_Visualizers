@@ -18,6 +18,8 @@ std::unique_ptr<LoadedFunction> MMLFileParser::ParseFile(const std::string& file
         return ParseRealFunction(file, index);
     } else if (typeStr == "MULTI_REAL_FUNCTION") {
         return ParseMultiRealFunction(file);
+    } else if (typeStr == "MULTI_REAL_FUNCTION_VARIABLE_SPACED") {
+        return ParseMultiRealFunctionVariableSpaced(file);
     } else if (typeStr == "REAL_FUNCTION_EQUALLY_SPACED") {
         throw std::runtime_error("REAL_FUNCTION_EQUALLY_SPACED not yet supported");
     } else if (typeStr == "REAL_FUNCTION_VARIABLE_SPACED") {
@@ -128,6 +130,64 @@ std::unique_ptr<LoadedFunction> MMLFileParser::ParseMultiRealFunction(std::ifstr
         
         parts = Split(line, ' ');
         if (parts.size() >= dim + 1) {
+            double x = ParseDouble(parts[0]);
+            std::vector<double> yValues;
+            for (int i = 1; i <= dim; ++i) {
+                yValues.push_back(ParseDouble(parts[i]));
+            }
+            func->AddPoint(x, yValues);
+        }
+    }
+    
+    return func;
+}
+
+std::unique_ptr<LoadedFunction> MMLFileParser::ParseMultiRealFunctionVariableSpaced(std::ifstream& file) {
+    // Format:
+    // Title
+    // Dimension (number of y-values per point)
+    // NumPoints
+    // StartTime
+    // EndTime
+    // Data lines: x y1 y2 y3...
+    
+    std::string title;
+    std::getline(file, title);
+    title = Trim(title);
+    
+    std::string line;
+    
+    // Parse dimension
+    std::getline(file, line);
+    int dim = ParseInt(Trim(line));
+    
+    // Parse number of points
+    std::getline(file, line);
+    int numPoints = ParseInt(Trim(line));
+    
+    // Parse start time (ignored, we read actual x values)
+    std::getline(file, line);
+    // double startTime = ParseDouble(Trim(line));
+    
+    // Parse end time (ignored, we read actual x values)
+    std::getline(file, line);
+    // double endTime = ParseDouble(Trim(line));
+    
+    // Create legend with default names
+    std::vector<std::string> legend;
+    for (int i = 0; i < dim; ++i) {
+        legend.push_back(title + " - Function " + std::to_string(i + 1));
+    }
+    
+    auto func = std::make_unique<MultiLoadedFunction>(title, legend);
+    
+    // Parse data points
+    while (std::getline(file, line)) {
+        line = Trim(line);
+        if (line.empty()) continue;
+        
+        auto parts = Split(line, ' ');
+        if (parts.size() >= static_cast<size_t>(dim + 1)) {
             double x = ParseDouble(parts[0]);
             std::vector<double> yValues;
             for (int i = 1; i <= dim; ++i) {
