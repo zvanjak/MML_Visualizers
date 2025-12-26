@@ -3,6 +3,7 @@
 #include <QWheelEvent>
 #include <QtMath>
 #include <algorithm>
+#include <cmath>
 
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -15,21 +16,50 @@ GLWidget::GLWidget(QWidget *parent)
     , xMin_(-1), xMax_(1)
     , yMin_(-1), yMax_(1)
     , zMin_(-1), zMax_(1)
-    , sceneRadius_(1.0) {
+    , sceneRadius_(1.0)
+    , lineWidth_(2.0f)
+    , animationRunning_(false)
+    , currentAnimationFrame_(0)
+    , maxAnimationFrames_(0)
+    , animationSpeed_(10.0)
+{
+    // Create animation timer
+    animationTimer_ = new QTimer(this);
+    connect(animationTimer_, &QTimer::timeout, this, &GLWidget::OnAnimationTimer);
 }
 
 GLWidget::~GLWidget() {
+    StopAnimation();
 }
 
-void GLWidget::AddCurve(std::unique_ptr<LoadedParametricCurve3D> curve, const Color& color) {
-    curves_.push_back({std::move(curve), color});
+void GLWidget::AddCurve(std::unique_ptr<LoadedParametricCurve3D> curve) {
+    // Assign color based on index
+    curve->SetColor(GetColorByIndex(curves_.size()));
+    curves_.push_back(std::move(curve));
     UpdateBounds();
+    
+    // Update max animation frames
+    maxAnimationFrames_ = 0;
+    for (const auto& c : curves_) {
+        maxAnimationFrames_ = std::max(maxAnimationFrames_, c->GetNumPoints());
+    }
+    
     update();
+    emit boundsChanged();
 }
 
 void GLWidget::ClearCurves() {
+    StopAnimation();
     curves_.clear();
+    currentAnimationFrame_ = 0;
+    maxAnimationFrames_ = 0;
+    
+    xMin_ = yMin_ = zMin_ = -1.0;
+    xMax_ = yMax_ = zMax_ = 1.0;
+    sceneRadius_ = 1.0;
+    
     update();
+    emit boundsChanged();
 }
 
 void GLWidget::ResetCamera() {
@@ -40,6 +70,84 @@ void GLWidget::ResetCamera() {
     update();
 }
 
+void GLWidget::SetCurveVisible(int index, bool visible) {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        curves_[index]->SetVisible(visible);
+        update();
+    }
+}
+
+bool GLWidget::IsCurveVisible(int index) const {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        return curves_[index]->IsVisible();
+    }
+    return false;
+}
+
+void GLWidget::SetLineWidth(float width) {
+    lineWidth_ = std::max(0.5f, std::min(10.0f, width));
+    update();
+}
+
+// Animation methods
+void GLWidget::StartAnimation() {
+    if (maxAnimationFrames_ == 0) return;
+    
+    animationRunning_ = true;
+    int interval = static_cast<int>(1000.0 / animationSpeed_);
+    animationTimer_->start(interval);
+    update();
+}
+
+void GLWidget::PauseAnimation() {
+    animationRunning_ = false;
+    animationTimer_->stop();
+}
+
+void GLWidget::ResumeAnimation() {
+    if (maxAnimationFrames_ == 0) return;
+    
+    animationRunning_ = true;
+    int interval = static_cast<int>(1000.0 / animationSpeed_);
+    animationTimer_->start(interval);
+}
+
+void GLWidget::ResetAnimation() {
+    currentAnimationFrame_ = 0;
+    update();
+}
+
+void GLWidget::StopAnimation() {
+    animationRunning_ = false;
+    animationTimer_->stop();
+}
+
+void GLWidget::SetAnimationSpeed(double pointsPerSecond) {
+    animationSpeed_ = std::max(0.1, pointsPerSecond);
+    
+    if (animationRunning_) {
+        int interval = static_cast<int>(1000.0 / animationSpeed_);
+        animationTimer_->setInterval(interval);
+    }
+}
+
+void GLWidget::OnAnimationTimer() {
+    if (!animationRunning_) return;
+    
+    currentAnimationFrame_++;
+    
+    // Loop animation
+    if (currentAnimationFrame_ >= maxAnimationFrames_) {
+        currentAnimationFrame_ = 0;
+    }
+    
+    update();
+    
+    if (animationCallback_) {
+        animationCallback_();
+    }
+}
+
 void GLWidget::initializeGL() {
     initializeOpenGLFunctions();
     
@@ -47,7 +155,6 @@ void GLWidget::initializeGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glLineWidth(2.0f);
 }
 
 void GLWidget::paintGL() {
@@ -55,16 +162,21 @@ void GLWidget::paintGL() {
     
     SetupCamera();
     
-    // Apply view transformation
-    QMatrix4x4 modelViewMatrix = viewMatrix_;
-    
     // Draw grid and axes
     DrawGrid();
     DrawAxes();
     
-    // Draw all curves
-    for (const auto& curveData : curves_) {
-        DrawCurve(curveData.curve.get(), curveData.color);
+    // Draw all visible curves
+    glLineWidth(lineWidth_);
+    for (const auto& curve : curves_) {
+        if (curve && curve->IsVisible()) {
+            DrawCurve(curve.get());
+        }
+    }
+    
+    // Draw animation markers
+    if (animationRunning_ || currentAnimationFrame_ > 0) {
+        DrawAnimationMarkers();
     }
 }
 
@@ -84,10 +196,11 @@ void GLWidget::SetupCamera() {
     viewMatrix_.translate(-cameraTarget_);
 }
 
-void GLWidget::DrawCurve(const LoadedParametricCurve3D* curve, const Color& color) {
+void GLWidget::DrawCurve(const LoadedParametricCurve3D* curve) {
     if (!curve || curve->GetNumPoints() < 2) return;
     
-    glColor3f(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f);
+    Color color = curve->GetColor();
+    glColor3f(color.r, color.g, color.b);
     
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(projectionMatrix_.constData());
@@ -101,15 +214,67 @@ void GLWidget::DrawCurve(const LoadedParametricCurve3D* curve, const Color& colo
         glVertex3d(p.x, p.y, p.z);
     }
     glEnd();
+}
+
+void GLWidget::DrawAnimationMarkers() {
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(projectionMatrix_.constData());
     
-    // Draw points
-    glPointSize(4.0f);
-    glBegin(GL_POINTS);
-    for (size_t i = 0; i < curve->GetNumPoints(); ++i) {
-        Point3D p = curve->GetPoint(i);
-        glVertex3d(p.x, p.y, p.z);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(viewMatrix_.constData());
+    
+    int curveIndex = 0;
+    for (const auto& curve : curves_) {
+        if (!curve || !curve->IsVisible()) {
+            curveIndex++;
+            continue;
+        }
+        if (currentAnimationFrame_ >= curve->GetNumPoints()) {
+            curveIndex++;
+            continue;
+        }
+        
+        Point3D p = curve->GetPoint(currentAnimationFrame_);
+        
+        // First curve gets larger marker (5 units), others get 2 units
+        // Scale by scene radius for visibility
+        float baseRadius = (curveIndex == 0) ? 0.05f : 0.02f;
+        float radius = static_cast<float>(sceneRadius_) * baseRadius;
+        
+        DrawSphere(p, radius, curve->GetColor());
+        curveIndex++;
     }
-    glEnd();
+}
+
+void GLWidget::DrawSphere(const Point3D& center, float radius, const Color& color) {
+    glColor3f(color.r, color.g, color.b);
+    
+    // Simple sphere approximation using triangles
+    const int slices = 16;
+    const int stacks = 8;
+    
+    for (int i = 0; i < stacks; ++i) {
+        float lat0 = M_PI * (-0.5f + float(i) / stacks);
+        float lat1 = M_PI * (-0.5f + float(i + 1) / stacks);
+        float y0 = std::sin(lat0);
+        float y1 = std::sin(lat1);
+        float r0 = std::cos(lat0);
+        float r1 = std::cos(lat1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for (int j = 0; j <= slices; ++j) {
+            float lng = 2 * M_PI * float(j) / slices;
+            float x = std::cos(lng);
+            float z = std::sin(lng);
+            
+            glNormal3f(x * r0, y0, z * r0);
+            glVertex3f(center.x + radius * x * r0, center.y + radius * y0, center.z + radius * z * r0);
+            
+            glNormal3f(x * r1, y1, z * r1);
+            glVertex3f(center.x + radius * x * r1, center.y + radius * y1, center.z + radius * z * r1);
+        }
+        glEnd();
+    }
 }
 
 void GLWidget::DrawAxes() {
@@ -119,7 +284,7 @@ void GLWidget::DrawAxes() {
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(viewMatrix_.constData());
     
-    glLineWidth(2.0f);
+    glLineWidth(lineWidth_ * 1.0f);  // Axis width = base line width
     
     double axisLength = sceneRadius_ * 1.5;
     
@@ -159,7 +324,7 @@ void GLWidget::DrawGrid() {
     int gridLines = 10;
     double step = gridSize / gridLines;
     
-    // XY plane grid
+    // XY plane grid (at z=0)
     glBegin(GL_LINES);
     for (int i = -gridLines; i <= gridLines; ++i) {
         double offset = i * step;
@@ -182,7 +347,7 @@ void GLWidget::UpdateBounds() {
     }
     
     double xMin, xMax, yMin, yMax, zMin, zMax;
-    curves_[0].curve->GetBounds(xMin, xMax, yMin, yMax, zMin, zMax);
+    curves_[0]->GetBounds(xMin, xMax, yMin, yMax, zMin, zMax);
     
     xMin_ = xMin;
     xMax_ = xMax;
@@ -193,7 +358,7 @@ void GLWidget::UpdateBounds() {
     
     // Expand bounds for all curves
     for (size_t i = 1; i < curves_.size(); ++i) {
-        curves_[i].curve->GetBounds(xMin, xMax, yMin, yMax, zMin, zMax);
+        curves_[i]->GetBounds(xMin, xMax, yMin, yMax, zMin, zMax);
         xMin_ = std::min(xMin_, xMin);
         xMax_ = std::max(xMax_, xMax);
         yMin_ = std::min(yMin_, yMin);
@@ -208,6 +373,9 @@ void GLWidget::UpdateBounds() {
     double dz = zMax_ - zMin_;
     sceneRadius_ = std::sqrt(dx * dx + dy * dy + dz * dz) / 2.0;
     
+    // Ensure minimum radius
+    if (sceneRadius_ < 0.1) sceneRadius_ = 1.0;
+    
     ResetCamera();
 }
 
@@ -216,8 +384,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
     
     if (event->button() == Qt::LeftButton) {
         isRotating_ = true;
+        setCursor(Qt::ClosedHandCursor);
     } else if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
         isPanning_ = true;
+        setCursor(Qt::SizeAllCursor);
     }
 }
 
@@ -243,8 +413,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
         rotation.rotate(cameraRotationY_, 0, 1, 0);
         rotation.rotate(cameraRotationX_, 1, 0, 0);
         
-        right = rotation * right;
-        up = rotation * up;
+        right = rotation.map(right);
+        up = rotation.map(up);
         
         cameraTarget_ -= right * dx * panSpeed;
         cameraTarget_ += up * dy * panSpeed;
@@ -253,6 +423,15 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
     }
     
     lastMousePos_ = event->pos();
+}
+
+void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        isRotating_ = false;
+    } else if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
+        isPanning_ = false;
+    }
+    setCursor(Qt::ArrowCursor);
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {
