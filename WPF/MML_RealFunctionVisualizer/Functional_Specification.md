@@ -248,10 +248,10 @@ The visualizer automatically calculates visually pleasing axis ticks:
 
 | Style | Pattern | Use Case |
 |-------|---------|----------|
-| Solid | ????????? | Single functions, primary data |
-| Dashed | - - - - - | Secondary data, comparisons |
-| Dotted | ··········· | Tertiary data |
-| DashDot | -·-·-·-·- | Multi-function default |
+| Solid | ????????? | Default for all functions |
+| Dashed | - - - - - | When color palette exhausted (>10 functions) |
+| Dotted | ··········· | When color palette exhausted (>20 functions) |
+| DashDot | -·-·-·-·- | When color palette exhausted (>30 functions) |
 
 ### 6.3 Color Palette
 
@@ -276,7 +276,7 @@ Functions are automatically assigned colors from this palette (cycles for >10 fu
 |----------|------|---------|
 | Stroke Color | Brush | From palette |
 | Stroke Thickness | double | 1.5 px |
-| Line Style | enum | Solid (single) / DashDot (multi) |
+| Line Style | enum | Solid |
 | Show Points | bool | false |
 | Point Radius | double | 3 px |
 
@@ -475,4 +475,3 @@ NumPoints: 5
 2 18 8
 3 25.5 7
 4 32 6
-```

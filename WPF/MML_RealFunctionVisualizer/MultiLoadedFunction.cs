@@ -66,7 +66,7 @@ namespace MML_RealFunctionVisualizer
     /// <param name="yValues">Matrix where each row represents a different function's Y values.</param>
     /// <exception cref="ArgumentNullException">Thrown when xValues or yValues is null.</exception>
     /// <remarks>
-    /// This method initializes default draw styles (with DashDot line style) and visibility flags
+    /// This method initializes default draw styles (with Solid line style) and visibility flags
     /// for each function in the data set.
     /// </remarks>
     public void SetData(MML.Vector xValues, MML.Matrix yValues)
@@ -80,7 +80,7 @@ namespace MML_RealFunctionVisualizer
       for (int i = 0; i < yValues.Rows; i++)
       {
         var style = FunctionDrawStyle.CreateDefault(i);
-        style.LineStyle = LineStyle.DashDot; // Default for multi-function
+        // Default is Solid - use Dashed/Dotted only when color palette is exhausted
         _drawStyles.Add(style);
         _visibilityFlags.Add(true);
       }
