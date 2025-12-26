@@ -1,182 +1,103 @@
 #define NOMINMAX
 #include "GraphWidget.h"
+#include <FL/Fl.H>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
 
-// Define color palette
-const std::vector<Color> GraphWidget::colors_ = {
-    Color(0, 0, 0),       // Black
-    Color(0, 0, 255),     // Blue
-    Color(255, 0, 0),     // Red
-    Color(0, 128, 0),     // Green
-    Color(255, 165, 0),   // Orange
-    Color(128, 0, 128),   // Purple
-    Color(0, 255, 255),   // Cyan
-    Color(255, 0, 255),   // Magenta
-};
-
 GraphWidget::GraphWidget(int X, int Y, int W, int H, const char* L)
     : Fl_Widget(X, Y, W, H, L) {
+    coordParams_.preserveAspectRatio = true;  // Default true for parametric curves
+}
+
+GraphWidget::~GraphWidget() {
+    StopAnimation();
 }
 
 void GraphWidget::AddCurve(std::unique_ptr<LoadedParametricCurve2D> curve) {
     curves_.push_back(std::move(curve));
-    InitializeCoordParams();
+    CalculateBounds();
+    CalculateTicks();
+    
+    // Update max animation frames
+    for (const auto& c : curves_) {
+        maxAnimationFrames_ = std::max(maxAnimationFrames_, c->GetNumPoints());
+    }
+    
+    redraw();
 }
 
 void GraphWidget::ClearCurves() {
+    StopAnimation();
     curves_.clear();
-    InitializeCoordParams();
+    currentAnimationFrame_ = 0;
+    maxAnimationFrames_ = 0;
+    dataMinX_ = dataMaxX_ = dataMinY_ = dataMaxY_ = 0;
+    dataMinT_ = dataMaxT_ = 0;
+    redraw();
 }
 
-void GraphWidget::InitializeCoordParams() {
+void GraphWidget::CalculateBounds() {
     if (curves_.empty()) {
-        coordParams_.xMin = -1;
-        coordParams_.xMax = 1;
-        coordParams_.yMin = -1;
-        coordParams_.yMax = 1;
-        coordParams_.numPoints = 0;
-    } else {
-        // Initialize with first curve's bounds
-        coordParams_.xMin = curves_[0]->GetMinX();
-        coordParams_.xMax = curves_[0]->GetMaxX();
-        coordParams_.yMin = curves_[0]->GetMinY();
-        coordParams_.yMax = curves_[0]->GetMaxY();
-        coordParams_.numPoints = curves_[0]->GetNumPoints();
-        
-        // Expand bounds to include all curves
-        for (const auto& curve : curves_) {
-            coordParams_.xMin = std::min(coordParams_.xMin, curve->GetMinX());
-            coordParams_.xMax = std::max(coordParams_.xMax, curve->GetMaxX());
-            coordParams_.yMin = std::min(coordParams_.yMin, curve->GetMinY());
-            coordParams_.yMax = std::max(coordParams_.yMax, curve->GetMaxY());
-        }
-        
-        // Add 5% padding
-        double xPadding = (coordParams_.xMax - coordParams_.xMin) * 0.05;
-        double yPadding = (coordParams_.yMax - coordParams_.yMin) * 0.05;
-        coordParams_.xMin -= xPadding;
-        coordParams_.xMax += xPadding;
-        coordParams_.yMin -= yPadding;
-        coordParams_.yMax += yPadding;
+        dataMinX_ = -1; dataMaxX_ = 1;
+        dataMinY_ = -1; dataMaxY_ = 1;
+        dataMinT_ = 0; dataMaxT_ = 1;
+        return;
     }
     
-    // Calculate scaling and centering
-    coordParams_.windowWidth = w();
-    coordParams_.windowHeight = h();
+    // Initialize with first curve's bounds
+    dataMinX_ = curves_[0]->GetMinX();
+    dataMaxX_ = curves_[0]->GetMaxX();
+    dataMinY_ = curves_[0]->GetMinY();
+    dataMaxY_ = curves_[0]->GetMaxY();
+    dataMinT_ = curves_[0]->GetMinT();
+    dataMaxT_ = curves_[0]->GetMaxT();
     
-    double xRange = coordParams_.xMax - coordParams_.xMin;
-    double yRange = coordParams_.yMax - coordParams_.yMin;
-    
-    if (xRange <= 0) xRange = 1;
-    if (yRange <= 0) yRange = 1;
-    
-    coordParams_.scaleX = (coordParams_.windowWidth * 0.9) / xRange;
-    coordParams_.scaleY = (coordParams_.windowHeight * 0.9) / yRange;
-    
-    double midPointX = (coordParams_.xMin + coordParams_.xMax) / 2;
-    double midPointY = (coordParams_.yMin + coordParams_.yMax) / 2;
-    
-    coordParams_.centerX = coordParams_.windowWidth / 2 - midPointX * coordParams_.scaleX;
-    coordParams_.centerY = coordParams_.windowHeight / 2 + midPointY * coordParams_.scaleY;
-}
-
-void GraphWidget::WorldToScreen(double worldX, double worldY, int& screenX, int& screenY) const {
-    screenX = static_cast<int>(coordParams_.centerX + worldX * coordParams_.scaleX);
-    screenY = static_cast<int>(coordParams_.centerY - worldY * coordParams_.scaleY);
-    
-    // Add widget position offset
-    screenX += x();
-    screenY += y();
-}
-
-std::string GraphWidget::FormatNumber(double value) const {
-    std::ostringstream oss;
-    if (std::abs(value) < 0.001 || std::abs(value) > 1000) {
-        oss << std::scientific << std::setprecision(2) << value;
-    } else {
-        oss << std::fixed << std::setprecision(2) << value;
-    }
-    return oss.str();
-}
-
-void GraphWidget::DrawAxisLabels() {
-    fl_color(FL_BLACK);
-    fl_font(FL_HELVETICA, 10);
-    
-    // X-axis labels
-    int numXLabels = 5;
-    for (int i = 0; i <= numXLabels; ++i) {
-        double worldX = coordParams_.xMin + (coordParams_.xMax - coordParams_.xMin) * i / numXLabels;
-        int screenX, screenY;
-        WorldToScreen(worldX, 0, screenX, screenY);
-        
-        std::string label = FormatNumber(worldX);
-        fl_draw(label.c_str(), screenX - 20, y() + h() - 5);
+    // Expand bounds to include all curves
+    for (const auto& curve : curves_) {
+        dataMinX_ = std::min(dataMinX_, curve->GetMinX());
+        dataMaxX_ = std::max(dataMaxX_, curve->GetMaxX());
+        dataMinY_ = std::min(dataMinY_, curve->GetMinY());
+        dataMaxY_ = std::max(dataMaxY_, curve->GetMaxY());
+        dataMinT_ = std::min(dataMinT_, curve->GetMinT());
+        dataMaxT_ = std::max(dataMaxT_, curve->GetMaxT());
     }
     
-    // Y-axis labels
-    int numYLabels = 5;
-    for (int i = 0; i <= numYLabels; ++i) {
-        double worldY = coordParams_.yMin + (coordParams_.yMax - coordParams_.yMin) * i / numYLabels;
-        int screenX, screenY;
-        WorldToScreen(0, worldY, screenX, screenY);
-        
-        std::string label = FormatNumber(worldY);
-        fl_draw(label.c_str(), x() + 5, screenY + 5);
+    // Handle equal bounds
+    if (std::abs(dataMaxX_ - dataMinX_) < 1e-10) {
+        dataMinX_ -= 1;
+        dataMaxX_ += 1;
+    }
+    if (std::abs(dataMaxY_ - dataMinY_) < 1e-10) {
+        dataMinY_ -= 1;
+        dataMaxY_ += 1;
     }
 }
 
-void GraphWidget::DrawGrid() {
-    fl_color(220, 220, 220);
+void GraphWidget::CalculateTicks() {
+    // Add 5% padding to data bounds
+    double xPadding = (dataMaxX_ - dataMinX_) * 0.05;
+    double yPadding = (dataMaxY_ - dataMinY_) * 0.05;
     
-    int numGridLines = 10;
+    auto [xTicks, yTicks] = AxisTickCalculator::CalculateAxisTicks(
+        dataMinX_ - xPadding, dataMaxX_ + xPadding,
+        dataMinY_ - yPadding, dataMaxY_ + yPadding,
+        10, 8);
     
-    // Vertical grid lines
-    for (int i = 0; i <= numGridLines; ++i) {
-        double worldX = coordParams_.xMin + (coordParams_.xMax - coordParams_.xMin) * i / numGridLines;
-        int screenX1, screenY1, screenX2, screenY2;
-        WorldToScreen(worldX, coordParams_.yMin, screenX1, screenY1);
-        WorldToScreen(worldX, coordParams_.yMax, screenX2, screenY2);
-        fl_line(screenX1, screenY1, screenX2, screenY2);
-    }
-    
-    // Horizontal grid lines
-    for (int i = 0; i <= numGridLines; ++i) {
-        double worldY = coordParams_.yMin + (coordParams_.yMax - coordParams_.yMin) * i / numGridLines;
-        int screenX1, screenY1, screenX2, screenY2;
-        WorldToScreen(coordParams_.xMin, worldY, screenX1, screenY1);
-        WorldToScreen(coordParams_.xMax, worldY, screenX2, screenY2);
-        fl_line(screenX1, screenY1, screenX2, screenY2);
-    }
-}
-
-void GraphWidget::DrawAxes() {
-    fl_color(FL_BLACK);
-    fl_line_style(FL_SOLID, 2);
-    
-    // X-axis
-    int screenX1, screenY1, screenX2, screenY2;
-    WorldToScreen(coordParams_.xMin, 0, screenX1, screenY1);
-    WorldToScreen(coordParams_.xMax, 0, screenX2, screenY2);
-    fl_line(screenX1, screenY1, screenX2, screenY2);
-    
-    // Y-axis
-    WorldToScreen(0, coordParams_.yMin, screenX1, screenY1);
-    WorldToScreen(0, coordParams_.yMax, screenX2, screenY2);
-    fl_line(screenX1, screenY1, screenX2, screenY2);
-    
-    fl_line_style(0);
-}
-
-void GraphWidget::DrawCoordinateSystem() {
-    DrawGrid();
-    DrawAxes();
-    DrawAxisLabels();
+    coordParams_.xTickInfo = xTicks;
+    coordParams_.yTickInfo = yTicks;
+    coordParams_.xMin = xTicks.min;
+    coordParams_.xMax = xTicks.max;
+    coordParams_.yMin = yTicks.min;
+    coordParams_.yMax = yTicks.max;
+    coordParams_.tMin = dataMinT_;
+    coordParams_.tMax = dataMaxT_;
 }
 
 void GraphWidget::draw() {
+    // Update dimensions
+    coordParams_.UpdateFromWidget(w(), h());
+    
     // Draw background
     fl_color(FL_WHITE);
     fl_rectf(x(), y(), w(), h());
@@ -185,36 +106,299 @@ void GraphWidget::draw() {
     fl_color(FL_BLACK);
     fl_rect(x(), y(), w(), h());
     
-    if (curves_.empty()) {
-        return;
+    // Set clipping to drawing area
+    fl_push_clip(x() + coordParams_.drawX, y() + coordParams_.drawY, 
+                 coordParams_.drawWidth, coordParams_.drawHeight);
+    
+    if (!curves_.empty()) {
+        DrawCoordinateSystem();
+        DrawCurves();
+        
+        if (animationRunning_ || currentAnimationFrame_ > 0) {
+            DrawAnimationMarkers();
+        }
     }
     
-    DrawCoordinateSystem();
+    fl_pop_clip();
     
-    // Draw all curves
-    int colorIndex = 0;
+    // Draw axis labels outside clip area
+    if (!curves_.empty() && coordParams_.showAxisLabels) {
+        DrawAxisLabels();
+    }
+}
+
+void GraphWidget::DrawCoordinateSystem() {
+    if (coordParams_.showGrid) {
+        DrawGrid();
+    }
+    DrawAxes();
+}
+
+void GraphWidget::DrawGrid() {
+    fl_color(220, 220, 220);
+    fl_line_style(FL_SOLID, 1);
+    
+    // Vertical grid lines at X ticks
+    for (const auto& tick : coordParams_.xTickInfo.ticks) {
+        int screenX, screenY1, screenY2;
+        coordParams_.WorldToScreen(tick.value, coordParams_.yTickInfo.min, screenX, screenY1);
+        coordParams_.WorldToScreen(tick.value, coordParams_.yTickInfo.max, screenX, screenY2);
+        fl_line(x() + screenX, y() + screenY1, x() + screenX, y() + screenY2);
+    }
+    
+    // Horizontal grid lines at Y ticks
+    for (const auto& tick : coordParams_.yTickInfo.ticks) {
+        int screenX1, screenX2, screenY;
+        coordParams_.WorldToScreen(coordParams_.xTickInfo.min, tick.value, screenX1, screenY);
+        coordParams_.WorldToScreen(coordParams_.xTickInfo.max, tick.value, screenX2, screenY);
+        fl_line(x() + screenX1, y() + screenY, x() + screenX2, y() + screenY);
+    }
+    
+    fl_line_style(0);
+}
+
+void GraphWidget::DrawAxes() {
+    fl_color(FL_BLACK);
+    fl_line_style(FL_SOLID, 2);
+    
+    double xMin = coordParams_.xTickInfo.min;
+    double xMax = coordParams_.xTickInfo.max;
+    double yMin = coordParams_.yTickInfo.min;
+    double yMax = coordParams_.yTickInfo.max;
+    
+    // X-axis (at y=0 if in range, otherwise at bottom)
+    double xAxisY = (yMin <= 0 && yMax >= 0) ? 0 : yMin;
+    int screenX1, screenY1, screenX2, screenY2;
+    coordParams_.WorldToScreen(xMin, xAxisY, screenX1, screenY1);
+    coordParams_.WorldToScreen(xMax, xAxisY, screenX2, screenY2);
+    fl_line(x() + screenX1, y() + screenY1, x() + screenX2, y() + screenY2);
+    
+    // Y-axis (at x=0 if in range, otherwise at left)
+    double yAxisX = (xMin <= 0 && xMax >= 0) ? 0 : xMin;
+    coordParams_.WorldToScreen(yAxisX, yMin, screenX1, screenY1);
+    coordParams_.WorldToScreen(yAxisX, yMax, screenX2, screenY2);
+    fl_line(x() + screenX1, y() + screenY1, x() + screenX2, y() + screenY2);
+    
+    fl_line_style(0);
+}
+
+void GraphWidget::DrawAxisLabels() {
+    fl_color(FL_BLACK);
+    fl_font(FL_HELVETICA, 10);
+    
+    // X-axis labels
+    for (const auto& tick : coordParams_.xTickInfo.ticks) {
+        int screenX, screenY;
+        coordParams_.WorldToScreen(tick.value, coordParams_.yTickInfo.min, screenX, screenY);
+        
+        int textWidth = static_cast<int>(fl_width(tick.label.c_str()));
+        fl_draw(tick.label.c_str(), x() + screenX - textWidth/2, 
+                y() + coordParams_.drawY + coordParams_.drawHeight + 15);
+    }
+    
+    // Y-axis labels
+    for (const auto& tick : coordParams_.yTickInfo.ticks) {
+        int screenX, screenY;
+        coordParams_.WorldToScreen(coordParams_.xTickInfo.min, tick.value, screenX, screenY);
+        
+        int textWidth = static_cast<int>(fl_width(tick.label.c_str()));
+        fl_draw(tick.label.c_str(), x() + coordParams_.drawX - textWidth - 5, 
+                y() + screenY + 4);
+    }
+}
+
+void GraphWidget::DrawCurves() {
     for (const auto& curve : curves_) {
-        if (curve) {
-            curve->Draw(this, coordParams_);
-            colorIndex++;
+        if (curve && curve->IsVisible()) {
+            // Draw curve with widget offset
+            const auto& xVals = curve->GetXVals();
+            const auto& yVals = curve->GetYVals();
+            const auto& style = curve->GetStyle();
+            CurveColor color = curve->GetColor();
+            
+            if (xVals.size() < 2) continue;
+            
+            fl_color(color.r, color.g, color.b);
+            fl_line_style(FL_SOLID, static_cast<int>(style.lineWidth));
+            
+            // Draw as connected line segments
+            for (size_t i = 0; i < xVals.size() - 1; ++i) {
+                int screenX1, screenY1, screenX2, screenY2;
+                coordParams_.WorldToScreen(xVals[i], yVals[i], screenX1, screenY1);
+                coordParams_.WorldToScreen(xVals[i + 1], yVals[i + 1], screenX2, screenY2);
+                
+                fl_line(x() + screenX1, y() + screenY1, x() + screenX2, y() + screenY2);
+            }
+            
+            fl_line_style(0);
         }
     }
 }
 
-void LoadedParametricCurve2D::Draw(GraphWidget* widget, const CoordSystemParams& params) {
-    if (xVals_.empty()) return;
+void GraphWidget::DrawAnimationMarkers() {
+    for (const auto& curve : curves_) {
+        if (curve && curve->IsVisible() && currentAnimationFrame_ < curve->GetNumPoints()) {
+            const auto& xVals = curve->GetXVals();
+            const auto& yVals = curve->GetYVals();
+            CurveColor color = curve->GetColor();
+            
+            int screenX, screenY;
+            coordParams_.WorldToScreen(xVals[currentAnimationFrame_], 
+                                       yVals[currentAnimationFrame_], 
+                                       screenX, screenY);
+            
+            // Draw filled circle marker
+            fl_color(color.r, color.g, color.b);
+            fl_pie(x() + screenX - 6, y() + screenY - 6, 12, 12, 0, 360);
+            
+            // Draw black outline
+            fl_color(FL_BLACK);
+            fl_line_style(FL_SOLID, 1);
+            fl_arc(x() + screenX - 6, y() + screenY - 6, 12, 12, 0, 360);
+            fl_line_style(0);
+        }
+    }
+}
+
+// Animation methods
+void GraphWidget::StartAnimation() {
+    if (maxAnimationFrames_ == 0) return;
     
-    auto color = GraphWidget::GetColor(index_);
-    fl_color(color.r, color.g, color.b);
-    fl_line_style(FL_SOLID, 2);
+    animationRunning_ = true;
+    double delay = 1.0 / animationSpeed_;
+    Fl::add_timeout(delay, AnimationTimerCallback, this);
+    redraw();
+}
+
+void GraphWidget::PauseAnimation() {
+    animationRunning_ = false;
+    Fl::remove_timeout(AnimationTimerCallback, this);
+}
+
+void GraphWidget::ResumeAnimation() {
+    if (maxAnimationFrames_ == 0) return;
     
-    // Draw the parametric curve as connected line segments
-    for (size_t i = 0; i < xVals_.size() - 1; ++i) {
-        int x1, y1, x2, y2;
-        widget->WorldToScreen(xVals_[i], yVals_[i], x1, y1);
-        widget->WorldToScreen(xVals_[i + 1], yVals_[i + 1], x2, y2);
-        fl_line(x1, y1, x2, y2);
+    animationRunning_ = true;
+    double delay = 1.0 / animationSpeed_;
+    Fl::add_timeout(delay, AnimationTimerCallback, this);
+}
+
+void GraphWidget::ResetAnimation() {
+    currentAnimationFrame_ = 0;
+    redraw();
+}
+
+void GraphWidget::StopAnimation() {
+    animationRunning_ = false;
+    Fl::remove_timeout(AnimationTimerCallback, this);
+}
+
+void GraphWidget::SetAnimationSpeed(double pointsPerSecond) {
+    animationSpeed_ = std::max(0.1, pointsPerSecond);
+}
+
+void GraphWidget::AnimationTimerCallback(void* data) {
+    GraphWidget* widget = static_cast<GraphWidget*>(data);
+    widget->OnAnimationTimer();
+}
+
+void GraphWidget::OnAnimationTimer() {
+    if (!animationRunning_) return;
+    
+    currentAnimationFrame_++;
+    
+    // Loop animation
+    if (currentAnimationFrame_ >= maxAnimationFrames_) {
+        currentAnimationFrame_ = 0;
     }
     
+    redraw();
+    
+    if (animationFrameCallback_) {
+        animationFrameCallback_();
+    }
+    
+    // Schedule next frame
+    double delay = 1.0 / animationSpeed_;
+    Fl::add_timeout(delay, AnimationTimerCallback, this);
+}
+
+// Settings
+void GraphWidget::SetPreserveAspectRatio(bool preserve) {
+    coordParams_.preserveAspectRatio = preserve;
+    redraw();
+}
+
+void GraphWidget::SetShowGrid(bool show) {
+    coordParams_.showGrid = show;
+    redraw();
+}
+
+void GraphWidget::SetShowAxisLabels(bool show) {
+    coordParams_.showAxisLabels = show;
+    redraw();
+}
+
+void GraphWidget::SetCurveVisible(int index, bool visible) {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        curves_[index]->SetVisible(visible);
+        redraw();
+    }
+}
+
+bool GraphWidget::IsCurveVisible(int index) const {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        return curves_[index]->IsVisible();
+    }
+    return false;
+}
+
+// LoadedParametricCurve2D Draw implementation
+void LoadedParametricCurve2D::Draw(const CoordSystemParams& params) {
+    if (xVals_.size() < 2) return;
+    
+    fl_color(color_.r, color_.g, color_.b);
+    fl_line_style(FL_SOLID, static_cast<int>(style_.lineWidth));
+    
+    // Draw as connected line segments using fl_line (more reliable than fl_vertex)
+    for (size_t i = 0; i < xVals_.size() - 1; ++i) {
+        int screenX1, screenY1, screenX2, screenY2;
+        params.WorldToScreen(xVals_[i], yVals_[i], screenX1, screenY1);
+        params.WorldToScreen(xVals_[i + 1], yVals_[i + 1], screenX2, screenY2);
+        
+        fl_line(screenX1, screenY1, screenX2, screenY2);
+    }
+    
+    fl_line_style(0);
+    
+    // Draw points if enabled
+    if (style_.showPoints) {
+        for (size_t i = 0; i < xVals_.size(); ++i) {
+            int screenX, screenY;
+            params.WorldToScreen(xVals_[i], yVals_[i], screenX, screenY);
+            
+            fl_color(color_.r, color_.g, color_.b);
+            fl_pie(screenX - static_cast<int>(style_.pointRadius), 
+                   screenY - static_cast<int>(style_.pointRadius),
+                   static_cast<int>(style_.pointRadius * 2), 
+                   static_cast<int>(style_.pointRadius * 2), 0, 360);
+        }
+    }
+}
+
+void LoadedParametricCurve2D::DrawMarker(const CoordSystemParams& params, size_t pointIndex) {
+    if (pointIndex >= xVals_.size()) return;
+    
+    int screenX, screenY;
+    params.WorldToScreen(xVals_[pointIndex], yVals_[pointIndex], screenX, screenY);
+    
+    // Draw filled circle marker
+    fl_color(color_.r, color_.g, color_.b);
+    fl_pie(screenX - 6, screenY - 6, 12, 12, 0, 360);
+    
+    // Draw black outline
+    fl_color(FL_BLACK);
+    fl_line_style(FL_SOLID, 1);
+    fl_arc(screenX - 6, screenY - 6, 12, 12, 0, 360);
     fl_line_style(0);
 }

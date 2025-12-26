@@ -1,4 +1,4 @@
 {
   "cmake.sourceDirectory": "/home/zvanjak/Projects/MML_Visualizers/FLTK/MML_RealFunctionVisualizer",
-  "idf.pythonInstallPath": "c:\\Dev\\Espressif\\frameworks\\esp-idf-v5.5.1\\tools\\tools\\idf-python\\3.11.2\\python.exe"
+  "idf.pythonInstallPath": "/usr/bin/python3"
 }

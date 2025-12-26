@@ -16,6 +16,7 @@ set(SOURCES
     GraphWidget.cpp
     LegendWidget.cpp
     MMLFileParser.cpp
+    AxisTickCalculator.cpp
 )
 
 set(HEADERS
@@ -23,6 +24,7 @@ set(HEADERS
     GraphWidget.h
     LegendWidget.h
     MMLFileParser.h
+    AxisTickCalculator.h
 )
 
 # Create executable

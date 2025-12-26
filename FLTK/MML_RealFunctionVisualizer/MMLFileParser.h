@@ -14,6 +14,7 @@ public:
 private:
     static std::unique_ptr<LoadedFunction> ParseRealFunction(std::ifstream& file, int index);
     static std::unique_ptr<LoadedFunction> ParseMultiRealFunction(std::ifstream& file);
+    static std::unique_ptr<LoadedFunction> ParseMultiRealFunctionVariableSpaced(std::ifstream& file);
     
     static double ParseDouble(const std::string& str);
     static int ParseInt(const std::string& str);

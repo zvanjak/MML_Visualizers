@@ -5,42 +5,49 @@
 
 GLWidget::GLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
-    , viewMinX_(-10.0)
-    , viewMaxX_(10.0)
-    , viewMinY_(-10.0)
-    , viewMaxY_(10.0)
-    , defaultMinX_(-10.0)
-    , defaultMaxX_(10.0)
-    , defaultMinY_(-10.0)
-    , defaultMaxY_(10.0)
+    , dataMinX_(-10.0), dataMaxX_(10.0)
+    , dataMinY_(-10.0), dataMaxY_(10.0)
+    , dataMinT_(0.0), dataMaxT_(1.0)
+    , viewMinX_(-10.0), viewMaxX_(10.0)
+    , viewMinY_(-10.0), viewMaxY_(10.0)
+    , displayMinX_(-10.0), displayMaxX_(10.0)
+    , displayMinY_(-10.0), displayMaxY_(10.0)
+    , defaultMinX_(-10.0), defaultMaxX_(10.0)
+    , defaultMinY_(-10.0), defaultMaxY_(10.0)
+    , showGrid_(true)
+    , showLabels_(true)
+    , preserveAspectRatio_(true)  // Default true for parametric curves
+    , animationRunning_(false)
+    , currentAnimationFrame_(0)
+    , maxAnimationFrames_(0)
+    , animationSpeed_(10.0)
     , isPanning_(false)
+    , glInitialized_(false)
     , width_(800)
     , height_(600)
 {
-    // Initialize curve colors (matching WPF's _brushes)
-    curveColors_ = {
-        QColor(0, 0, 0),         // Black
-        QColor(255, 165, 0),     // Orange
-        QColor(0, 0, 255),       // Blue
-        QColor(255, 0, 0),       // Red
-        QColor(0, 128, 0),       // Green
-        QColor(128, 0, 128),     // Purple
-        QColor(0, 255, 255),     // Cyan
-        QColor(165, 42, 42),     // Brown
-        QColor(255, 0, 255),     // Magenta
-        QColor(255, 255, 0)      // Yellow
-    };
-    
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
+    
+    // Initialize tick info for default view
+    auto [xTicks, yTicks] = AxisTickCalculator::CalculateAxisTicks(
+        viewMinX_, viewMaxX_, viewMinY_, viewMaxY_, 10, 8);
+    xTickInfo_ = xTicks;
+    yTickInfo_ = yTicks;
+    
+    // Create animation timer
+    animationTimer_ = new QTimer(this);
+    connect(animationTimer_, &QTimer::timeout, this, &GLWidget::OnAnimationTimer);
 }
 
 GLWidget::~GLWidget() {
+    StopAnimation();
 }
 
 void GLWidget::initializeGL() {
     initializeOpenGLFunctions();
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);  // White background
+    glInitialized_ = true;
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 }
@@ -48,33 +55,51 @@ void GLWidget::initializeGL() {
 void GLWidget::resizeGL(int w, int h) {
     width_ = w;
     height_ = h;
-    glViewport(0, 0, w, h);
-    UpdateProjection();
 }
 
-void GLWidget::UpdateProjection() {
+void GLWidget::SetupProjection() {
+    // Calculate the drawable area (excluding margins)
+    int drawWidth = width_ - MARGIN_LEFT - MARGIN_RIGHT;
+    int drawHeight = height_ - MARGIN_TOP - MARGIN_BOTTOM;
+    
+    if (drawWidth <= 0) drawWidth = 1;
+    if (drawHeight <= 0) drawHeight = 1;
+    
+    glViewport(MARGIN_LEFT, MARGIN_BOTTOM, drawWidth, drawHeight);
+    
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     
-    // 2D orthographic projection
-    double aspectRatio = static_cast<double>(width_) / static_cast<double>(height_);
     double rangeX = viewMaxX_ - viewMinX_;
     double rangeY = viewMaxY_ - viewMinY_;
-    double centerX = (viewMinX_ + viewMaxX_) / 2.0;
-    double centerY = (viewMinY_ + viewMaxY_) / 2.0;
     
-    // Adjust for aspect ratio
-    if (aspectRatio > 1.0) {
-        double halfWidth = rangeX / 2.0 * aspectRatio;
-        glOrtho(centerX - halfWidth, centerX + halfWidth,
-                centerY - rangeY / 2.0, centerY + rangeY / 2.0,
-                -1.0, 1.0);
-    } else {
-        double halfHeight = rangeY / 2.0 / aspectRatio;
-        glOrtho(centerX - rangeX / 2.0, centerX + rangeX / 2.0,
-                centerY - halfHeight, centerY + halfHeight,
-                -1.0, 1.0);
+    // Default: display bounds equal view bounds
+    displayMinX_ = viewMinX_;
+    displayMaxX_ = viewMaxX_;
+    displayMinY_ = viewMinY_;
+    displayMaxY_ = viewMaxY_;
+    
+    if (preserveAspectRatio_) {
+        double aspectRatio = static_cast<double>(drawWidth) / static_cast<double>(drawHeight);
+        double dataAspect = rangeX / rangeY;
+        
+        double centerX = (viewMinX_ + viewMaxX_) / 2.0;
+        double centerY = (viewMinY_ + viewMaxY_) / 2.0;
+        
+        if (dataAspect > aspectRatio) {
+            // Data is wider - adjust Y range
+            double newRangeY = rangeX / aspectRatio;
+            displayMinY_ = centerY - newRangeY / 2.0;
+            displayMaxY_ = centerY + newRangeY / 2.0;
+        } else {
+            // Data is taller - adjust X range
+            double newRangeX = rangeY * aspectRatio;
+            displayMinX_ = centerX - newRangeX / 2.0;
+            displayMaxX_ = centerX + newRangeX / 2.0;
+        }
     }
+    
+    glOrtho(displayMinX_, displayMaxX_, displayMinY_, displayMaxY_, -1.0, 1.0);
     
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -83,100 +108,124 @@ void GLWidget::UpdateProjection() {
 void GLWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
     
-    DrawGrid();
+    SetupProjection();
+    
+    // Draw OpenGL elements
+    if (showGrid_) {
+        DrawGrid();
+    }
     DrawAxes();
     
-    // Draw curves with their respective colors
-    for (size_t i = 0; i < curves_.size(); ++i) {
-        QColor color = GetCurveColor(i);
-        DrawCurve(*curves_[i], color);
-    }
-}
-
-void GLWidget::DrawAxes() {
-    glLineWidth(2.0f);
-    glColor3f(0.0f, 0.0f, 0.0f);
-    
-    // X-axis
-    glBegin(GL_LINES);
-    glVertex2d(viewMinX_, 0.0);
-    glVertex2d(viewMaxX_, 0.0);
-    glEnd();
-    
-    // Y-axis
-    glBegin(GL_LINES);
-    glVertex2d(0.0, viewMinY_);
-    glVertex2d(0.0, viewMaxY_);
-    glEnd();
-    
-    // Draw tick marks
-    double rangeX = viewMaxX_ - viewMinX_;
-    double rangeY = viewMaxY_ - viewMinY_;
-    double tickSize = std::min(rangeX, rangeY) * 0.01;
-    
-    // X-axis ticks
-    int numTicksX = 10;
-    double stepX = rangeX / numTicksX;
-    for (int i = 0; i <= numTicksX; i++) {
-        double x = viewMinX_ + i * stepX;
-        glBegin(GL_LINES);
-        glVertex2d(x, -tickSize);
-        glVertex2d(x, tickSize);
-        glEnd();
+    // Draw all visible curves
+    for (const auto& curve : curves_) {
+        if (curve && curve->IsVisible()) {
+            DrawCurve(*curve);
+        }
     }
     
-    // Y-axis ticks
-    int numTicksY = 10;
-    double stepY = rangeY / numTicksY;
-    for (int i = 0; i <= numTicksY; i++) {
-        double y = viewMinY_ + i * stepY;
-        glBegin(GL_LINES);
-        glVertex2d(-tickSize, y);
-        glVertex2d(tickSize, y);
-        glEnd();
+    // Draw labels and animation markers using QPainter overlay
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    if (showLabels_) {
+        DrawAxisLabels(painter);
     }
+    
+    if (animationRunning_ || currentAnimationFrame_ > 0) {
+        DrawAnimationMarkers(painter);
+    }
+    
+    painter.end();
 }
 
 void GLWidget::DrawGrid() {
     glLineWidth(1.0f);
     glColor3f(0.9f, 0.9f, 0.9f);
     
-    double rangeX = viewMaxX_ - viewMinX_;
-    double rangeY = viewMaxY_ - viewMinY_;
+    // Draw vertical grid lines at X tick positions
+    glBegin(GL_LINES);
+    for (const auto& tick : xTickInfo_.ticks) {
+        glVertex2d(tick.value, displayMinY_);
+        glVertex2d(tick.value, displayMaxY_);
+    }
+    glEnd();
     
-    // Vertical grid lines
-    int numGridX = 20;
-    double stepX = rangeX / numGridX;
-    for (int i = 0; i <= numGridX; i++) {
-        double x = viewMinX_ + i * stepX;
-        glBegin(GL_LINES);
-        glVertex2d(x, viewMinY_);
-        glVertex2d(x, viewMaxY_);
-        glEnd();
+    // Draw horizontal grid lines at Y tick positions
+    glBegin(GL_LINES);
+    for (const auto& tick : yTickInfo_.ticks) {
+        glVertex2d(displayMinX_, tick.value);
+        glVertex2d(displayMaxX_, tick.value);
+    }
+    glEnd();
+}
+
+void GLWidget::DrawAxes() {
+    glLineWidth(2.0f);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    
+    // X-axis (at y=0 if in range, otherwise at bottom)
+    double xAxisY = (displayMinY_ <= 0 && displayMaxY_ >= 0) ? 0 : displayMinY_;
+    glBegin(GL_LINES);
+    glVertex2d(displayMinX_, xAxisY);
+    glVertex2d(displayMaxX_, xAxisY);
+    glEnd();
+    
+    // Y-axis (at x=0 if in range, otherwise at left)
+    double yAxisX = (displayMinX_ <= 0 && displayMaxX_ >= 0) ? 0 : displayMinX_;
+    glBegin(GL_LINES);
+    glVertex2d(yAxisX, displayMinY_);
+    glVertex2d(yAxisX, displayMaxY_);
+    glEnd();
+}
+
+void GLWidget::DrawAxisLabels(QPainter& painter) {
+    painter.setFont(QFont("Helvetica", 9));
+    painter.setPen(Qt::black);
+    
+    int drawWidth = width_ - MARGIN_LEFT - MARGIN_RIGHT;
+    int drawHeight = height_ - MARGIN_TOP - MARGIN_BOTTOM;
+    
+    double rangeX = displayMaxX_ - displayMinX_;
+    double rangeY = displayMaxY_ - displayMinY_;
+    
+    // X-axis labels
+    for (const auto& tick : xTickInfo_.ticks) {
+        double normX = (tick.value - displayMinX_) / rangeX;
+        int screenX = MARGIN_LEFT + static_cast<int>(normX * drawWidth);
+        int screenY = height_ - MARGIN_BOTTOM + 15;
+        
+        QString label = QString::fromStdString(tick.label);
+        QFontMetrics fm(painter.font());
+        int textWidth = fm.horizontalAdvance(label);
+        
+        painter.drawText(screenX - textWidth / 2, screenY, label);
     }
     
-    // Horizontal grid lines
-    int numGridY = 20;
-    double stepY = rangeY / numGridY;
-    for (int i = 0; i <= numGridY; i++) {
-        double y = viewMinY_ + i * stepY;
-        glBegin(GL_LINES);
-        glVertex2d(viewMinX_, y);
-        glVertex2d(viewMaxX_, y);
-        glEnd();
+    // Y-axis labels
+    for (const auto& tick : yTickInfo_.ticks) {
+        double normY = (tick.value - displayMinY_) / rangeY;
+        int screenX = MARGIN_LEFT - 5;
+        int screenY = height_ - MARGIN_BOTTOM - static_cast<int>(normY * drawHeight);
+        
+        QString label = QString::fromStdString(tick.label);
+        QFontMetrics fm(painter.font());
+        int textWidth = fm.horizontalAdvance(label);
+        
+        painter.drawText(screenX - textWidth, screenY + 4, label);
     }
 }
 
-void GLWidget::DrawCurve(const LoadedParamCurve2D& curve, const QColor& color) {
+void GLWidget::DrawCurve(const LoadedParamCurve2D& curve) {
     const auto& xVals = curve.GetXVals();
     const auto& yVals = curve.GetYVals();
     
-    if (xVals.empty() || yVals.empty()) return;
+    if (xVals.size() < 2) return;
     
-    glColor3f(color.redF(), color.greenF(), color.blueF());
+    Color color = curve.GetColor();
+    glColor3f(color.r, color.g, color.b);
     glLineWidth(2.0f);
     
-    // Draw curve as connected line segments (matching WPF's Draw logic)
+    // Draw curve as connected line segments
     glBegin(GL_LINE_STRIP);
     for (size_t i = 0; i < xVals.size(); ++i) {
         glVertex2d(xVals[i], yVals[i]);
@@ -184,62 +233,131 @@ void GLWidget::DrawCurve(const LoadedParamCurve2D& curve, const QColor& color) {
     glEnd();
 }
 
-QColor GLWidget::GetCurveColor(int index) const {
-    if (index < 0 || index >= static_cast<int>(curveColors_.size())) {
-        return curveColors_[0];  // Default to black
+void GLWidget::DrawAnimationMarkers(QPainter& painter) {
+    int drawWidth = width_ - MARGIN_LEFT - MARGIN_RIGHT;
+    int drawHeight = height_ - MARGIN_TOP - MARGIN_BOTTOM;
+    
+    double rangeX = displayMaxX_ - displayMinX_;
+    double rangeY = displayMaxY_ - displayMinY_;
+    
+    for (const auto& curve : curves_) {
+        if (!curve || !curve->IsVisible()) continue;
+        if (currentAnimationFrame_ >= curve->GetNumPoints()) continue;
+        
+        double x, y;
+        if (!curve->GetPointAt(currentAnimationFrame_, x, y)) continue;
+        
+        // Convert to screen coordinates
+        double normX = (x - displayMinX_) / rangeX;
+        double normY = (y - displayMinY_) / rangeY;
+        int screenX = MARGIN_LEFT + static_cast<int>(normX * drawWidth);
+        int screenY = height_ - MARGIN_BOTTOM - static_cast<int>(normY * drawHeight);
+        
+        // Draw filled circle marker
+        Color color = curve->GetColor();
+        QColor qColor(static_cast<int>(color.r * 255), 
+                      static_cast<int>(color.g * 255), 
+                      static_cast<int>(color.b * 255));
+        
+        painter.setBrush(qColor);
+        painter.setPen(QPen(Qt::black, 1));
+        painter.drawEllipse(QPoint(screenX, screenY), 6, 6);
     }
-    return curveColors_[index];
+}
+
+QColor GLWidget::GetCurveColor(int index) const {
+    Color color = GetColorByIndex(index);
+    return QColor(static_cast<int>(color.r * 255),
+                  static_cast<int>(color.g * 255),
+                  static_cast<int>(color.b * 255));
 }
 
 void GLWidget::AddCurve(std::unique_ptr<LoadedParamCurve2D> curve) {
     curves_.push_back(std::move(curve));
     CalculateBounds();
+    
+    // Update max animation frames
+    maxAnimationFrames_ = 0;
+    for (const auto& c : curves_) {
+        maxAnimationFrames_ = std::max(maxAnimationFrames_, c->GetNumPoints());
+    }
+    
     update();
+    emit boundsChanged();
 }
 
 void GLWidget::ClearCurves() {
+    StopAnimation();
     curves_.clear();
-    ResetView();
+    currentAnimationFrame_ = 0;
+    maxAnimationFrames_ = 0;
+    
+    // Reset to default view
+    viewMinX_ = defaultMinX_ = -10.0;
+    viewMaxX_ = defaultMaxX_ = 10.0;
+    viewMinY_ = defaultMinY_ = -10.0;
+    viewMaxY_ = defaultMaxY_ = 10.0;
+    
+    auto [xTicks, yTicks] = AxisTickCalculator::CalculateAxisTicks(
+        viewMinX_, viewMaxX_, viewMinY_, viewMaxY_, 10, 8);
+    xTickInfo_ = xTicks;
+    yTickInfo_ = yTicks;
+    
     update();
+    emit boundsChanged();
 }
 
 void GLWidget::CalculateBounds() {
     if (curves_.empty()) {
-        defaultMinX_ = -10.0;
-        defaultMaxX_ = 10.0;
-        defaultMinY_ = -10.0;
-        defaultMaxY_ = 10.0;
+        dataMinX_ = dataMinY_ = -10.0;
+        dataMaxX_ = dataMaxY_ = 10.0;
+        dataMinT_ = 0; dataMaxT_ = 1;
         return;
     }
     
-    // Calculate bounds from all curves (matching WPF's InitializeCoordSysParams)
-    double minX = curves_[0]->GetMinX();
-    double maxX = curves_[0]->GetMaxX();
-    double minY = curves_[0]->GetMinY();
-    double maxY = curves_[0]->GetMaxY();
+    // Initialize with first curve's bounds
+    dataMinX_ = curves_[0]->GetMinX();
+    dataMaxX_ = curves_[0]->GetMaxX();
+    dataMinY_ = curves_[0]->GetMinY();
+    dataMaxY_ = curves_[0]->GetMaxY();
+    dataMinT_ = curves_[0]->GetMinT();
+    dataMaxT_ = curves_[0]->GetMaxT();
     
-    for (size_t i = 1; i < curves_.size(); ++i) {
-        minX = std::min(minX, curves_[i]->GetMinX());
-        maxX = std::max(maxX, curves_[i]->GetMaxX());
-        minY = std::min(minY, curves_[i]->GetMinY());
-        maxY = std::max(maxY, curves_[i]->GetMaxY());
+    // Expand bounds to include all curves
+    for (const auto& curve : curves_) {
+        dataMinX_ = std::min(dataMinX_, curve->GetMinX());
+        dataMaxX_ = std::max(dataMaxX_, curve->GetMaxX());
+        dataMinY_ = std::min(dataMinY_, curve->GetMinY());
+        dataMaxY_ = std::max(dataMaxY_, curve->GetMaxY());
+        dataMinT_ = std::min(dataMinT_, curve->GetMinT());
+        dataMaxT_ = std::max(dataMaxT_, curve->GetMaxT());
     }
     
-    // Add 10% padding
-    double paddingX = (maxX - minX) * 0.1;
-    double paddingY = (maxY - minY) * 0.1;
+    // Handle equal bounds
+    if (std::abs(dataMaxX_ - dataMinX_) < 1e-10) {
+        dataMinX_ -= 1; dataMaxX_ += 1;
+    }
+    if (std::abs(dataMaxY_ - dataMinY_) < 1e-10) {
+        dataMinY_ -= 1; dataMaxY_ += 1;
+    }
     
-    defaultMinX_ = minX - paddingX;
-    defaultMaxX_ = maxX + paddingX;
-    defaultMinY_ = minY - paddingY;
-    defaultMaxY_ = maxY + paddingY;
+    // Add 5% padding and calculate nice tick values
+    double xPadding = (dataMaxX_ - dataMinX_) * 0.05;
+    double yPadding = (dataMaxY_ - dataMinY_) * 0.05;
     
-    viewMinX_ = defaultMinX_;
-    viewMaxX_ = defaultMaxX_;
-    viewMinY_ = defaultMinY_;
-    viewMaxY_ = defaultMaxY_;
+    auto [xTicks, yTicks] = AxisTickCalculator::CalculateAxisTicks(
+        dataMinX_ - xPadding, dataMaxX_ + xPadding,
+        dataMinY_ - yPadding, dataMaxY_ + yPadding,
+        10, 8);
     
-    UpdateProjection();
+    xTickInfo_ = xTicks;
+    yTickInfo_ = yTicks;
+    
+    // Set view and default bounds from nice tick bounds
+    viewMinX_ = defaultMinX_ = xTickInfo_.min;
+    viewMaxX_ = defaultMaxX_ = xTickInfo_.max;
+    viewMinY_ = defaultMinY_ = yTickInfo_.min;
+    viewMaxY_ = defaultMaxY_ = yTickInfo_.max;
 }
 
 void GLWidget::ResetView() {
@@ -247,14 +365,106 @@ void GLWidget::ResetView() {
     viewMaxX_ = defaultMaxX_;
     viewMinY_ = defaultMinY_;
     viewMaxY_ = defaultMaxY_;
-    UpdateProjection();
+    update();
+    emit boundsChanged();
+}
+
+// Display settings
+void GLWidget::SetGridVisible(bool visible) {
+    showGrid_ = visible;
     update();
 }
 
+void GLWidget::SetLabelsVisible(bool visible) {
+    showLabels_ = visible;
+    update();
+}
+
+void GLWidget::SetPreserveAspectRatio(bool preserve) {
+    preserveAspectRatio_ = preserve;
+    update();
+}
+
+// Animation methods
+void GLWidget::StartAnimation() {
+    if (maxAnimationFrames_ == 0) return;
+    
+    animationRunning_ = true;
+    int interval = static_cast<int>(1000.0 / animationSpeed_);
+    animationTimer_->start(interval);
+    update();
+}
+
+void GLWidget::PauseAnimation() {
+    animationRunning_ = false;
+    animationTimer_->stop();
+}
+
+void GLWidget::ResumeAnimation() {
+    if (maxAnimationFrames_ == 0) return;
+    
+    animationRunning_ = true;
+    int interval = static_cast<int>(1000.0 / animationSpeed_);
+    animationTimer_->start(interval);
+}
+
+void GLWidget::ResetAnimation() {
+    currentAnimationFrame_ = 0;
+    update();
+}
+
+void GLWidget::StopAnimation() {
+    animationRunning_ = false;
+    animationTimer_->stop();
+}
+
+void GLWidget::SetAnimationSpeed(double pointsPerSecond) {
+    animationSpeed_ = std::max(0.1, pointsPerSecond);
+    
+    if (animationRunning_) {
+        int interval = static_cast<int>(1000.0 / animationSpeed_);
+        animationTimer_->setInterval(interval);
+    }
+}
+
+void GLWidget::OnAnimationTimer() {
+    if (!animationRunning_) return;
+    
+    currentAnimationFrame_++;
+    
+    // Loop animation
+    if (currentAnimationFrame_ >= maxAnimationFrames_) {
+        currentAnimationFrame_ = 0;
+    }
+    
+    update();
+    
+    if (animationCallback_) {
+        animationCallback_();
+    }
+}
+
+// Visibility
+void GLWidget::SetCurveVisible(int index, bool visible) {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        curves_[index]->SetVisible(visible);
+        update();
+    }
+}
+
+bool GLWidget::IsCurveVisible(int index) const {
+    if (index >= 0 && index < static_cast<int>(curves_.size())) {
+        return curves_[index]->IsVisible();
+    }
+    return false;
+}
+
+// Mouse events
 void GLWidget::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
         isPanning_ = true;
         lastMousePos_ = event->pos();
+        setCursor(Qt::ClosedHandCursor);
     }
 }
 
@@ -263,31 +473,42 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
         QPoint delta = event->pos() - lastMousePos_;
         lastMousePos_ = event->pos();
         
-        double rangeX = viewMaxX_ - viewMinX_;
-        double rangeY = viewMaxY_ - viewMinY_;
+        // Calculate pan distance in world coordinates
+        int drawWidth = width_ - MARGIN_LEFT - MARGIN_RIGHT;
+        int drawHeight = height_ - MARGIN_TOP - MARGIN_BOTTOM;
         
-        double dx = -delta.x() * rangeX / width_;
-        double dy = delta.y() * rangeY / height_;
+        double rangeX = displayMaxX_ - displayMinX_;
+        double rangeY = displayMaxY_ - displayMinY_;
+        
+        double dx = -delta.x() * rangeX / drawWidth;
+        double dy = delta.y() * rangeY / drawHeight;
         
         viewMinX_ += dx;
         viewMaxX_ += dx;
         viewMinY_ += dy;
         viewMaxY_ += dy;
         
-        UpdateProjection();
         update();
+    }
+}
+
+void GLWidget::mouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) {
+        isPanning_ = false;
+        setCursor(Qt::ArrowCursor);
     }
 }
 
 void GLWidget::wheelEvent(QWheelEvent* event) {
     double zoomFactor = 1.1;
     
+    double centerX = (viewMinX_ + viewMaxX_) / 2.0;
+    double centerY = (viewMinY_ + viewMaxY_) / 2.0;
+    
     if (event->angleDelta().y() > 0) {
         // Zoom in
         double rangeX = (viewMaxX_ - viewMinX_) / zoomFactor;
         double rangeY = (viewMaxY_ - viewMinY_) / zoomFactor;
-        double centerX = (viewMinX_ + viewMaxX_) / 2.0;
-        double centerY = (viewMinY_ + viewMaxY_) / 2.0;
         
         viewMinX_ = centerX - rangeX / 2.0;
         viewMaxX_ = centerX + rangeX / 2.0;
@@ -297,8 +518,6 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
         // Zoom out
         double rangeX = (viewMaxX_ - viewMinX_) * zoomFactor;
         double rangeY = (viewMaxY_ - viewMinY_) * zoomFactor;
-        double centerX = (viewMinX_ + viewMaxX_) / 2.0;
-        double centerY = (viewMinY_ + viewMaxY_) / 2.0;
         
         viewMinX_ = centerX - rangeX / 2.0;
         viewMaxX_ = centerX + rangeX / 2.0;
@@ -306,6 +525,5 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
         viewMaxY_ = centerY + rangeY / 2.0;
     }
     
-    UpdateProjection();
     update();
 }

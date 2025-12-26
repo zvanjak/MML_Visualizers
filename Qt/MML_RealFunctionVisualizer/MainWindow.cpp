@@ -1,88 +1,63 @@
 #include "MainWindow.h"
 #include "MMLFileParser.h"
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QSplitter>
+#include <QVBoxLayout>
+#include <QLabel>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QLabel>
-#include <sstream>
-#include <iomanip>
+#include <QFrame>
+#include <QScrollArea>
+#include <QPalette>
+
+// Color palette matching WPF version
+const std::vector<Color> MainWindow::colorPalette_ = {
+    Color(0.0f, 0.0f, 0.0f),       // Black
+    Color(0.0f, 0.0f, 1.0f),       // Blue
+    Color(1.0f, 0.0f, 0.0f),       // Red
+    Color(0.0f, 0.5f, 0.0f),       // Green
+    Color(1.0f, 0.65f, 0.0f),      // Orange
+    Color(0.5f, 0.0f, 0.5f),       // Purple
+    Color(0.65f, 0.16f, 0.16f),    // Brown
+    Color(0.0f, 1.0f, 1.0f),       // Cyan
+    Color(1.0f, 0.0f, 1.0f),       // Magenta
+    Color(0.5f, 0.5f, 0.5f),       // Gray
+    Color(1.0f, 1.0f, 0.0f)        // Yellow
+};
 
 MainWindow::MainWindow(const std::vector<std::string>& filenames, QWidget *parent)
     : QMainWindow(parent)
     , functionCounter_(0)
+    , graphTitle_("Real Function Visualizer")
 {
     setWindowTitle("MML Real Function Visualizer (Qt + OpenGL)");
-    resize(1200, 700);
+    resize(1200, 850);
 
     // Create central widget and main layout
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
+    
+    QHBoxLayout* mainLayout = new QHBoxLayout(centralWidget);
+    mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setSpacing(5);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
-
-    // Create splitter for GL widget and info panel
-    QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
-
-    // Create GL widget
+    // Create GL widget (takes most space)
     glWidget_ = new GLWidget(this);
-    splitter->addWidget(glWidget_);
+    glWidget_->setMinimumSize(600, 400);
+    mainLayout->addWidget(glWidget_, 1);  // Stretch factor 1
+    
+    // Connect signals
+    connect(glWidget_, &GLWidget::boundsChanged, this, &MainWindow::OnBoundsChanged);
 
-    // Create right panel
-    QWidget* rightPanel = new QWidget(this);
-    QVBoxLayout* rightLayout = new QVBoxLayout(rightPanel);
-
-    // Create buttons
-    loadButton_ = new QPushButton("Load Function", this);
-    resetButton_ = new QPushButton("Reset View", this);
-
-    rightLayout->addWidget(loadButton_);
-    rightLayout->addWidget(resetButton_);
-
-    // Create info display
-    QLabel* infoLabel = new QLabel("Loaded Functions:", this);
-    rightLayout->addWidget(infoLabel);
-
-    infoDisplay_ = new QTextEdit(this);
-    infoDisplay_->setReadOnly(true);
-    infoDisplay_->setMaximumHeight(300);
-    rightLayout->addWidget(infoDisplay_);
-
-    // Add instructions
-    QLabel* instructionsLabel = new QLabel("Controls:", this);
-    rightLayout->addWidget(instructionsLabel);
-
-    QTextEdit* instructions = new QTextEdit(this);
-    instructions->setReadOnly(true);
-    instructions->setMaximumHeight(150);
-    instructions->setHtml(
-        "<b>Mouse Controls:</b><br>"
-        "• Left/Right button + drag: Pan view<br>"
-        "• Mouse wheel: Zoom in/out<br>"
-        "<br>"
-        "<b>Buttons:</b><br>"
-        "• Load Function: Add new function<br>"
-        "• Reset View: Fit all functions"
-    );
-    rightLayout->addWidget(instructions);
-
-    rightLayout->addStretch();
-
-    splitter->addWidget(rightPanel);
-    splitter->setStretchFactor(0, 3);
-    splitter->setStretchFactor(1, 1);
-
-    mainLayout->addWidget(splitter);
+    // Create sidebar
+    sidebarWidget_ = new QWidget(this);
+    sidebarWidget_->setFixedWidth(230);
+    CreateSidebar(sidebarWidget_);
+    mainLayout->addWidget(sidebarWidget_, 0);  // No stretch
 
     // Create status bar
     statusBar_ = new QStatusBar(this);
     setStatusBar(statusBar_);
     statusBar_->showMessage("Ready");
-
-    // Connect signals
-    connect(loadButton_, &QPushButton::clicked, this, &MainWindow::LoadFile);
-    connect(resetButton_, &QPushButton::clicked, this, &MainWindow::ResetView);
 
     // Load initial files
     for (const auto& filename : filenames) {
@@ -91,6 +66,94 @@ MainWindow::MainWindow(const std::vector<std::string>& filenames, QWidget *paren
 }
 
 MainWindow::~MainWindow() {
+}
+
+void MainWindow::CreateSidebar(QWidget* parent) {
+    QVBoxLayout* sidebarLayout = new QVBoxLayout(parent);
+    sidebarLayout->setContentsMargins(5, 5, 5, 5);
+    sidebarLayout->setSpacing(10);
+    
+    // ===== TITLE SECTION =====
+    QLabel* titleLabel = new QLabel("Graph Title:", parent);
+    titleLabel->setStyleSheet("font-weight: bold;");
+    sidebarLayout->addWidget(titleLabel);
+    
+    titleEdit_ = new QLineEdit(graphTitle_, parent);
+    connect(titleEdit_, &QLineEdit::editingFinished, this, &MainWindow::OnTitleChanged);
+    sidebarLayout->addWidget(titleEdit_);
+    
+    // ===== LEGEND SECTION =====
+    QLabel* legendLabel = new QLabel("Legend:", parent);
+    legendLabel->setStyleSheet("font-weight: bold;");
+    sidebarLayout->addWidget(legendLabel);
+    
+    legendScrollArea_ = new QScrollArea(parent);
+    legendScrollArea_->setWidgetResizable(true);
+    legendScrollArea_->setMinimumHeight(250);
+    legendScrollArea_->setMaximumHeight(350);
+    legendScrollArea_->setFrameShape(QFrame::StyledPanel);
+    
+    legendContent_ = new QWidget();
+    legendLayout_ = new QVBoxLayout(legendContent_);
+    legendLayout_->setContentsMargins(5, 5, 5, 5);
+    legendLayout_->setSpacing(2);
+    legendLayout_->addStretch();
+    
+    legendScrollArea_->setWidget(legendContent_);
+    sidebarLayout->addWidget(legendScrollArea_);
+    
+    // ===== SETTINGS SECTION =====
+    QLabel* settingsLabel = new QLabel("Graph Settings:", parent);
+    settingsLabel->setStyleSheet("font-weight: bold;");
+    sidebarLayout->addWidget(settingsLabel);
+    
+    gridCheckbox_ = new QCheckBox("Show Grid", parent);
+    gridCheckbox_->setChecked(true);
+    connect(gridCheckbox_, &QCheckBox::toggled, this, &MainWindow::OnGridToggled);
+    sidebarLayout->addWidget(gridCheckbox_);
+    
+    labelsCheckbox_ = new QCheckBox("Show Axis Labels", parent);
+    labelsCheckbox_->setChecked(true);
+    connect(labelsCheckbox_, &QCheckBox::toggled, this, &MainWindow::OnLabelsToggled);
+    sidebarLayout->addWidget(labelsCheckbox_);
+    
+    aspectRatioCheckbox_ = new QCheckBox("Preserve Aspect Ratio", parent);
+    aspectRatioCheckbox_->setChecked(false);
+    connect(aspectRatioCheckbox_, &QCheckBox::toggled, this, &MainWindow::OnAspectRatioToggled);
+    sidebarLayout->addWidget(aspectRatioCheckbox_);
+    
+    sidebarLayout->addSpacing(10);
+    
+    // ===== BUTTONS SECTION =====
+    loadButton_ = new QPushButton("Load File...", parent);
+    loadButton_->setStyleSheet("QPushButton { background-color: #4682B4; color: white; font-weight: bold; padding: 8px; }");
+    connect(loadButton_, &QPushButton::clicked, this, &MainWindow::LoadFile);
+    sidebarLayout->addWidget(loadButton_);
+    
+    clearButton_ = new QPushButton("Clear All", parent);
+    clearButton_->setStyleSheet("QPushButton { background-color: #B44646; color: white; padding: 8px; }");
+    connect(clearButton_, &QPushButton::clicked, this, &MainWindow::ClearAll);
+    sidebarLayout->addWidget(clearButton_);
+    
+    resetButton_ = new QPushButton("Reset View", parent);
+    connect(resetButton_, &QPushButton::clicked, this, &MainWindow::ResetView);
+    sidebarLayout->addWidget(resetButton_);
+    
+    sidebarLayout->addStretch();
+    
+    // ===== INSTRUCTIONS =====
+    QLabel* controlsLabel = new QLabel("Controls:", parent);
+    controlsLabel->setStyleSheet("font-weight: bold;");
+    sidebarLayout->addWidget(controlsLabel);
+    
+    QLabel* instructions = new QLabel(
+        "• Left/Right drag: Pan view\n"
+        "• Mouse wheel: Zoom\n"
+        "• Checkbox: Toggle visibility",
+        parent);
+    instructions->setWordWrap(true);
+    instructions->setStyleSheet("color: #666;");
+    sidebarLayout->addWidget(instructions);
 }
 
 void MainWindow::LoadFile() {
@@ -108,15 +171,38 @@ void MainWindow::LoadFile() {
 
 void MainWindow::LoadFunctionFile(const QString& filename) {
     try {
-        Color color = GetColorForIndex(functionCounter_);
-        auto func = MMLFileParser::ParseRealFunction(filename.toStdString(), color);
+        auto func = MMLFileParser::ParseFile(filename.toStdString(), functionCounter_);
         
-        glWidget_->AddFunction(std::move(func));
-        loadedFilenames_.push_back(filename.toStdString());
-        functionCounter_++;
-        
-        UpdateInfoDisplay();
-        statusBar_->showMessage("Loaded: " + filename, 3000);
+        if (func) {
+            // Assign colors to functions
+            if (func->GetDimension() == 1) {
+                auto* singleFunc = dynamic_cast<LoadedRealFunction*>(func.get());
+                if (singleFunc) {
+                    singleFunc->SetColor(GetColorForIndex(functionCounter_));
+                }
+            } else {
+                auto* multiFunc = dynamic_cast<MultiLoadedFunction*>(func.get());
+                if (multiFunc) {
+                    for (int i = 0; i < multiFunc->GetDimension(); ++i) {
+                        multiFunc->SetFunctionColor(i, GetColorForIndex(i));
+                    }
+                }
+            }
+            
+            // Update title from first loaded function if still default
+            if (graphTitle_ == "Real Function Visualizer" && !func->GetTitle().empty()) {
+                graphTitle_ = QString::fromStdString(func->GetTitle());
+                titleEdit_->setText(graphTitle_);
+                setWindowTitle("MML Real Function Visualizer - " + graphTitle_);
+            }
+            
+            glWidget_->AddFunction(std::move(func));
+            loadedFilenames_.push_back(filename.toStdString());
+            functionCounter_++;
+            
+            UpdateLegend();
+            statusBar_->showMessage("Loaded: " + filename, 3000);
+        }
     }
     catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to load file:\n%1").arg(e.what()));
@@ -124,59 +210,177 @@ void MainWindow::LoadFunctionFile(const QString& filename) {
     }
 }
 
+void MainWindow::ClearAll() {
+    glWidget_->ClearFunctions();
+    loadedFilenames_.clear();
+    functionCounter_ = 0;
+    graphTitle_ = "Real Function Visualizer";
+    titleEdit_->setText(graphTitle_);
+    setWindowTitle("MML Real Function Visualizer (Qt + OpenGL)");
+    UpdateLegend();
+    statusBar_->showMessage("Cleared all functions", 2000);
+}
+
 void MainWindow::ResetView() {
     glWidget_->ResetView();
     statusBar_->showMessage("View reset", 2000);
 }
 
-void MainWindow::UpdateInfoDisplay() {
-    QString html = "<table border='0' cellpadding='3'>";
-    html += "<tr><th align='left'>Function</th><th>Points</th><th>X Range</th><th>Y Range</th></tr>";
+void MainWindow::OnTitleChanged() {
+    graphTitle_ = titleEdit_->text();
+    setWindowTitle("MML Real Function Visualizer - " + graphTitle_);
+}
 
-    const auto& functions = glWidget_->GetFunctions();
-    for (size_t i = 0; i < functions.size(); i++) {
-        const auto& func = functions[i];
-        const Color& color = func->GetColor();
-        
-        QString colorStr = QString("rgb(%1,%2,%3)")
-            .arg(static_cast<int>(color.r * 255))
-            .arg(static_cast<int>(color.g * 255))
-            .arg(static_cast<int>(color.b * 255));
+void MainWindow::OnGridToggled(bool checked) {
+    glWidget_->SetGridVisible(checked);
+}
 
-        std::ostringstream xRange, yRange;
-        xRange << std::fixed << std::setprecision(2) 
-               << "[" << func->GetMinX() << ", " << func->GetMaxX() << "]";
-        yRange << std::fixed << std::setprecision(2)
-               << "[" << func->GetMinY() << ", " << func->GetMaxY() << "]";
+void MainWindow::OnLabelsToggled(bool checked) {
+    glWidget_->SetLabelsVisible(checked);
+}
 
-        html += QString("<tr>"
-                       "<td><span style='color:%1'>■</span> %2</td>"
-                       "<td align='center'>%3</td>"
-                       "<td>%4</td>"
-                       "<td>%5</td>"
-                       "</tr>")
-            .arg(colorStr)
-            .arg(QString::fromStdString(func->GetTitle()))
-            .arg(func->GetNumPoints())
-            .arg(QString::fromStdString(xRange.str()))
-            .arg(QString::fromStdString(yRange.str()));
+void MainWindow::OnAspectRatioToggled(bool checked) {
+    glWidget_->SetPreserveAspectRatio(checked);
+}
+
+void MainWindow::OnLegendCheckboxToggled(bool checked) {
+    QCheckBox* checkbox = qobject_cast<QCheckBox*>(sender());
+    if (!checkbox) return;
+    
+    // Find which legend entry this checkbox belongs to
+    for (const auto& entry : legendEntries_) {
+        if (entry.checkbox == checkbox) {
+            auto& functions = glWidget_->GetFunctions();
+            
+            if (entry.functionIndex < static_cast<int>(functions.size())) {
+                auto& func = functions[entry.functionIndex];
+                
+                if (entry.subFunctionIndex >= 0) {
+                    // Multi-function sub-entry
+                    func->SetFunctionVisible(entry.subFunctionIndex, checked);
+                } else {
+                    // Single function
+                    func->SetVisible(checked);
+                }
+                
+                glWidget_->RecalculateBounds();
+                glWidget_->update();
+            }
+            break;
+        }
     }
+}
 
-    html += "</table>";
-    infoDisplay_->setHtml(html);
+void MainWindow::OnBoundsChanged() {
+    // Could update status bar with current bounds if desired
+}
+
+void MainWindow::UpdateLegend() {
+    // Clear all widgets from the legend layout
+    // This properly deletes all child widgets
+    QLayoutItem* item;
+    while ((item = legendLayout_->takeAt(0)) != nullptr) {
+        if (item->widget()) {
+            delete item->widget();
+        }
+        delete item;
+    }
+    legendEntries_.clear();
+    
+    const auto& functions = glWidget_->GetFunctions();
+    int colorIndex = 0;
+    
+    for (size_t funcIdx = 0; funcIdx < functions.size(); ++funcIdx) {
+        const auto& func = functions[funcIdx];
+        
+        if (func->GetDimension() == 1) {
+            // Single function
+            QWidget* entryWidget = new QWidget();
+            QHBoxLayout* entryLayout = new QHBoxLayout(entryWidget);
+            entryLayout->setContentsMargins(0, 2, 0, 2);
+            entryLayout->setSpacing(5);
+            
+            // Checkbox
+            QCheckBox* checkbox = new QCheckBox();
+            checkbox->setChecked(func->IsVisible());
+            connect(checkbox, &QCheckBox::toggled, this, &MainWindow::OnLegendCheckboxToggled);
+            entryLayout->addWidget(checkbox);
+            
+            // Color box
+            QWidget* colorBox = new QWidget();
+            colorBox->setFixedSize(20, 15);
+            Color c = func->GetFunctionColor(0);
+            QString colorStyle = QString("background-color: rgb(%1,%2,%3); border: 1px solid black;")
+                .arg(static_cast<int>(c.r * 255))
+                .arg(static_cast<int>(c.g * 255))
+                .arg(static_cast<int>(c.b * 255));
+            colorBox->setStyleSheet(colorStyle);
+            entryLayout->addWidget(colorBox);
+            
+            // Label
+            QLabel* label = new QLabel(QString::fromStdString(func->GetTitle()));
+            label->setWordWrap(true);
+            entryLayout->addWidget(label, 1);
+            
+            legendLayout_->addWidget(entryWidget);
+            
+            LegendEntry entry;
+            entry.checkbox = checkbox;
+            entry.colorBox = colorBox;
+            entry.functionIndex = static_cast<int>(funcIdx);
+            entry.subFunctionIndex = -1;
+            legendEntries_.push_back(entry);
+            
+            colorIndex++;
+        } else {
+            // Multi-function - add entry for each sub-function
+            auto* multiFunc = dynamic_cast<const MultiLoadedFunction*>(func.get());
+            if (multiFunc) {
+                for (int i = 0; i < func->GetDimension(); ++i) {
+                    QWidget* entryWidget = new QWidget();
+                    QHBoxLayout* entryLayout = new QHBoxLayout(entryWidget);
+                    entryLayout->setContentsMargins(0, 2, 0, 2);
+                    entryLayout->setSpacing(5);
+                    
+                    // Checkbox
+                    QCheckBox* checkbox = new QCheckBox();
+                    checkbox->setChecked(multiFunc->IsFunctionVisible(i));
+                    connect(checkbox, &QCheckBox::toggled, this, &MainWindow::OnLegendCheckboxToggled);
+                    entryLayout->addWidget(checkbox);
+                    
+                    // Color box
+                    QWidget* colorBox = new QWidget();
+                    colorBox->setFixedSize(20, 15);
+                    Color c = multiFunc->GetFunctionColor(i);
+                    QString colorStyle = QString("background-color: rgb(%1,%2,%3); border: 1px solid black;")
+                        .arg(static_cast<int>(c.r * 255))
+                        .arg(static_cast<int>(c.g * 255))
+                        .arg(static_cast<int>(c.b * 255));
+                    colorBox->setStyleSheet(colorStyle);
+                    entryLayout->addWidget(colorBox);
+                    
+                    // Label
+                    QLabel* label = new QLabel(QString::fromStdString(multiFunc->GetFunctionTitle(i)));
+                    label->setWordWrap(true);
+                    entryLayout->addWidget(label, 1);
+                    
+                    legendLayout_->addWidget(entryWidget);
+                    
+                    LegendEntry entry;
+                    entry.checkbox = checkbox;
+                    entry.colorBox = colorBox;
+                    entry.functionIndex = static_cast<int>(funcIdx);
+                    entry.subFunctionIndex = i;
+                    legendEntries_.push_back(entry);
+                }
+            }
+        }
+    }
+    
+    // Add stretch at the end
+    legendLayout_->addStretch();
 }
 
 Color MainWindow::GetColorForIndex(int index) {
-    static const Color colors[] = {
-        Color(1.0f, 0.0f, 0.0f),   // Red
-        Color(0.0f, 0.5f, 1.0f),   // Blue
-        Color(0.0f, 0.7f, 0.0f),   // Green
-        Color(1.0f, 0.5f, 0.0f),   // Orange
-        Color(0.6f, 0.0f, 0.8f),   // Purple
-        Color(0.0f, 0.8f, 0.8f),   // Cyan
-        Color(1.0f, 0.8f, 0.0f),   // Yellow
-        Color(1.0f, 0.0f, 0.5f),   // Pink
-    };
-    
-    return colors[index % 8];
+    return colorPalette_[index % colorPalette_.size()];
 }

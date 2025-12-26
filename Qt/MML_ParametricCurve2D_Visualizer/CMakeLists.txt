@@ -25,6 +25,7 @@ set(HEADERS
     GLWidget.h
     MMLData.h
     MMLFileParser.h
+    AxisTickCalculator.h
 )
 
 # Create executable
