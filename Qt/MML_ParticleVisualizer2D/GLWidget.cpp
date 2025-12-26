@@ -110,8 +110,9 @@ void GLWidget::SetAnimationSpeed(int fps) {
 void GLWidget::OnAnimationTimer() {
     currentTimestep_++;
     if (currentTimestep_ >= numTimesteps_) {
-        currentTimestep_ = 0;  // Loop animation
-        // Or stop: Pause(); emit AnimationFinished();
+        currentTimestep_ = numTimesteps_ - 1;  // Stay at last frame
+        Pause();
+        emit AnimationFinished();
     }
     emit TimestepChanged(currentTimestep_);
     update();
