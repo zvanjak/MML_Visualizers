@@ -114,7 +114,9 @@ void GLWidget::UpdateProjectionMatrix()
     float aspectRatio = static_cast<float>(width()) / static_cast<float>(height());
     
     projectionMatrix_.setToIdentity();
-    projectionMatrix_.perspective(45.0f, aspectRatio, 0.1f, 1000.0f);
+    // Far plane scales with camera distance to support unlimited zoom out
+    float farPlane = qMax(10000.0f, cameraDistance_ * 10.0f);
+    projectionMatrix_.perspective(45.0f, aspectRatio, 0.1f, farPlane);
 }
 
 void GLWidget::paintGL()
