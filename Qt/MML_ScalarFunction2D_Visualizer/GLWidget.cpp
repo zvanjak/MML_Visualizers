@@ -13,9 +13,14 @@ GLWidget::GLWidget(QWidget* parent)
     , m_showGridPoints(true)
     , m_colorByHeight(true)
     , m_hasData(false)
+    , m_surfaceColorIndex(0)
+    , m_pointsColorIndex(0)
     , m_distance(300.0f)
     , m_angleX(45.0f)
     , m_angleY(30.0f)
+    , m_initialDistance(300.0f)
+    , m_initialAngleX(45.0f)
+    , m_initialAngleY(30.0f)
 {
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -36,20 +41,68 @@ void GLWidget::setScalarFunction(const ScalarFunction2DData& data)
         double rangeZ = std::abs(data.maxValue - data.minValue);
         double maxRange = std::max({rangeX, rangeY, rangeZ});
         m_distance = maxRange * 1.5f;
+        m_initialDistance = m_distance;
+        m_initialAngleX = 45.0f;
+        m_initialAngleY = 30.0f;
+        m_angleX = m_initialAngleX;
+        m_angleY = m_initialAngleY;
     }
     
+    update();
+}
+
+void GLWidget::clearData()
+{
+    m_data = ScalarFunction2DData();
+    m_hasData = false;
+    m_distance = 300.0f;
+    m_angleX = 45.0f;
+    m_angleY = 30.0f;
+    m_initialDistance = 300.0f;
+    m_initialAngleX = 45.0f;
+    m_initialAngleY = 30.0f;
+    update();
+}
+
+void GLWidget::resetCamera()
+{
+    m_distance = m_initialDistance;
+    m_angleX = m_initialAngleX;
+    m_angleY = m_initialAngleY;
     update();
 }
 
 void GLWidget::setScaleX(double scale)
 {
     m_scaleX = scale;
+    
+    // Recalculate camera distance based on new scale
+    if (m_hasData) {
+        double rangeX = std::abs(m_data.xMax - m_data.xMin) * m_scaleX;
+        double rangeY = std::abs(m_data.yMax - m_data.yMin) * m_scaleY;
+        double rangeZ = std::abs(m_data.maxValue - m_data.minValue);
+        double maxRange = std::max({rangeX, rangeY, rangeZ});
+        m_distance = maxRange * 1.5f;
+        m_initialDistance = m_distance;
+    }
+    
     update();
 }
 
 void GLWidget::setScaleY(double scale)
 {
     m_scaleY = scale;
+    
+    // Recalculate camera distance based on new scale
+    if (m_hasData) {
+        double rangeX = std::abs(m_data.xMax - m_data.xMin) * m_scaleX;
+        double rangeY = std::abs(m_data.yMax - m_data.yMin) * m_scaleY;
+        double rangeZ = std::abs(m_data.maxValue - m_data.minValue);
+        double maxRange = std::max({rangeX, rangeY, rangeZ});
+        m_distance = maxRange * 1.5f;
+        m_initialDistance = m_distance;
+    }
+    
     update();
 }
 
@@ -65,9 +118,21 @@ void GLWidget::setColorByHeight(bool enable)
     update();
 }
 
+void GLWidget::setSurfaceColorIndex(int index)
+{
+    m_surfaceColorIndex = index;
+    update();
+}
+
+void GLWidget::setPointsColorIndex(int index)
+{
+    m_pointsColorIndex = index;
+    update();
+}
+
 void GLWidget::initializeGL()
 {
-    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+    glClearColor(0.95f, 0.95f, 0.98f, 1.0f);  // Light gray background
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -208,12 +273,13 @@ void GLWidget::drawQuad(const QVector3D& v0, const QVector3D& v1, const QVector3
     
     glNormal3f(normal.x(), normal.y(), normal.z());
     
-    // Set color based on height if enabled
+    // Set color based on height if enabled, else use solid color
     if (m_colorByHeight) {
         QVector3D color0 = getColorForHeight(v0.z());
         glColor3f(color0.x(), color0.y(), color0.z());
     } else {
-        glColor3f(0.8f, 0.2f, 0.2f);  // Red surface
+        Color c = GetSurfaceColorByIndex(m_surfaceColorIndex);
+        glColor3f(c.r, c.g, c.b);
     }
     glVertex3f(v0.x(), v0.y(), v0.z());
     
@@ -243,8 +309,10 @@ void GLWidget::drawGridPoints()
     if (!m_hasData) return;
     
     glDisable(GL_LIGHTING);
-    glColor3f(0.2f, 0.4f, 1.0f);  // Blue points
-    glPointSize(4.0f);
+    
+    Color pointColor = GetPointColorByIndex(m_pointsColorIndex);
+    glColor3f(pointColor.r, pointColor.g, pointColor.b);
+    glPointSize(5.0f);
     
     glBegin(GL_POINTS);
     

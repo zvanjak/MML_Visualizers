@@ -16,10 +16,20 @@ public:
     ~GLWidget();
 
     void setScalarFunction(const ScalarFunction2DData& data);
+    void clearData();
+    void resetCamera();
+    
+    // Display settings
     void setScaleX(double scale);
     void setScaleY(double scale);
     void setShowGridPoints(bool show);
     void setColorByHeight(bool enable);
+    void setSurfaceColorIndex(int index);
+    void setPointsColorIndex(int index);
+    
+    // Accessors
+    const ScalarFunction2DData& getData() const { return m_data; }
+    bool hasData() const { return m_hasData; }
 
 protected:
     void initializeGL() override;
@@ -43,10 +53,17 @@ private:
     bool m_showGridPoints;
     bool m_colorByHeight;
     bool m_hasData;
+    int m_surfaceColorIndex;
+    int m_pointsColorIndex;
 
     // Camera parameters
     float m_distance;
     float m_angleX;
     float m_angleY;
     QPoint m_lastMousePos;
+    
+    // Initial camera state for reset
+    float m_initialDistance;
+    float m_initialAngleX;
+    float m_initialAngleY;
 };
