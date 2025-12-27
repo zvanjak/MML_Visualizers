@@ -1,7 +1,4 @@
 PARTICLE_SIMULATION_DATA_3D
-Width: -1
-Height: -1
-Depth: -1
 NumBalls: 9
 Sun Yellow 30
 Mercury Black 3

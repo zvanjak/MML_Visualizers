@@ -424,7 +424,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     float delta = event->angleDelta().y() / 120.0f;
     cameraDistance_ *= (1.0f - delta * 0.1f);
-    cameraDistance_ = qBound(1.0f, cameraDistance_, 500.0f);
+    cameraDistance_ = qMax(0.1f, cameraDistance_);  // Only enforce minimum, no upper limit
     
     update();
 }
