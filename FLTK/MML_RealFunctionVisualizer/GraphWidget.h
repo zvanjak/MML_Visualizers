@@ -72,6 +72,7 @@ public:
     GraphWidget(int X, int Y, int W, int H, const char* L = nullptr);
     
     void draw() override;
+    void resize(int X, int Y, int W, int H) override;
     
     void AddFunction(std::unique_ptr<LoadedFunction> func);
     void ClearFunctions();

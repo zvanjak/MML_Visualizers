@@ -20,6 +20,7 @@ public:
     SimulationWidget(int X, int Y, int W, int H, const char* L = nullptr);
     
     void draw() override;
+    void resize(int X, int Y, int W, int H) override;
     
     void SetSimulationData(std::unique_ptr<ParticleSimulationData> data);
     void SetCurrentStep(int step);

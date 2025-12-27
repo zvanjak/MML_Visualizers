@@ -94,6 +94,11 @@ void GraphWidget::CalculateTicks() {
     coordParams_.tMax = dataMaxT_;
 }
 
+void GraphWidget::resize(int X, int Y, int W, int H) {
+    Fl_Widget::resize(X, Y, W, H);
+    coordParams_.UpdateFromWidget(w(), h());
+}
+
 void GraphWidget::draw() {
     // Update dimensions
     coordParams_.UpdateFromWidget(w(), h());

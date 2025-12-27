@@ -304,6 +304,11 @@ void GraphWidget::RecalculateAndRedraw() {
     }
 }
 
+void GraphWidget::resize(int X, int Y, int W, int H) {
+    Fl_Widget::resize(X, Y, W, H);
+    InitializeCoordParams();
+}
+
 void GraphWidget::draw() {
     // Clear background
     fl_color(255, 255, 255); // White background

@@ -48,6 +48,7 @@ public:
     ~GraphWidget();
     
     void draw() override;
+    void resize(int X, int Y, int W, int H) override;
     
     // Curve management
     void AddCurve(std::unique_ptr<LoadedParametricCurve2D> curve);

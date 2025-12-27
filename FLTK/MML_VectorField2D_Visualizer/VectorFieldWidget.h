@@ -41,6 +41,7 @@ public:
     VectorFieldWidget(int X, int Y, int W, int H, const char* L = nullptr);
     
     void draw() override;
+    void resize(int X, int Y, int W, int H) override;
     
     void SetVectorField(std::unique_ptr<VectorField2D> field);
     void ClearVectorField();

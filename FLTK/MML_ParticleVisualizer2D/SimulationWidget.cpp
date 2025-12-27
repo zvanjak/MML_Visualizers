@@ -81,6 +81,11 @@ void SimulationWidget::DrawBorder() {
     fl_line_style(0);
 }
 
+void SimulationWidget::resize(int X, int Y, int W, int H) {
+    Fl_Widget::resize(X, Y, W, H);
+    InitializeCoordParams();
+}
+
 void SimulationWidget::draw() {
     // Draw background
     fl_color(FL_WHITE);

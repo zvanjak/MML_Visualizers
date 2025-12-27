@@ -305,6 +305,11 @@ void VectorFieldWidget::DrawVector(const VectorRepr& vec) {
     fl_line_style(0);
 }
 
+void VectorFieldWidget::resize(int X, int Y, int W, int H) {
+    Fl_Widget::resize(X, Y, W, H);
+    InitializeCoordParams();
+}
+
 void VectorFieldWidget::draw() {
     // Draw background
     fl_color(FL_WHITE);
