@@ -95,6 +95,57 @@ public:
         }
         return maxMag;
     }
+    
+    double GetMinVectorMagnitude() const {
+        if (vectors_.empty()) return 0.0;
+        
+        double minMag = vectors_[0].vector.Magnitude();
+        for (const auto& vec : vectors_) {
+            double mag = vec.vector.Magnitude();
+            if (mag > 0) {  // Skip zero vectors
+                minMag = std::min(minMag, mag);
+            }
+        }
+        return minMag;
+    }
+    
+    double GetAvgVectorMagnitude() const {
+        if (vectors_.empty()) return 0.0;
+        
+        double sum = 0;
+        for (const auto& vec : vectors_) {
+            sum += vec.vector.Magnitude();
+        }
+        return sum / vectors_.size();
+    }
+    
+    // Calculate optimal scale based on grid spacing (WPF algorithm)
+    double CalculateOptimalScale() const {
+        if (vectors_.empty()) return 1.0;
+        
+        double xMin, xMax, yMin, yMax;
+        GetBounds(xMin, xMax, yMin, yMax);
+        
+        double xRange = xMax - xMin;
+        double yRange = yMax - yMin;
+        
+        // Estimate grid size
+        int estimatedGridSize = static_cast<int>(std::sqrt(vectors_.size()));
+        if (estimatedGridSize < 2) estimatedGridSize = 2;
+        
+        double avgSpacingX = xRange / (estimatedGridSize - 1);
+        double avgSpacingY = yRange / (estimatedGridSize - 1);
+        double avgSpacing = std::min(avgSpacingX, avgSpacingY);
+        
+        double avgMag = GetAvgVectorMagnitude();
+        if (avgMag <= 0) return 1.0;
+        
+        // Vectors should be ~70% of grid spacing
+        double optimalScale = (0.7 * avgSpacing) / avgMag;
+        
+        // Clamp to reasonable range
+        return std::max(0.001, std::min(1000.0, optimalScale));
+    }
 };
 
 #endif // MML_DATA_H
