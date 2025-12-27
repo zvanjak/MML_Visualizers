@@ -84,6 +84,45 @@ public:
         }
         return maxMag;
     }
+    
+    double GetMinMagnitude() const {
+        if (vectors_.empty()) return 0;
+        double minMag = vectors_[0].vector.Magnitude();
+        for (const auto& v : vectors_) {
+            minMag = std::min(minMag, v.vector.Magnitude());
+        }
+        return minMag;
+    }
+    
+    double GetAvgMagnitude() const {
+        if (vectors_.empty()) return 0;
+        double sum = 0;
+        for (const auto& v : vectors_) {
+            sum += v.vector.Magnitude();
+        }
+        return sum / vectors_.size();
+    }
+    
+    double CalculateOptimalScale() const {
+        if (vectors_.empty()) return 1.0;
+        
+        double avgMagnitude = GetAvgMagnitude();
+        if (avgMagnitude < 1e-10) return 1.0;
+        
+        // Estimate grid spacing from data
+        double xMin, xMax, yMin, yMax;
+        GetBounds(xMin, xMax, yMin, yMax);
+        double xRange = xMax - xMin;
+        double yRange = yMax - yMin;
+        
+        int gridSize = static_cast<int>(std::sqrt(static_cast<double>(vectors_.size())));
+        if (gridSize < 1) gridSize = 1;
+        
+        double avgSpacing = ((xRange / gridSize) + (yRange / gridSize)) / 2.0;
+        
+        // Scale so average vector fills ~70% of grid cell
+        return (0.7 * avgSpacing) / avgMagnitude;
+    }
 };
 
 #endif // MML_DATA_H

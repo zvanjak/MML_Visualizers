@@ -14,9 +14,14 @@ GLWidget::GLWidget(QWidget* parent)
     , zoom_(1.0)
     , offsetX_(0)
     , offsetY_(0)
-    , arrowScale_(0.5)
+    , magnitudeScale_(1.0)
+    , optimalScale_(1.0)
+    , arrowSize_(8)
     , normalizeVectors_(false)
-    , showMagnitudeColor_(true)
+    , colorByMagnitude_(true)
+    , preserveAspectRatio_(false)
+    , arrowColorIndex_(0)
+    , minMagnitude_(0)
     , maxMagnitude_(1.0)
     , isPanning_(false)
 {
@@ -31,7 +36,9 @@ void GLWidget::LoadVectorField(std::unique_ptr<VectorField2D> field) {
     
     // Get bounds from vector field
     vectorField_->GetBounds(xMin_, xMax_, yMin_, yMax_);
+    minMagnitude_ = vectorField_->GetMinMagnitude();
     maxMagnitude_ = vectorField_->GetMaxMagnitude();
+    optimalScale_ = vectorField_->CalculateOptimalScale();
     
     // Add some margin
     double xMargin = (xMax_ - xMin_) * 0.1;
@@ -56,6 +63,9 @@ void GLWidget::ClearVectorField() {
     zoom_ = 1.0;
     offsetX_ = 0;
     offsetY_ = 0;
+    optimalScale_ = 1.0;
+    minMagnitude_ = 0;
+    maxMagnitude_ = 1.0;
     update();
 }
 
@@ -85,16 +95,22 @@ void GLWidget::paintGL() {
     
     double dataWidth = xMax_ - xMin_;
     double dataHeight = yMax_ - yMin_;
-    double aspectRatio = dataWidth / dataHeight;
     double windowRatio = static_cast<double>(w) / h;
     
     double viewWidth = dataWidth / zoom_;
     double viewHeight = dataHeight / zoom_;
     
-    if (aspectRatio > windowRatio) {
-        viewHeight = viewWidth / windowRatio;
+    if (preserveAspectRatio_) {
+        // Maintain uniform scaling
+        double dataRatio = dataWidth / dataHeight;
+        if (dataRatio > windowRatio) {
+            viewHeight = viewWidth / windowRatio;
+        } else {
+            viewWidth = viewHeight * windowRatio;
+        }
     } else {
-        viewWidth = viewHeight * windowRatio;
+        // Stretch to fill
+        viewHeight = viewWidth / windowRatio;
     }
     
     double centerX = (xMin_ + xMax_) / 2.0 + offsetX_;
@@ -161,61 +177,73 @@ void GLWidget::DrawVectors() {
 }
 
 void GLWidget::DrawArrow(double px, double py, double vx, double vy, double magnitude) {
+    if (magnitude < 1e-10) return;  // Skip zero vectors
+    
     // Determine arrow vector
     double arrowVx = vx;
     double arrowVy = vy;
     
-    if (normalizeVectors_ && magnitude > 0) {
+    if (normalizeVectors_) {
         arrowVx = vx / magnitude;
         arrowVy = vy / magnitude;
     }
     
-    // Scale arrow
-    arrowVx *= arrowScale_;
-    arrowVy *= arrowScale_;
+    // Apply effective scale (optimal * user scale)
+    double effectiveScale = optimalScale_ * magnitudeScale_;
+    arrowVx *= effectiveScale;
+    arrowVy *= effectiveScale;
     
-    // Color by magnitude if enabled
-    if (showMagnitudeColor_ && maxMagnitude_ > 0) {
-        QColor color = GetMagnitudeColor(magnitude, maxMagnitude_);
-        glColor3f(color.redF(), color.greenF(), color.blueF());
+    // Calculate half-vector for centering (WPF spec: arrows centered at data points)
+    double halfVx = arrowVx / 2.0;
+    double halfVy = arrowVy / 2.0;
+    
+    // Start and end points (centered on position)
+    double startX = px - halfVx;
+    double startY = py - halfVy;
+    double endX = px + halfVx;
+    double endY = py + halfVy;
+    
+    // Get color
+    QColor color;
+    if (colorByMagnitude_) {
+        color = GetMagnitudeColor(magnitude);
     } else {
-        glColor3f(0.0f, 0.0f, 0.0f);
+        color = GetSolidArrowColor();
     }
+    glColor3f(color.redF(), color.greenF(), color.blueF());
     
     // Draw arrow shaft
-    glLineWidth(1.5f);
+    glLineWidth(2.0f);
     glBegin(GL_LINES);
-    glVertex2d(px, py);
-    glVertex2d(px + arrowVx, py + arrowVy);
+    glVertex2d(startX, startY);
+    glVertex2d(endX, endY);
     glEnd();
     
     // Draw arrowhead
-    if (magnitude > 0) {
-        double angle = std::atan2(arrowVy, arrowVx);
-        double arrowHeadLength = (xMax_ - xMin_) * 0.02;
-        double arrowHeadAngle = M_PI / 6;  // 30 degrees
-        
-        double x2 = px + arrowVx;
-        double y2 = py + arrowVy;
-        
-        double x1 = x2 - arrowHeadLength * std::cos(angle + arrowHeadAngle);
-        double y1 = y2 - arrowHeadLength * std::sin(angle + arrowHeadAngle);
-        double x3 = x2 - arrowHeadLength * std::cos(angle - arrowHeadAngle);
-        double y3 = y2 - arrowHeadLength * std::sin(angle - arrowHeadAngle);
-        
-        glBegin(GL_TRIANGLES);
-        glVertex2d(x2, y2);
-        glVertex2d(x1, y1);
-        glVertex2d(x3, y3);
-        glEnd();
-    }
+    double angle = std::atan2(arrowVy, arrowVx);
+    double arrowHeadAngle = M_PI / 6;  // 30 degrees
+    
+    // Calculate arrowhead size in world coordinates
+    double viewWidth = (xMax_ - xMin_) / zoom_;
+    double arrowHeadLength = viewWidth * arrowSize_ / width();
+    
+    double x1 = endX - arrowHeadLength * std::cos(angle + arrowHeadAngle);
+    double y1 = endY - arrowHeadLength * std::sin(angle + arrowHeadAngle);
+    double x3 = endX - arrowHeadLength * std::cos(angle - arrowHeadAngle);
+    double y3 = endY - arrowHeadLength * std::sin(angle - arrowHeadAngle);
+    
+    glBegin(GL_TRIANGLES);
+    glVertex2d(endX, endY);
+    glVertex2d(x1, y1);
+    glVertex2d(x3, y3);
+    glEnd();
 }
 
-QColor GLWidget::GetMagnitudeColor(double magnitude, double maxMagnitude) const {
-    // Color gradient: Blue (low) -> Green -> Yellow -> Red (high)
-    if (maxMagnitude <= 0) return QColor(0, 0, 0);
+QColor GLWidget::GetMagnitudeColor(double magnitude) const {
+    // Color gradient: Blue (low) -> Cyan -> Green -> Yellow -> Red (high)
+    if (maxMagnitude_ <= minMagnitude_) return QColor(0, 0, 0);
     
-    double normalized = magnitude / maxMagnitude;
+    double normalized = (magnitude - minMagnitude_) / (maxMagnitude_ - minMagnitude_);
     normalized = std::min(1.0, std::max(0.0, normalized));
     
     int r, g, b;
@@ -248,6 +276,19 @@ QColor GLWidget::GetMagnitudeColor(double magnitude, double maxMagnitude) const 
     return QColor(r, g, b);
 }
 
+QColor GLWidget::GetSolidArrowColor() const {
+    // Solid colors: Black, Blue, Red, Green, Orange, Purple
+    switch (arrowColorIndex_) {
+        case 0: return QColor(0, 0, 0);       // Black
+        case 1: return QColor(0, 0, 255);     // Blue
+        case 2: return QColor(255, 0, 0);     // Red
+        case 3: return QColor(0, 128, 0);     // Green
+        case 4: return QColor(255, 165, 0);   // Orange
+        case 5: return QColor(128, 0, 128);   // Purple
+        default: return QColor(0, 0, 0);
+    }
+}
+
 void GLWidget::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
         lastMousePos_ = event->pos();
@@ -265,15 +306,19 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
         int w = width();
         int h = height();
         if (w > 0 && h > 0) {
-            double dataWidth = xMax_ - xMin_;
-            double dataHeight = yMax_ - yMin_;
-            double aspectRatio = dataWidth / dataHeight;
             double windowRatio = static_cast<double>(w) / h;
             
-            if (aspectRatio > windowRatio) {
-                viewHeight = viewWidth / windowRatio;
+            if (preserveAspectRatio_) {
+                double dataWidth = xMax_ - xMin_;
+                double dataHeight = yMax_ - yMin_;
+                double dataRatio = dataWidth / dataHeight;
+                if (dataRatio > windowRatio) {
+                    viewHeight = viewWidth / windowRatio;
+                } else {
+                    viewWidth = viewHeight * windowRatio;
+                }
             } else {
-                viewWidth = viewHeight * windowRatio;
+                viewHeight = viewWidth / windowRatio;
             }
             
             offsetX_ -= delta.x() * viewWidth / w;
