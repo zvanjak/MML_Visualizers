@@ -13,14 +13,13 @@ int main(int argc, char *argv[])
         filenames.push_back(argv[i]);
     }
     
-    if (filenames.empty()) {
-        std::cerr << "Usage: " << argv[0] << " <data_file>" << std::endl;
-        std::cerr << "Example: " << argv[0] << " SimData3D.txt" << std::endl;
-        return 1;
+    MainWindow window;
+    
+    // Load file from command line if provided
+    if (!filenames.empty()) {
+        window.LoadSimulation(QString::fromStdString(filenames[0]));
     }
     
-    MainWindow window;
-    window.LoadSimulation(QString::fromStdString(filenames[0]));
     window.show();
     
     return app.exec();

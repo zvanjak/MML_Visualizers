@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QScrollArea>
+#include <QFileDialog>
 #include <vector>
 #include "GLWidget.h"
 #include "MMLData.h"
@@ -28,6 +29,7 @@ public:
     void LoadSimulation(const QString& filePath);
 
 private slots:
+    void OnLoadData();
     void OnStartPause();
     void OnRestart();
     void OnTimerTick();
@@ -50,6 +52,9 @@ private:
     
     // Sidebar panels
     QLineEdit* titleEdit_;
+    
+    // File controls
+    QPushButton* loadDataButton_;
     
     // Simulation controls
     QPushButton* startPauseButton_;

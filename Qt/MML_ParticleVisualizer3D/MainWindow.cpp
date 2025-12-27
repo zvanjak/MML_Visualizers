@@ -45,6 +45,14 @@ void MainWindow::SetupUI()
     sidebarLayout->setContentsMargins(5, 5, 5, 5);
     sidebarLayout->setSpacing(8);
     
+    // === File Panel ===
+    QGroupBox* fileGroup = new QGroupBox("File");
+    QVBoxLayout* fileLayout = new QVBoxLayout(fileGroup);
+    loadDataButton_ = new QPushButton("Load Data...");
+    connect(loadDataButton_, &QPushButton::clicked, this, &MainWindow::OnLoadData);
+    fileLayout->addWidget(loadDataButton_);
+    sidebarLayout->addWidget(fileGroup);
+    
     // === Title Panel ===
     QGroupBox* titleGroup = new QGroupBox("Simulation Title");
     QVBoxLayout* titleLayout = new QVBoxLayout(titleGroup);
@@ -287,6 +295,25 @@ void MainWindow::UpdateContainerInfo()
     containerHeightLabel_->setText(QString::number(simulation_.containerHeight, 'f', 2));
     containerDepthLabel_->setText(QString::number(simulation_.containerDepth, 'f', 2));
     numParticlesLabel_->setText(QString::number(simulation_.particles.size()));
+}
+
+void MainWindow::OnLoadData()
+{
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        "Open Particle Simulation Data",
+        QString(),
+        "Data Files (*.txt);;All Files (*)");
+    
+    if (!filePath.isEmpty()) {
+        // Stop any running animation
+        if (isPlaying_) {
+            animationTimer_->stop();
+            startPauseButton_->setText("Start");
+            isPlaying_ = false;
+        }
+        LoadSimulation(filePath);
+    }
 }
 
 void MainWindow::OnStartPause()
