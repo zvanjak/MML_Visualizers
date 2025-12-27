@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <QColor>
 
 struct Point3D
@@ -33,35 +34,53 @@ class ParticleData3D
 public:
     std::string name;
     Color color;
-    double radius;
-    std::vector<Point3D> positions;
+    double size;  // particle size/radius
+    std::vector<Point3D> trajectory;  // positions over time
+    bool visible;
     
-    ParticleData3D(const std::string& _name, const Color& _color, double _radius)
-        : name(_name), color(_color), radius(_radius) {}
+    ParticleData3D(const std::string& _name, const Color& _color, double _size)
+        : name(_name), color(_color), size(_size), visible(true) {}
     
     void AddPosition(const Point3D& pos) {
-        positions.push_back(pos);
+        trajectory.push_back(pos);
     }
     
     Point3D GetPosition(int step) const {
-        if (step >= 0 && step < static_cast<int>(positions.size()))
-            return positions[step];
+        if (step >= 0 && step < static_cast<int>(trajectory.size()))
+            return trajectory[step];
         return Point3D();
     }
     
     int GetNumSteps() const {
-        return static_cast<int>(positions.size());
+        return static_cast<int>(trajectory.size());
     }
 };
 
 struct LoadedParticleSimulation3D
 {
+    std::string title;
     std::vector<ParticleData3D> particles;
     int numSteps;
-    double width, height, depth;
+    double containerWidth, containerHeight, containerDepth;
     
     LoadedParticleSimulation3D() 
-        : numSteps(0), width(1000), height(1000), depth(1000) {}
+        : title("Particle Simulation 3D"), numSteps(0), 
+          containerWidth(10.0), containerHeight(10.0), containerDepth(10.0) {}
+    
+    double GetMaxDimension() const {
+        return std::max({containerWidth, containerHeight, containerDepth});
+    }
+    
+    Point3D GetCenter() const {
+        return Point3D(containerWidth / 2.0, containerHeight / 2.0, containerDepth / 2.0);
+    }
+};
+
+// Display modes matching WPF specification
+enum class DisplayMode {
+    None,           // Axes only
+    BoundingBox,    // Semi-transparent bounding box walls
+    CoordinatePlanes // Full coordinate planes extending both directions
 };
 
 #endif // MMLDATA_H

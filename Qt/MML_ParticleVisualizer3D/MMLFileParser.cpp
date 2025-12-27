@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cctype>
 #include <QColor>
+#include <QFileInfo>
 
 std::string MMLFileParser::Trim(const std::string& str)
 {
@@ -65,6 +66,22 @@ int MMLFileParser::ParseInt(const std::string& str)
     }
 }
 
+bool MMLFileParser::ParseFile(const std::string& filename, LoadedParticleSimulation3D& simulation)
+{
+    try {
+        simulation = LoadParticleSimulation3D(filename);
+        
+        // Extract title from filename
+        QFileInfo fileInfo(QString::fromStdString(filename));
+        simulation.title = fileInfo.baseName().toStdString();
+        
+        return true;
+    }
+    catch (const std::exception& e) {
+        return false;
+    }
+}
+
 LoadedParticleSimulation3D MMLFileParser::LoadParticleSimulation3D(const std::string& filename)
 {
     LoadedParticleSimulation3D simulation;
@@ -119,6 +136,11 @@ LoadedParticleSimulation3D MMLFileParser::LoadParticleSimulation3D(const std::st
     }
     simulation.numSteps = ParseInt(parts[1]);
     
+    // Track min/max for container dimensions
+    double minX = std::numeric_limits<double>::max(), maxX = std::numeric_limits<double>::lowest();
+    double minY = std::numeric_limits<double>::max(), maxY = std::numeric_limits<double>::lowest();
+    double minZ = std::numeric_limits<double>::max(), maxZ = std::numeric_limits<double>::lowest();
+    
     // Read steps
     for (int step = 0; step < simulation.numSteps; step++) {
         // Read "Step N T" line
@@ -155,8 +177,27 @@ LoadedParticleSimulation3D MMLFileParser::LoadParticleSimulation3D(const std::st
             }
             
             simulation.particles[i].AddPosition(Point3D(x, y, z));
+            
+            // Update bounds
+            minX = std::min(minX, x);
+            maxX = std::max(maxX, x);
+            minY = std::min(minY, y);
+            maxY = std::max(maxY, y);
+            minZ = std::min(minZ, z);
+            maxZ = std::max(maxZ, z);
         }
     }
+    
+    // Set container dimensions based on particle positions with some padding
+    double paddingFactor = 1.2;
+    simulation.containerWidth = (maxX - minX) * paddingFactor;
+    simulation.containerHeight = (maxY - minY) * paddingFactor;
+    simulation.containerDepth = (maxZ - minZ) * paddingFactor;
+    
+    // Ensure minimum dimensions
+    if (simulation.containerWidth < 1.0) simulation.containerWidth = 10.0;
+    if (simulation.containerHeight < 1.0) simulation.containerHeight = 10.0;
+    if (simulation.containerDepth < 1.0) simulation.containerDepth = 10.0;
     
     file.close();
     return simulation;

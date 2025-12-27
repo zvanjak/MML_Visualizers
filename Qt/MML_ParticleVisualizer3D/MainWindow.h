@@ -3,12 +3,17 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <QLabel>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QLabel>
+#include <QSlider>
+#include <QProgressBar>
+#include <QRadioButton>
 #include <QCheckBox>
-#include <QTextBrowser>
-#include <QSplitter>
+#include <QLineEdit>
+#include <QGroupBox>
+#include <QScrollArea>
+#include <vector>
 #include "GLWidget.h"
 #include "MMLData.h"
 
@@ -17,41 +22,74 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(const std::vector<std::string>& filenames, QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void LoadSimulation(const QString& filePath);
+
 private slots:
-    void OnStartAnimation();
-    void OnPauseAnimation();
-    void OnRestartAnimation();
-    void OnAnimationStep();
+    void OnStartPause();
+    void OnRestart();
+    void OnTimerTick();
     void OnDelayChanged(int value);
-    void OnToggleBoundingBox(int state);
+    void OnRefreshEveryChanged(int value);
+    void OnDisplayModeChanged();
+    void OnLookAtCenter();
+    void OnResetCamera();
+    void OnTitleChanged();
+    void OnParticleVisibilityChanged(int index);
 
 private:
     void SetupUI();
-    void LoadSimulations();
-    void UpdateInfoDisplay();
-    void UpdateStepDisplay();
+    void UpdateControls();
+    void UpdateParticleCheckboxes();
+    void UpdateContainerInfo();
     
-    GLWidget *glWidget_;
-    QTimer *animationTimer_;
+    // Central widget
+    GLWidget* glWidget_;
     
-    // UI Controls
-    QPushButton *startButton_;
-    QPushButton *pauseButton_;
-    QPushButton *restartButton_;
-    QSpinBox *delaySpinBox_;
-    QLabel *currentStepLabel_;
-    QLabel *totalStepsLabel_;
-    QCheckBox *boundingBoxCheckBox_;
-    QTextBrowser *infoBrowser_;
+    // Sidebar panels
+    QLineEdit* titleEdit_;
     
-    // Data
-    std::vector<std::string> filenames_;
-    LoadedParticleSimulation3D simulation_;
+    // Simulation controls
+    QPushButton* startPauseButton_;
+    QPushButton* restartButton_;
+    QProgressBar* progressBar_;
+    QLabel* currentStepLabel_;
+    
+    // Animation settings
+    QLabel* totalStepsLabel_;
+    QSpinBox* delaySpinBox_;
+    QSpinBox* refreshEverySpinBox_;
+    
+    // Camera controls
+    QPushButton* lookAtCenterButton_;
+    QPushButton* resetCameraButton_;
+    
+    // Display mode
+    QRadioButton* displayNoneRadio_;
+    QRadioButton* displayBoundingBoxRadio_;
+    QRadioButton* displayCoordinatePlanesRadio_;
+    
+    // Particles panel
+    QGroupBox* particlesGroupBox_;
+    QScrollArea* particlesScrollArea_;
+    std::vector<QCheckBox*> particleCheckboxes_;
+    
+    // Container info
+    QLabel* containerWidthLabel_;
+    QLabel* containerHeightLabel_;
+    QLabel* containerDepthLabel_;
+    QLabel* numParticlesLabel_;
+    
+    // Animation state
+    QTimer* animationTimer_;
+    bool isPlaying_;
     int currentStep_;
-    bool isAnimating_;
+    int refreshCounter_;
+    int refreshEvery_;
+    
+    LoadedParticleSimulation3D simulation_;
 };
 
 #endif // MAINWINDOW_H

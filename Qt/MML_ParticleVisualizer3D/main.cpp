@@ -14,12 +14,13 @@ int main(int argc, char *argv[])
     }
     
     if (filenames.empty()) {
-        std::cerr << "Usage: " << argv[0] << " <data_file> [additional_files...]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <data_file>" << std::endl;
         std::cerr << "Example: " << argv[0] << " SimData3D.txt" << std::endl;
         return 1;
     }
     
-    MainWindow window(filenames);
+    MainWindow window;
+    window.LoadSimulation(QString::fromStdString(filenames[0]));
     window.show();
     
     return app.exec();

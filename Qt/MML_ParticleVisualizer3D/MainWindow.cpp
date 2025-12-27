@@ -2,24 +2,29 @@
 #include "MMLFileParser.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QSplitter>
 #include <QGroupBox>
+#include <QFormLayout>
+#include <QButtonGroup>
+#include <QFileInfo>
 #include <QMessageBox>
-#include <QApplication>
-#include <sstream>
-#include <iomanip>
 
-MainWindow::MainWindow(const std::vector<std::string>& filenames, QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , filenames_(filenames)
+    , glWidget_(nullptr)
+    , animationTimer_(nullptr)
+    , isPlaying_(false)
     , currentStep_(0)
-    , isAnimating_(false)
+    , refreshCounter_(0)
+    , refreshEvery_(1)
 {
-    setWindowTitle("MML Particle Visualizer 3D");
-    resize(1200, 800);
-    
     SetupUI();
-    LoadSimulations();
-    UpdateInfoDisplay();
+    
+    animationTimer_ = new QTimer(this);
+    connect(animationTimer_, &QTimer::timeout, this, &MainWindow::OnTimerTick);
+    
+    setWindowTitle("MML Particle Visualizer 3D");
+    resize(1400, 900);
 }
 
 MainWindow::~MainWindow()
@@ -28,246 +33,343 @@ MainWindow::~MainWindow()
 
 void MainWindow::SetupUI()
 {
-    QWidget *centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    QWidget* centralWidget = new QWidget(this);
+    QHBoxLayout* mainLayout = new QHBoxLayout(centralWidget);
+    mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setSpacing(5);
     
-    QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
+    // Create sidebar
+    QWidget* sidebar = new QWidget();
+    sidebar->setFixedWidth(280);
+    QVBoxLayout* sidebarLayout = new QVBoxLayout(sidebar);
+    sidebarLayout->setContentsMargins(5, 5, 5, 5);
+    sidebarLayout->setSpacing(8);
     
-    // Create splitter
-    QSplitter *splitter = new QSplitter(Qt::Horizontal, centralWidget);
+    // === Title Panel ===
+    QGroupBox* titleGroup = new QGroupBox("Simulation Title");
+    QVBoxLayout* titleLayout = new QVBoxLayout(titleGroup);
+    titleEdit_ = new QLineEdit();
+    titleEdit_->setPlaceholderText("Untitled Simulation");
+    connect(titleEdit_, &QLineEdit::editingFinished, this, &MainWindow::OnTitleChanged);
+    titleLayout->addWidget(titleEdit_);
+    sidebarLayout->addWidget(titleGroup);
     
-    // Left panel - OpenGL widget
-    glWidget_ = new GLWidget(splitter);
-    glWidget_->setMinimumSize(600, 600);
-    splitter->addWidget(glWidget_);
+    // === Simulation Controls Panel ===
+    QGroupBox* controlsGroup = new QGroupBox("Simulation Controls");
+    QVBoxLayout* controlsLayout = new QVBoxLayout(controlsGroup);
     
-    // Right panel - controls and info
-    QWidget *rightPanel = new QWidget(splitter);
-    QVBoxLayout *rightLayout = new QVBoxLayout(rightPanel);
+    QHBoxLayout* buttonsLayout = new QHBoxLayout();
+    startPauseButton_ = new QPushButton("Start");
+    restartButton_ = new QPushButton("Restart");
+    connect(startPauseButton_, &QPushButton::clicked, this, &MainWindow::OnStartPause);
+    connect(restartButton_, &QPushButton::clicked, this, &MainWindow::OnRestart);
+    buttonsLayout->addWidget(startPauseButton_);
+    buttonsLayout->addWidget(restartButton_);
+    controlsLayout->addLayout(buttonsLayout);
     
-    // Animation controls
-    QGroupBox *animationGroup = new QGroupBox("Animation Controls", rightPanel);
-    QVBoxLayout *animGroupLayout = new QVBoxLayout(animationGroup);
+    progressBar_ = new QProgressBar();
+    progressBar_->setMinimum(0);
+    progressBar_->setMaximum(100);
+    progressBar_->setValue(0);
+    controlsLayout->addWidget(progressBar_);
     
-    // Start/Pause/Restart buttons
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    startButton_ = new QPushButton("Start", animationGroup);
-    pauseButton_ = new QPushButton("Pause", animationGroup);
-    restartButton_ = new QPushButton("Restart", animationGroup);
+    currentStepLabel_ = new QLabel("Step: 0 / 0");
+    currentStepLabel_->setAlignment(Qt::AlignCenter);
+    controlsLayout->addWidget(currentStepLabel_);
     
-    pauseButton_->setEnabled(false);
-    restartButton_->setEnabled(false);
+    sidebarLayout->addWidget(controlsGroup);
     
-    buttonLayout->addWidget(startButton_);
-    buttonLayout->addWidget(pauseButton_);
-    buttonLayout->addWidget(restartButton_);
-    animGroupLayout->addLayout(buttonLayout);
+    // === Animation Settings Panel ===
+    QGroupBox* animationGroup = new QGroupBox("Animation Settings");
+    QFormLayout* animationLayout = new QFormLayout(animationGroup);
     
-    // Delay control
-    QHBoxLayout *delayLayout = new QHBoxLayout();
-    delayLayout->addWidget(new QLabel("Delay (ms):", animationGroup));
-    delaySpinBox_ = new QSpinBox(animationGroup);
+    totalStepsLabel_ = new QLabel("0");
+    animationLayout->addRow("Total Steps:", totalStepsLabel_);
+    
+    delaySpinBox_ = new QSpinBox();
     delaySpinBox_->setRange(1, 1000);
     delaySpinBox_->setValue(50);
-    delayLayout->addWidget(delaySpinBox_);
-    animGroupLayout->addLayout(delayLayout);
+    delaySpinBox_->setSuffix(" ms");
+    connect(delaySpinBox_, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnDelayChanged);
+    animationLayout->addRow("Step Delay:", delaySpinBox_);
     
-    // Step display
-    QHBoxLayout *stepLayout = new QHBoxLayout();
-    stepLayout->addWidget(new QLabel("Current Step:", animationGroup));
-    currentStepLabel_ = new QLabel("0", animationGroup);
-    stepLayout->addWidget(currentStepLabel_);
-    stepLayout->addWidget(new QLabel("/", animationGroup));
-    totalStepsLabel_ = new QLabel("0", animationGroup);
-    stepLayout->addWidget(totalStepsLabel_);
-    stepLayout->addStretch();
-    animGroupLayout->addLayout(stepLayout);
+    refreshEverySpinBox_ = new QSpinBox();
+    refreshEverySpinBox_->setRange(1, 100);
+    refreshEverySpinBox_->setValue(1);
+    refreshEverySpinBox_->setSuffix(" steps");
+    connect(refreshEverySpinBox_, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnRefreshEveryChanged);
+    animationLayout->addRow("Refresh Every:", refreshEverySpinBox_);
     
-    rightLayout->addWidget(animationGroup);
+    sidebarLayout->addWidget(animationGroup);
     
-    // Display options
-    QGroupBox *displayGroup = new QGroupBox("Display Options", rightPanel);
-    QVBoxLayout *displayLayout = new QVBoxLayout(displayGroup);
+    // === Camera Controls Panel ===
+    QGroupBox* cameraGroup = new QGroupBox("Camera");
+    QVBoxLayout* cameraLayout = new QVBoxLayout(cameraGroup);
     
-    boundingBoxCheckBox_ = new QCheckBox("Show Bounding Box", displayGroup);
-    boundingBoxCheckBox_->setChecked(true);
-    displayLayout->addWidget(boundingBoxCheckBox_);
+    lookAtCenterButton_ = new QPushButton("Look at Center");
+    resetCameraButton_ = new QPushButton("Reset Camera");
+    connect(lookAtCenterButton_, &QPushButton::clicked, this, &MainWindow::OnLookAtCenter);
+    connect(resetCameraButton_, &QPushButton::clicked, this, &MainWindow::OnResetCamera);
+    cameraLayout->addWidget(lookAtCenterButton_);
+    cameraLayout->addWidget(resetCameraButton_);
     
-    rightLayout->addWidget(displayGroup);
+    QLabel* cameraHelpLabel = new QLabel("Mouse: Left=Rotate, Right=Pan\nWheel=Zoom");
+    cameraHelpLabel->setStyleSheet("color: gray; font-size: 10px;");
+    cameraLayout->addWidget(cameraHelpLabel);
     
-    // Info display
-    QGroupBox *infoGroup = new QGroupBox("Simulation Info", rightPanel);
-    QVBoxLayout *infoLayout = new QVBoxLayout(infoGroup);
+    sidebarLayout->addWidget(cameraGroup);
     
-    infoBrowser_ = new QTextBrowser(infoGroup);
-    infoBrowser_->setMaximumHeight(300);
-    infoLayout->addWidget(infoBrowser_);
+    // === Display Mode Panel ===
+    QGroupBox* displayGroup = new QGroupBox("Display Mode");
+    QVBoxLayout* displayLayout = new QVBoxLayout(displayGroup);
     
-    rightLayout->addWidget(infoGroup);
-    rightLayout->addStretch();
+    QButtonGroup* displayButtonGroup = new QButtonGroup(this);
+    displayNoneRadio_ = new QRadioButton("None (Axes only)");
+    displayBoundingBoxRadio_ = new QRadioButton("Bounding Box");
+    displayCoordinatePlanesRadio_ = new QRadioButton("Coordinate Planes");
     
-    splitter->addWidget(rightPanel);
-    splitter->setStretchFactor(0, 3);
-    splitter->setStretchFactor(1, 1);
+    displayButtonGroup->addButton(displayNoneRadio_);
+    displayButtonGroup->addButton(displayBoundingBoxRadio_);
+    displayButtonGroup->addButton(displayCoordinatePlanesRadio_);
+    displayNoneRadio_->setChecked(true);
     
-    mainLayout->addWidget(splitter);
+    connect(displayNoneRadio_, &QRadioButton::toggled, this, &MainWindow::OnDisplayModeChanged);
+    connect(displayBoundingBoxRadio_, &QRadioButton::toggled, this, &MainWindow::OnDisplayModeChanged);
+    connect(displayCoordinatePlanesRadio_, &QRadioButton::toggled, this, &MainWindow::OnDisplayModeChanged);
     
-    // Animation timer
-    animationTimer_ = new QTimer(this);
+    displayLayout->addWidget(displayNoneRadio_);
+    displayLayout->addWidget(displayBoundingBoxRadio_);
+    displayLayout->addWidget(displayCoordinatePlanesRadio_);
     
-    // Connect signals
-    connect(startButton_, &QPushButton::clicked, this, &MainWindow::OnStartAnimation);
-    connect(pauseButton_, &QPushButton::clicked, this, &MainWindow::OnPauseAnimation);
-    connect(restartButton_, &QPushButton::clicked, this, &MainWindow::OnRestartAnimation);
-    connect(animationTimer_, &QTimer::timeout, this, &MainWindow::OnAnimationStep);
-    connect(delaySpinBox_, QOverload<int>::of(&QSpinBox::valueChanged), 
-            this, &MainWindow::OnDelayChanged);
-    connect(boundingBoxCheckBox_, &QCheckBox::stateChanged, 
-            this, &MainWindow::OnToggleBoundingBox);
+    sidebarLayout->addWidget(displayGroup);
+    
+    // === Particles Panel ===
+    particlesGroupBox_ = new QGroupBox("Particles");
+    QVBoxLayout* particlesLayout = new QVBoxLayout(particlesGroupBox_);
+    
+    particlesScrollArea_ = new QScrollArea();
+    particlesScrollArea_->setWidgetResizable(true);
+    particlesScrollArea_->setMaximumHeight(150);
+    QWidget* particlesContainer = new QWidget();
+    particlesContainer->setLayout(new QVBoxLayout());
+    particlesScrollArea_->setWidget(particlesContainer);
+    particlesLayout->addWidget(particlesScrollArea_);
+    
+    sidebarLayout->addWidget(particlesGroupBox_);
+    
+    // === Container Info Panel ===
+    QGroupBox* containerGroup = new QGroupBox("Container Info");
+    QFormLayout* containerLayout = new QFormLayout(containerGroup);
+    
+    containerWidthLabel_ = new QLabel("0.0");
+    containerHeightLabel_ = new QLabel("0.0");
+    containerDepthLabel_ = new QLabel("0.0");
+    numParticlesLabel_ = new QLabel("0");
+    
+    containerLayout->addRow("Width:", containerWidthLabel_);
+    containerLayout->addRow("Height:", containerHeightLabel_);
+    containerLayout->addRow("Depth:", containerDepthLabel_);
+    containerLayout->addRow("Particles:", numParticlesLabel_);
+    
+    sidebarLayout->addWidget(containerGroup);
+    
+    // Add stretch to push everything up
+    sidebarLayout->addStretch();
+    
+    // Create OpenGL widget
+    glWidget_ = new GLWidget();
+    glWidget_->setMinimumSize(800, 600);
+    
+    // Add to main layout
+    mainLayout->addWidget(sidebar);
+    mainLayout->addWidget(glWidget_, 1);
+    
+    setCentralWidget(centralWidget);
 }
 
-void MainWindow::LoadSimulations()
+void MainWindow::LoadSimulation(const QString& filePath)
 {
-    if (filenames_.empty()) {
-        QMessageBox::warning(this, "No Files", "No data files specified.");
+    MMLFileParser parser;
+    if (!parser.ParseFile(filePath.toStdString(), simulation_)) {
+        QMessageBox::critical(this, "Error", "Failed to load simulation file:\n" + filePath);
         return;
     }
     
-    try {
-        // Load first file
-        simulation_ = MMLFileParser::LoadParticleSimulation3D(filenames_[0]);
+    // Set window title
+    QFileInfo fileInfo(filePath);
+    setWindowTitle("MML Particle Visualizer 3D - " + fileInfo.fileName());
+    
+    // Update title edit
+    titleEdit_->setText(QString::fromStdString(simulation_.title));
+    
+    // Reset animation state
+    currentStep_ = 0;
+    refreshCounter_ = 0;
+    isPlaying_ = false;
+    startPauseButton_->setText("Start");
+    
+    // Update UI
+    glWidget_->SetSimulation(simulation_);
+    UpdateParticleCheckboxes();
+    UpdateContainerInfo();
+    UpdateControls();
+}
+
+void MainWindow::UpdateControls()
+{
+    int totalSteps = simulation_.numSteps;
+    totalStepsLabel_->setText(QString::number(totalSteps));
+    
+    progressBar_->setMaximum(totalSteps > 0 ? totalSteps - 1 : 0);
+    progressBar_->setValue(currentStep_);
+    
+    currentStepLabel_->setText(QString("Step: %1 / %2").arg(currentStep_ + 1).arg(totalSteps));
+}
+
+void MainWindow::UpdateParticleCheckboxes()
+{
+    // Clear existing checkboxes
+    QWidget* container = particlesScrollArea_->widget();
+    QLayout* layout = container->layout();
+    
+    while (QLayoutItem* item = layout->takeAt(0)) {
+        delete item->widget();
+        delete item;
+    }
+    particleCheckboxes_.clear();
+    
+    // Create new checkboxes
+    for (size_t i = 0; i < simulation_.particles.size(); ++i) {
+        const auto& particle = simulation_.particles[i];
         
-        glWidget_->SetSimulation(simulation_);
-        glWidget_->SetCurrentStep(0);
+        QCheckBox* checkbox = new QCheckBox();
+        checkbox->setChecked(particle.visible);
         
-        totalStepsLabel_->setText(QString::number(simulation_.numSteps));
-        currentStepLabel_->setText("0");
-    }
-    catch (const std::exception& e) {
-        QMessageBox::critical(this, "Error Loading File", 
-                            QString("Failed to load simulation:\n%1").arg(e.what()));
-    }
-}
-
-void MainWindow::UpdateInfoDisplay()
-{
-    std::ostringstream html;
-    
-    html << "<html><body style='font-family: Arial; font-size: 10pt;'>";
-    html << "<h3>Simulation Information</h3>";
-    html << "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>";
-    html << "<tr><th>Property</th><th>Value</th></tr>";
-    
-    html << "<tr><td><b>Dimensions</b></td><td>" 
-         << simulation_.width << " × " 
-         << simulation_.height << " × " 
-         << simulation_.depth << "</td></tr>";
-    
-    html << "<tr><td><b>Particles</b></td><td>" 
-         << simulation_.particles.size() << "</td></tr>";
-    
-    html << "<tr><td><b>Steps</b></td><td>" 
-         << simulation_.numSteps << "</td></tr>";
-    
-    html << "</table>";
-    
-    html << "<h3>Particles</h3>";
-    html << "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>";
-    html << "<tr><th>#</th><th>Name</th><th>Radius</th><th>Color</th></tr>";
-    
-    for (size_t i = 0; i < simulation_.particles.size() && i < 10; ++i) {
-        const auto& p = simulation_.particles[i];
-        html << "<tr>";
-        html << "<td>" << (i + 1) << "</td>";
-        html << "<td>" << p.name << "</td>";
-        html << "<td>" << std::fixed << std::setprecision(1) << p.radius << "</td>";
+        // Create label with color indicator
+        QString label = QString("Particle %1").arg(i + 1);
+        if (!particle.name.empty()) {
+            label = QString::fromStdString(particle.name);
+        }
         
-        // Color swatch
-        int r = static_cast<int>(p.color.r * 255);
-        int g = static_cast<int>(p.color.g * 255);
-        int b = static_cast<int>(p.color.b * 255);
-        html << "<td style='background-color: rgb(" << r << "," << g << "," << b << ");'>&nbsp;&nbsp;&nbsp;</td>";
-        html << "</tr>";
+        // Create color indicator
+        QColor color(particle.color.r * 255, particle.color.g * 255, 
+                     particle.color.b * 255);
+        QString colorStyle = QString("background-color: %1; border: 1px solid gray;").arg(color.name());
+        
+        QWidget* row = new QWidget();
+        QHBoxLayout* rowLayout = new QHBoxLayout(row);
+        rowLayout->setContentsMargins(2, 2, 2, 2);
+        
+        QLabel* colorBox = new QLabel();
+        colorBox->setFixedSize(16, 16);
+        colorBox->setStyleSheet(colorStyle);
+        
+        checkbox->setText(label);
+        
+        rowLayout->addWidget(checkbox);
+        rowLayout->addStretch();
+        rowLayout->addWidget(colorBox);
+        
+        layout->addWidget(row);
+        particleCheckboxes_.push_back(checkbox);
+        
+        // Connect with index capture
+        int index = static_cast<int>(i);
+        connect(checkbox, &QCheckBox::toggled, this, [this, index]() {
+            OnParticleVisibilityChanged(index);
+        });
     }
-    
-    if (simulation_.particles.size() > 10) {
-        html << "<tr><td colspan='4' style='text-align: center;'><i>... and " 
-             << (simulation_.particles.size() - 10) << " more</i></td></tr>";
+}
+
+void MainWindow::UpdateContainerInfo()
+{
+    containerWidthLabel_->setText(QString::number(simulation_.containerWidth, 'f', 2));
+    containerHeightLabel_->setText(QString::number(simulation_.containerHeight, 'f', 2));
+    containerDepthLabel_->setText(QString::number(simulation_.containerDepth, 'f', 2));
+    numParticlesLabel_->setText(QString::number(simulation_.particles.size()));
+}
+
+void MainWindow::OnStartPause()
+{
+    if (isPlaying_) {
+        animationTimer_->stop();
+        startPauseButton_->setText("Start");
+        isPlaying_ = false;
+    } else {
+        animationTimer_->start(delaySpinBox_->value());
+        startPauseButton_->setText("Pause");
+        isPlaying_ = true;
     }
-    
-    html << "</table>";
-    
-    html << "<h3>Controls</h3>";
-    html << "<ul>";
-    html << "<li><b>Left Mouse</b>: Rotate camera</li>";
-    html << "<li><b>Right Mouse</b>: Pan view</li>";
-    html << "<li><b>Mouse Wheel</b>: Zoom in/out</li>";
-    html << "</ul>";
-    
-    html << "</body></html>";
-    
-    infoBrowser_->setHtml(QString::fromStdString(html.str()));
 }
 
-void MainWindow::UpdateStepDisplay()
-{
-    currentStepLabel_->setText(QString::number(currentStep_));
-}
-
-void MainWindow::OnStartAnimation()
-{
-    isAnimating_ = true;
-    startButton_->setEnabled(false);
-    pauseButton_->setEnabled(true);
-    restartButton_->setEnabled(false);
-    
-    animationTimer_->start(delaySpinBox_->value());
-}
-
-void MainWindow::OnPauseAnimation()
-{
-    isAnimating_ = false;
-    animationTimer_->stop();
-    
-    startButton_->setEnabled(true);
-    pauseButton_->setEnabled(false);
-    restartButton_->setEnabled(true);
-}
-
-void MainWindow::OnRestartAnimation()
+void MainWindow::OnRestart()
 {
     currentStep_ = 0;
+    refreshCounter_ = 0;
     glWidget_->SetCurrentStep(currentStep_);
-    UpdateStepDisplay();
-    
-    startButton_->setEnabled(true);
-    pauseButton_->setEnabled(false);
-    restartButton_->setEnabled(false);
+    UpdateControls();
 }
 
-void MainWindow::OnAnimationStep()
+void MainWindow::OnTimerTick()
 {
-    currentStep_++;
+    refreshCounter_++;
     
-    if (currentStep_ >= simulation_.numSteps) {
-        // Animation complete
-        OnPauseAnimation();
-        restartButton_->setEnabled(true);
-        currentStep_ = simulation_.numSteps - 1;
+    if (refreshCounter_ >= refreshEvery_) {
+        refreshCounter_ = 0;
+        currentStep_++;
+        
+        if (currentStep_ >= simulation_.numSteps) {
+            currentStep_ = 0;  // Loop
+        }
+        
+        glWidget_->SetCurrentStep(currentStep_);
+        UpdateControls();
     }
-    
-    glWidget_->SetCurrentStep(currentStep_);
-    UpdateStepDisplay();
 }
 
 void MainWindow::OnDelayChanged(int value)
 {
-    if (isAnimating_) {
+    if (isPlaying_) {
         animationTimer_->setInterval(value);
     }
 }
 
-void MainWindow::OnToggleBoundingBox(int state)
+void MainWindow::OnRefreshEveryChanged(int value)
 {
-    glWidget_->SetShowBoundingBox(state == Qt::Checked);
+    refreshEvery_ = value;
+    refreshCounter_ = 0;
+}
+
+void MainWindow::OnDisplayModeChanged()
+{
+    if (displayNoneRadio_->isChecked()) {
+        glWidget_->SetDisplayMode(DisplayMode::None);
+    } else if (displayBoundingBoxRadio_->isChecked()) {
+        glWidget_->SetDisplayMode(DisplayMode::BoundingBox);
+    } else if (displayCoordinatePlanesRadio_->isChecked()) {
+        glWidget_->SetDisplayMode(DisplayMode::CoordinatePlanes);
+    }
+}
+
+void MainWindow::OnLookAtCenter()
+{
+    glWidget_->LookAtCenter();
+}
+
+void MainWindow::OnResetCamera()
+{
+    glWidget_->ResetCamera();
+}
+
+void MainWindow::OnTitleChanged()
+{
+    simulation_.title = titleEdit_->text().toStdString();
+}
+
+void MainWindow::OnParticleVisibilityChanged(int index)
+{
+    if (index >= 0 && index < static_cast<int>(particleCheckboxes_.size())) {
+        bool visible = particleCheckboxes_[index]->isChecked();
+        glWidget_->SetParticleVisible(index, visible);
+    }
 }
